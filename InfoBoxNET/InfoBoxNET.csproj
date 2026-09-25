@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>True</UseWindowsForms>
+    <AssemblyVersion>1.7.2026.8</AssemblyVersion>
+    <FileVersion>1.7.2026.8</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Picture\ApplicationIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.161" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
+    <PackageReference Include="System.Management" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Picture\ApplicationIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TemplateCore\ArgumentGuard\" />
+    <Folder Include="TemplateCore\Controls\LoadingOverlay\" />
+    <Folder Include="TemplateCore\Controls\ProgressOverlay\Converter\" />
+    <Folder Include="TemplateCore\Controls\ProgressOverlay\Themes\" />
+    <Folder Include="TemplateCore\Controls\SwitchBox\Converter\" />
+    <Folder Include="TemplateCore\Controls\SwitchBox\Themes\" />
+    <Folder Include="TemplateCore\Controls\TreeView\Converter\" />
+    <Folder Include="TemplateCore\Controls\TreeView\Adapter\" />
+    <Folder Include="TemplateCore\Controls\TreeView\Themes\" />
+    <Folder Include="TemplateCore\Extension\Behaviors\" />
+    <Folder Include="TemplateCore\Extension\System.Integer\" />
+    <Folder Include="TemplateCore\Extension\System.Enum\" />
+    <Folder Include="TemplateCore\Extension\System.Data\" />
+  </ItemGroup>
+
+</Project>
