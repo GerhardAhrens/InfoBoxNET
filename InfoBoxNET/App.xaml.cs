@@ -1,6 +1,7 @@
 ﻿namespace MinimalWPF
 {
     using System.Collections;
+    using System.Data.SQLite;
     using System.Diagnostics;
     using System.Globalization;
     using System.IO;
@@ -70,6 +71,8 @@
         /// </summary>
         public static ApplicationSettings Settings { get; set; }
 
+        public static string DatabasePath { get; set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Database", "InfoBox.db");
+
         /// <summary>
         /// Verwaltet die Startlogik der Anwendung, einschließlich der Initialisierung der Ländereinstellungen und der Konfiguration der Benutzereinstellungen.
         /// </summary>
@@ -101,6 +104,9 @@
 
                 /* Initiale Benutzer Einstellungen speichern */
                 InitializeSettings();
+
+                /* Initialisierung der Datenbank */
+                InitializeDatabase();
 
                 /*
                 // MainWindow als Startpunkt festlegen 
@@ -215,6 +221,24 @@
 
                 Settings = settings;
             }
+        }
+
+        private static void InitializeDatabase()
+        {
+            if (Directory.Exists(Path.GetDirectoryName(App.DatabasePath)) == false)
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(App.DatabasePath));
+            }
+
+            using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+            {
+                ds.Create(CreateTableInDB);
+            }
+        }
+
+        private static void CreateTableInDB(SQLiteConnection sqliteConnection)
+        {
+
         }
 
         /// <summary>

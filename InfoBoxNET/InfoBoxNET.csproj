@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Core\" />
     <Folder Include="TemplateCore\ArgumentGuard\" />
     <Folder Include="TemplateCore\Controls\LoadingOverlay\" />
     <Folder Include="TemplateCore\Controls\ProgressOverlay\Converter\" />
