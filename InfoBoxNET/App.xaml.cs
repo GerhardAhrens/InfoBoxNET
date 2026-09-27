@@ -5,18 +5,14 @@
     using System.Diagnostics;
     using System.Globalization;
     using System.IO;
-    using System.Reflection.Emit;
     using System.Text;
     using System.Windows;
-    using System.Windows.Domain;
     using System.Windows.Markup;
     using System.Windows.Threading;
 
     using InfoBoxNET.Core;
-    using InfoBoxNET.Data.Core;
+    using InfoBoxNET.Model;
     using InfoBoxNET.View;
-
-    using PasswortNET.Model;
 
     /// <summary>
     /// Interaction logic for App.xaml
@@ -244,13 +240,26 @@
         private static void CreateTableInDB(SQLiteConnection sqliteConnection)
         {
             string createSQL = string.Empty;
-            using (SQLGenerator<PasswordPin> aa = new SQLGenerator<PasswordPin>(new PasswordPin()))
+            using (SQLGenerator<PasswordPin> aa = new SQLGenerator<PasswordPin>(null))
             {
                 createSQL = aa.CreateTable();
             }
 
             sqliteConnection.RecordSet<int>(createSQL).Execute();
 
+            using (SQLGenerator<Region> aa = new SQLGenerator<Region>(null))
+            {
+                createSQL = aa.CreateTable();
+            }
+
+            sqliteConnection.RecordSet<int>(createSQL).Execute();
+
+            using (SQLGenerator<Attachment> aa = new SQLGenerator<Attachment>(null))
+            {
+                createSQL = aa.CreateTable();
+            }
+
+            sqliteConnection.RecordSet<int>(createSQL).Execute();
         }
 
         /// <summary>

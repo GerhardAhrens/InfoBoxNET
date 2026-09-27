@@ -1,12 +1,12 @@
 //-----------------------------------------------------------------------
-// <copyright file="PasswordPin.cs" company="www.lifeprojects.de">
-//     Class: PasswordPin
+// <copyright file="RegionPart.cs" company="www.lifeprojects.de">
+//     Class: Region
 //     Copyright © www.lifeprojects.de 2022
 // </copyright>
 //
 // <author>Gerhard Ahrens - www.lifeprojects.de</author>
 // <email>developer@lifeprojects.de</email>
-// <date>27.04.2022 14:17:30</date>
+// <date>30.05.2022 15:02:30</date>
 //
 // <summary>
 // Klasse für 
@@ -16,25 +16,18 @@
 namespace InfoBoxNET.Model
 {
     using System.Data.SQLite;
+    using System.Diagnostics;
     using System.Text.Json.Serialization;
 
-    public partial class PasswordPin
+    [DebuggerDisplay("Name={this.Name}")]
+    public partial class Region 
     {
         [JsonIgnore]
         public string FullName
         {
             get
             {
-                return $"{this.Id}|{this.Title}|{this.Description}";
-            }
-        }
-
-        [JsonIgnore]
-        public string ToSearchFilter
-        {
-            get
-            {
-                return $"{this.Title}|{this.Username}|{this.Description}|{this.Website}";
+                return $"{this.Id}|{this.Name}|{this.Background}|{this.Symbol}";
             }
         }
 
@@ -47,7 +40,6 @@ namespace InfoBoxNET.Model
 
                 TimeStamp ts = new TimeStamp();
                 result = ts.MaxEntry(this.CreatedOn, this.CreatedBy, this.ModifiedOn, this.ModifiedBy);
-
                 return result;
             }
         }

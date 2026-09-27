@@ -1,12 +1,12 @@
 //-----------------------------------------------------------------------
-// <copyright file="PasswordPin.cs" company="www.lifeprojects.de">
-//     Class: PasswordPin
+// <copyright file="Attachment.cs" company="www.lifeprojects.de">
+//     Class: Attachment
 //     Copyright © www.lifeprojects.de 2022
 // </copyright>
 //
-// <author>Gerhard Ahrens - www.lifeprojects.de</author>
-// <email>developer@lifeprojects.de</email>
-// <date>27.04.2022 14:17:30</date>
+// <author>Gerhard Ahrens - www.Lifeprojects.de</author>
+// <email>gerhard.ahrens@lifeprojects.de</email>
+// <date>30.06.2022 13:53:09</date>
 //
 // <summary>
 // Klasse für 
@@ -18,23 +18,14 @@ namespace InfoBoxNET.Model
     using System.Data.SQLite;
     using System.Text.Json.Serialization;
 
-    public partial class PasswordPin
+    public sealed partial class Attachment 
     {
         [JsonIgnore]
         public string FullName
         {
             get
             {
-                return $"{this.Id}|{this.Title}|{this.Description}";
-            }
-        }
-
-        [JsonIgnore]
-        public string ToSearchFilter
-        {
-            get
-            {
-                return $"{this.Title}|{this.Username}|{this.Description}|{this.Website}";
+                return $"{this.ObjectName}-{this.Filename}-{this.FileSize}";
             }
         }
 
