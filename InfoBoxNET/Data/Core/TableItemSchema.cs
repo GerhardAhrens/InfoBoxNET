@@ -1,12 +1,8 @@
 ﻿namespace InfoBoxNET.Data.Core
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
-    public class TableItem
+    public class TableItemSchema
     {
-        public TableItem(string table, string column, string columnType)
+        public TableItemSchema(string table, string column, string columnType)
         {
             this.Table = table;
             this.Column = column;
