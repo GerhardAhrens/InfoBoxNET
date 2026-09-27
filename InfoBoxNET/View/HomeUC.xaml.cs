@@ -13,14 +13,14 @@
 // </summary>
 //-----------------------------------------------------------------------
 
-namespace MinimalWPF.View
+namespace InfoBoxNET.View
 {
     using System.IO;
     using System.Reflection;
     using System.Windows;
     using System.Windows.Controls;
 
-    using MinimalWPF.Core;
+    using InfoBoxNET.Core;
 
     /// <summary>
     /// Interaktionslogik für HomeUC.xaml

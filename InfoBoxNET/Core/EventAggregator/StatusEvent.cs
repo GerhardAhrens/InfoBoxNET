@@ -1,4 +1,4 @@
-﻿namespace MinimalWPF.Core
+﻿namespace InfoBoxNET.Core
 {
     using System;
 

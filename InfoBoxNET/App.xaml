@@ -1,7 +1,7 @@
-﻿<Application x:Class="MinimalWPF.App"
+﻿<Application x:Class="InfoBoxNET.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:MinimalWPF"
+             xmlns:local="clr-namespace:InfoBoxNET"
              StartupUri="View\MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>

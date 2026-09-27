@@ -6,8 +6,8 @@
     using System.Windows.Controls;
     using System.Windows.Input;
 
-    using MinimalWPF;
-    using MinimalWPF.Core;
+    using InfoBoxNET;
+    using InfoBoxNET.Core;
 
     /// <summary>
     /// Interaktionslogik für LoginUC.xaml

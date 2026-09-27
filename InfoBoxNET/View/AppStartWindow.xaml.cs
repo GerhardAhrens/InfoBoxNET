@@ -13,7 +13,7 @@
 // </summary>
 //-----------------------------------------------------------------------
 
-namespace MinimalWPF.View
+namespace InfoBoxNET.View
 {
     using System.ComponentModel;
     using System.Windows;

@@ -1,11 +1,11 @@
 ﻿<base:WindowBase
-    x:Class="MinimalWPF.MainWindow"
+    x:Class="InfoBoxNET.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:UI="clr-namespace:System.Windows.Controls"
     xmlns:base="clr-namespace:System.Windows"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:MinimalWPF"
+    xmlns:local="clr-namespace:InfoBoxNET"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="{Binding Path=WindowTitel, FallbackValue=~WindowTitel}"
     Width="950"

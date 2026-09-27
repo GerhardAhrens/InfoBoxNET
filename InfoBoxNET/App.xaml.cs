@@ -1,4 +1,4 @@
-﻿namespace MinimalWPF
+﻿namespace InfoBoxNET
 {
     using System.Collections;
     using System.Data.SQLite;
@@ -10,8 +10,8 @@
     using System.Windows.Markup;
     using System.Windows.Threading;
 
-    using MinimalWPF.Core;
-    using MinimalWPF.View;
+    using InfoBoxNET.Core;
+    using InfoBoxNET.View;
 
     /// <summary>
     /// Interaction logic for App.xaml
@@ -19,8 +19,8 @@
     public partial class App : Application
     {
         private const string DEFAULTLANGUAGE = "de-DE";
-        public const string SHORTNAME = "MinimalWPF";
-        private static readonly string MessageBoxTitle = "MinimalWPF Application";
+        public const string SHORTNAME = "InfoBoxNET";
+        private static readonly string MessageBoxTitle = "InfoBoxNET Application";
         private static readonly string UnexpectedError = "An unexpected error occured.";
         private string exePath = string.Empty;
         private string exeName = string.Empty;
@@ -108,33 +108,33 @@
                 /* Initialisierung der Datenbank */
                 InitializeDatabase();
 
-                /*
-                // MainWindow als Startpunkt festlegen 
-                // WICHTIG: Die Zeile StartupUri muß aus der app.xaml entfert werden, wenn der Start Dialog verwendet werden soll
-                // StartupUri="View\MainWindow.xaml"
-                MainWindow mainWindow = new MainWindow();
-                Application.Current.MainWindow = mainWindow;
-                mainWindow.Visibility = Visibility.Hidden;
-                mainWindow.Tag = null;
-
-                // zuvor wird aber das Start Window aufrufen 
-                AppStartWindow startScreen = new AppStartWindow();
-                if (startScreen.ShowDialog() == false)
+                if (string.IsNullOrEmpty(StartupUri.OriginalString) == true)
                 {
-                    mainWindow.Tag = typeof(AppStartWindow);
-                    ApplicationExit();
-                }
-                else
-                {
-                    mainWindow.Activate();
-                    mainWindow.WindowState = WindowState.Normal;
-                    mainWindow.Show();
-                    mainWindow.Visibility = Visibility.Visible;
-                    startScreen.Close();
-                    startScreen = null;
-                }
-                */
+                    // MainWindow als Startpunkt festlegen 
+                    // WICHTIG: Die Zeile StartupUri muß aus der app.xaml entfert werden, wenn der Start Dialog verwendet werden soll
+                    //StartupUri="View\MainWindow.xaml"
+                    MainWindow mainWindow = new MainWindow();
+                    Application.Current.MainWindow = mainWindow;
+                    mainWindow.Visibility = Visibility.Hidden;
+                    mainWindow.Tag = null;
 
+                    // zuvor wird aber das Start Window aufrufen 
+                    AppStartWindow startScreen = new AppStartWindow();
+                    if (startScreen.ShowDialog() == false)
+                    {
+                        mainWindow.Tag = typeof(AppStartWindow);
+                        ApplicationExit();
+                    }
+                    else
+                    {
+                        mainWindow.Activate();
+                        mainWindow.WindowState = WindowState.Normal;
+                        mainWindow.Show();
+                        mainWindow.Visibility = Visibility.Visible;
+                        startScreen.Close();
+                        startScreen = null;
+                    }
+                }
             }
             catch (Exception ex)
             {

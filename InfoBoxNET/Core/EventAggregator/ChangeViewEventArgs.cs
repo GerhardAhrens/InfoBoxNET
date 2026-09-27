@@ -13,7 +13,7 @@
 // </summary>
 //-----------------------------------------------------------------------
 
-namespace MinimalWPF.Core
+namespace InfoBoxNET.Core
 {
     public partial class ChangeViewEventArgs : System.EventArgs
     {

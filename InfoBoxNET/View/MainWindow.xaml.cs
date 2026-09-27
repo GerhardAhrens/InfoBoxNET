@@ -1,4 +1,4 @@
-﻿namespace MinimalWPF
+﻿namespace InfoBoxNET
 {
     using System.ComponentModel;
     using System.Data;
@@ -7,8 +7,8 @@
     using System.Windows.Data;
     using System.Windows.Input;
 
-    using MinimalWPF.Core;
-    using MinimalWPF.View;
+    using InfoBoxNET.Core;
+    using InfoBoxNET.View;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
