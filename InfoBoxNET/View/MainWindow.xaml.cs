@@ -175,7 +175,7 @@
                     {
                         this.OnQuit();
                     }
-                    else if (button.In(CommandButtons.Home, CommandButtons.Artikelliste))
+                    else if (button.In(CommandButtons.Home, CommandButtons.Passwords))
                     {
                         if (App.EventAgg.IsSubscription<WindowsTitelEvent>() == true)
                         {
@@ -186,6 +186,17 @@
                         this.WorkContent = (UserControl)Factory.Get<UserControlBase, CommandButtons>((CommandButtons)commandParam.MenuButton, commandParam);
                     }
                     else if (button.In(CommandButtons.Home, CommandButtons.GoBack))
+                    {
+
+                        if (App.EventAgg.IsSubscription<WindowsTitelEvent>() == true)
+                        {
+                            await App.EventAgg.PublishAsync(new WindowsTitelEvent(button.ToDescription()));
+                        }
+
+                        this.WorkContent = null;
+                        this.WorkContent = (UserControl)Factory.Get<UserControlBase, CommandButtons>((CommandButtons)commandParam.MenuButton, commandParam);
+                    }
+                    else if (button.In(CommandButtons.Home, CommandButtons.ImportExportPasswords))
                     {
 
                         if (App.EventAgg.IsSubscription<WindowsTitelEvent>() == true)
@@ -215,6 +226,8 @@
         private void RegisterFactory()
         {
             Factory.RegisterSingleton<CommandButtons>(CommandButtons.Home, () => new HomeUC());
+            Factory.RegisterTransient<CommandButtons>(CommandButtons.Passwords, (param) => new PasswordsUC((ChangeViewEventArgs)param!));
+            Factory.RegisterTransient<CommandButtons>(CommandButtons.ImportExportPasswords, (param) => new ImpExportPasswordsUC((ChangeViewEventArgs)param!));
         }
     }
 }

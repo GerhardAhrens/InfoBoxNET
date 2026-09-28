@@ -35,7 +35,7 @@ namespace InfoBoxNET.View
 
 
             this.QuitCommand = new CommandBase(commandParam => this.OnQuit(commandParam), () => true);
-            this.MenuArtikellisteCommand = new CommandBase(commandParam => this.OnMenuArtikelliste(commandParam), () => true);
+            this.PasswordsCommand = new CommandBase(commandParam => this.OnPasswords(commandParam), () => true);
             this.InformationCommand = new CommandBase(commandParam => this.OnPopup(commandParam));
             this.SettingsCommand = new CommandBase(commandParam => this.OnPopup(commandParam));
             this.CloseInformationPopupCommand = new CommandBase(commandParam => this.OnPopup(commandParam));
@@ -71,7 +71,7 @@ namespace InfoBoxNET.View
 
         #region Properties
         public CommandBase QuitCommand { get; private set; }
-        public CommandBase MenuArtikellisteCommand { get; private set; }
+        public CommandBase PasswordsCommand { get; private set; }
         public CommandBase InformationCommand { get; private set; }
         public CommandBase SettingsCommand { get; private set; }
         public CommandBase CloseInformationPopupCommand { get; private set; }
@@ -127,11 +127,11 @@ namespace InfoBoxNET.View
             }
         }
 
-        private async void OnMenuArtikelliste(object commandParam)
+        private async void OnPasswords(object commandParam)
         {
             if (commandParam != null && commandParam is CommandButtons button)
             {
-                if (button == CommandButtons.Artikelliste)
+                if (button == CommandButtons.Passwords)
                 {
                     ChangeViewEventArgs args = new();
                     args.FromPage = CommandButtons.Home;

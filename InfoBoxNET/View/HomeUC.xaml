@@ -122,6 +122,12 @@
                 ToolTipText="Programm beenden" />
 
             <UI:MenuButton
+                Command="{Binding Path=PasswordsCommand}"
+                CommandParameter="{x:Static core:CommandButtons.Passwords}"
+                Image="{StaticResource ResourceKey=ManagePasswordsIcon}"
+                ToolTip="Passwort verwalten" />
+
+            <UI:MenuButton
                 UI:MenuBar.Dock="Right"
                 Command="{Binding Path=SettingsCommand}"
                 CommandParameter="{x:Static core:CommandButtons.SettingsPopup}"

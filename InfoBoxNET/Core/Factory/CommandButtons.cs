@@ -14,8 +14,10 @@
         Help = 3,
         [Description("Zurück zur vorherigen Seite")]
         GoBack = 4,
-        [Description("Artikelliste")]
-        Artikelliste = 10,
+        [Description("Passwort Verwaltung")]
+        Passwords = 10,
+        [Description("Import / Export Passwörter")]
+        ImportExportPasswords = 11,
         [Description("Informationen")]
         InformationPopup = 20,
         [Description("Einstellungen")]

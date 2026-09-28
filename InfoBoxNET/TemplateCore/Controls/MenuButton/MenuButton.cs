@@ -25,7 +25,6 @@
             this._text.HorizontalAlignment = HorizontalAlignment.Center;
             this._text.VerticalAlignment = VerticalAlignment.Center;
             this._text.TextAlignment = TextAlignment.Center;
-
             this.Content = this._panel;
 
             this._text.SetBinding(TextBlock.ForegroundProperty, new Binding(nameof(Foreground)) { Source = this });
