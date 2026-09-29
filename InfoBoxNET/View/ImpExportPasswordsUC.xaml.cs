@@ -34,13 +34,29 @@ namespace InfoBoxNET.View
             this.CurrentCtorArgs = args;
 
             this.GoBackCommand = new CommandBase(commandParam => this.OnGoBack(commandParam), () => true);
+            this.ImportCommand = new CommandBase(commandParam => this.OnImport(commandParam), () => true);
+            this.ExportCommand = new CommandBase(commandParam => this.OnExport(commandParam), () => true);
 
             this.DataContext = this;
         }
 
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
-        
+        public CommandBase ImportCommand { get; private set; }
+        public CommandBase ExportCommand { get; private set; }
+
+        public string ExportFilename
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
+        public string ImportFilename
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
         #endregion Properties
 
@@ -71,6 +87,14 @@ namespace InfoBoxNET.View
                     }
                 }
             }
+        }
+
+        private void OnExport(object commandParam)
+        {
+        }
+
+        private void OnImport(object commandParam)
+        {
         }
         #endregion Command Events
 

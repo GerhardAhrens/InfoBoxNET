@@ -854,6 +854,449 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
+
+    <DrawingImage x:Key="ExportJsonIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+
+                <!--  =====================================  -->
+                <!--  Dokument  -->
+                <!--  =====================================  -->
+
+                <!--  Dokumentkörper  -->
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            LineJoin="Round"
+                            Thickness="1.1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M3,2
+                            L14.5,2
+                            L20,7.5
+                            L20,22
+                            L3,22
+                            Z
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Eselsohr  -->
+                <GeometryDrawing Brush="#FFE8E8E8">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            LineJoin="Round"
+                            Thickness="1.0" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M14.5,2
+                            L14.5,7.5
+                            L20,7.5
+                            Z
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+
+                <!--  =====================================  -->
+                <!--  JSON geschweifte Klammern  -->
+                <!--  =====================================  -->
+
+                <!--  Linke Klammer {  -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF7040B5"
+                            EndLineCap="Round"
+                            LineJoin="Round"
+                            StartLineCap="Round"
+                            Thickness="1.5" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M8,8
+                            C6.8,8 6.3,8.6 6.3,9.6
+                            L6.3,11
+                            C6.3,11.8 5.9,12 5.3,12
+                            C5.9,12 6.3,12.2 6.3,13
+                            L6.3,14.4
+                            C6.3,15.4 6.8,16 8,16
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Rechte Klammer }  -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF7040B5"
+                            EndLineCap="Round"
+                            LineJoin="Round"
+                            StartLineCap="Round"
+                            Thickness="1.5" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M12,8
+                            C13.2,8 13.7,8.6 13.7,9.6
+                            L13.7,11
+                            C13.7,11.8 14.1,12 14.7,12
+                            C14.1,12 13.7,12.2 13.7,13
+                            L13.7,14.4
+                            C13.7,15.4 13.2,16 12,16
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  JSON Inhalt ...  -->
+                <GeometryDrawing Brush="#FF7040B5">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+
+                            <EllipseGeometry
+                                Center="8.5,12"
+                                RadiusX="0.55"
+                                RadiusY="0.55" />
+
+                            <EllipseGeometry
+                                Center="10.25,12"
+                                RadiusX="0.55"
+                                RadiusY="0.55" />
+
+                            <EllipseGeometry
+                                Center="12,12"
+                                RadiusX="0.55"
+                                RadiusY="0.55" />
+
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+
+                <!--  =====================================  -->
+                <!--  JSON Kennzeichnung  -->
+                <!--  =====================================  -->
+
+                <GeometryDrawing Brush="#FF7040B5">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF56318F"
+                            LineJoin="Round"
+                            Thickness="0.7" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry
+                            RadiusX="0.8"
+                            RadiusY="0.8"
+                            Rect="5,17.2,10,3.2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  stilisierte JSON Balken  -->
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+
+                            <!--  J  -->
+                            <Geometry>
+                                M6.1,18
+                                L6.1,19.4
+                                C6.1,19.8 6.3,20 6.7,20
+                                C7.1,20 7.3,19.8 7.3,19.4
+                                L7.3,18
+                                Z
+                            </Geometry>
+
+                            <!--  S  -->
+                            <Geometry>
+                                M8,18
+                                C8,17.7 8.3,17.5 8.8,17.5
+                                C9.3,17.5 9.6,17.7 9.6,18
+                                L9.1,18
+                                C8.9,18 8.7,18.1 8.7,18.2
+                                C8.7,18.4 9,18.5 9.2,18.6
+                                C9.6,18.8 9.8,19.1 9.8,19.4
+                                C9.8,19.8 9.4,20 8.8,20
+                                C8.3,20 8,19.8 8,19.5
+                                L8.5,19.5
+                                C8.5,19.7 8.7,19.7 8.9,19.7
+                                C9.1,19.7 9.3,19.6 9.3,19.4
+                                C9.3,19.2 9,19.1 8.7,19
+                                C8.3,18.8 8,18.6 8,18.3
+                                Z
+                            </Geometry>
+
+                            <!--  N  -->
+                            <Geometry>
+                                M10.3,20
+                                L10.3,18
+                                L10.9,18
+                                L11.6,19.2
+                                L11.6,18
+                                L12.2,18
+                                L12.2,20
+                                L11.6,20
+                                L10.9,18.8
+                                L10.9,20
+                                Z
+                            </Geometry>
+
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+
+                <!--  =====================================  -->
+                <!--  Export-Pfeil  -->
+                <!--  =====================================  -->
+
+                <GeometryDrawing Brush="#FF1976D2">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF155AA0"
+                            LineJoin="Round"
+                            Thickness="0.9" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M13,9.5
+                            L18,9.5
+                            L18,7.5
+                            L22.5,12
+                            L18,16.5
+                            L18,14.5
+                            L13,14.5
+                            Z
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="ImportJsonIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+
+                <!--  =====================================  -->
+                <!--  Dokument  -->
+                <!--  =====================================  -->
+
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            LineJoin="Round"
+                            Thickness="1.1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M3,2
+                            L14.5,2
+                            L20,7.5
+                            L20,22
+                            L3,22
+                            Z
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Eselsohr  -->
+                <GeometryDrawing Brush="#FFE8E8E8">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            LineJoin="Round"
+                            Thickness="1.0" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M14.5,2
+                            L14.5,7.5
+                            L20,7.5
+                            Z
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+
+                <!--  =====================================  -->
+                <!--  JSON geschweifte Klammern  -->
+                <!--  =====================================  -->
+
+                <!--  Linke Klammer {  -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF7040B5"
+                            EndLineCap="Round"
+                            LineJoin="Round"
+                            StartLineCap="Round"
+                            Thickness="1.5" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M8,8
+                            C6.8,8 6.3,8.6 6.3,9.6
+                            L6.3,11
+                            C6.3,11.8 5.9,12 5.3,12
+                            C5.9,12 6.3,12.2 6.3,13
+                            L6.3,14.4
+                            C6.3,15.4 6.8,16 8,16
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Rechte Klammer }  -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF7040B5"
+                            EndLineCap="Round"
+                            LineJoin="Round"
+                            StartLineCap="Round"
+                            Thickness="1.5" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M12,8
+                            C13.2,8 13.7,8.6 13.7,9.6
+                            L13.7,11
+                            C13.7,11.8 14.1,12 14.7,12
+                            C14.1,12 13.7,12.2 13.7,13
+                            L13.7,14.4
+                            C13.7,15.4 13.2,16 12,16
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  JSON Inhalt ...  -->
+                <GeometryDrawing Brush="#FF7040B5">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+
+                            <EllipseGeometry
+                                Center="8.5,12"
+                                RadiusX="0.55"
+                                RadiusY="0.55" />
+
+                            <EllipseGeometry
+                                Center="10.25,12"
+                                RadiusX="0.55"
+                                RadiusY="0.55" />
+
+                            <EllipseGeometry
+                                Center="12,12"
+                                RadiusX="0.55"
+                                RadiusY="0.55" />
+
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+
+                <!--  =====================================  -->
+                <!--  JSON Kennzeichnung  -->
+                <!--  =====================================  -->
+
+                <GeometryDrawing Brush="#FF7040B5">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF56318F"
+                            LineJoin="Round"
+                            Thickness="0.7" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry
+                            RadiusX="0.8"
+                            RadiusY="0.8"
+                            Rect="5,17.2,10,3.2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  JSON Buchstaben  -->
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+
+                            <!--  J  -->
+                            <Geometry>
+                                M6.1,18
+                                L6.1,19.4
+                                C6.1,19.8 6.3,20 6.7,20
+                                C7.1,20 7.3,19.8 7.3,19.4
+                                L7.3,18
+                                Z
+                            </Geometry>
+
+                            <!--  S  -->
+                            <Geometry>
+                                M8,18
+                                C8,17.7 8.3,17.5 8.8,17.5
+                                C9.3,17.5 9.6,17.7 9.6,18
+                                L9.1,18
+                                C8.9,18 8.7,18.1 8.7,18.2
+                                C8.7,18.4 9,18.5 9.2,18.6
+                                C9.6,18.8 9.8,19.1 9.8,19.4
+                                C9.8,19.8 9.4,20 8.8,20
+                                C8.3,20 8,19.8 8,19.5
+                                L8.5,19.5
+                                C8.5,19.7 8.7,19.7 8.9,19.7
+                                C9.1,19.7 9.3,19.6 9.3,19.4
+                                C9.3,19.2 9,19.1 8.7,19
+                                C8.3,18.8 8,18.6 8,18.3
+                                Z
+                            </Geometry>
+
+                            <!--  N  -->
+                            <Geometry>
+                                M10.3,20
+                                L10.3,18
+                                L10.9,18
+                                L11.6,19.2
+                                L11.6,18
+                                L12.2,18
+                                L12.2,20
+                                L11.6,20
+                                L10.9,18.8
+                                L10.9,20
+                                Z
+                            </Geometry>
+
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <GeometryDrawing Brush="#FF1976D2">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF155AA0"
+                            LineJoin="Round"
+                            Thickness="0.9" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M12.775,10.3125
+                            L8.025,10.3125
+                            L8.025,8.9625
+                            L4.2,12
+                            L8.025,15.0375
+                            L8.025,13.6875
+                            L12.775,13.6875
+                            Z
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
     <!--#endregion Icons für die Funktion zur Passwort Verwaltung-->
 
 </ResourceDictionary>

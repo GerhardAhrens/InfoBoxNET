@@ -1,8 +1,6 @@
-﻿namespace System.Windows
+﻿namespace System.Windows.Controls
 {
     using System.IO;
-    using System.Windows.Controls;
-
     using Microsoft.Win32;
 
     public enum EnumChooseBoxType
