@@ -15,6 +15,7 @@
 
 namespace InfoBoxNET.View
 {
+    using System.Data.SQLite;
     using System.IO;
     using System.Text.Json;
     using System.Windows;
@@ -53,6 +54,18 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
+        public int ProgressValue
+        {
+            get => base.GetValue<int>();
+            set => base.SetValue(value);
+        }
+
+        public string ProgressText
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
         public string ExportFolder
         {
             get => base.GetValue<string>();
@@ -66,6 +79,7 @@ namespace InfoBoxNET.View
         }
 
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
+        private MessageBase Message { get; } = new MessageBase();
         #endregion Properties
 
         #region Windows Events
@@ -111,10 +125,19 @@ namespace InfoBoxNET.View
 
         private void OnImport(object commandParam)
         {
+            if (string.IsNullOrEmpty(this.ImportFolder) == true)
+            {
+                this.Message.Warning("Verzeichnis", "Es wurde kein Verzeichnis ausgewählt");
+                return;
+            }
+
             try
             {
-                //this.ImportAllRows(this.ImportFolder);
                 this.IsProgressOverlay = true;
+
+                this.ImportAllRows(this.ImportFolder);
+
+                this.IsProgressOverlay = false;
             }
             catch (Exception ex)
             {
@@ -138,7 +161,34 @@ namespace InfoBoxNET.View
 
                 string jsonText = File.ReadAllText(importSyncFile);
                 List<Region> importRegion = jsonText.JsonToList<Region>();
+                if (importRegion != null || importRegion.Count > 0)
+                {
+                    this.ProgressText = "Import Passwortdaten";
+                    this.ProgressValue = 0;
+                    App.DoEvents();
 
+                    using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                    {
+                        ds.OpenConnection();
+                        if (ds.Connection == null)
+                        {
+                            return;
+                        }
+
+                        ds.Connection.RecordSet<int>("DELETE FROM TAB_Region").Execute();
+
+                        double stepValue = 0;
+                        double maxValue = importRegion.Count;
+                        foreach (Region region in importRegion)
+                        {
+                            stepValue++;
+                            this.ProgressValue = Convert.ToInt32(Math.Abs((stepValue / maxValue) * 100));
+                            Thread.Sleep(1000);
+                            App.DoEvents();
+                        }
+                    }
+
+                }
             }
             catch (Exception ex)
             {
