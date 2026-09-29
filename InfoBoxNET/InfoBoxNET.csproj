@@ -32,6 +32,7 @@
     <Folder Include="TemplateCore\Controls\LoadingOverlay\" />
     <Folder Include="TemplateCore\Controls\ProgressOverlay\Converter\" />
     <Folder Include="TemplateCore\Controls\ProgressOverlay\Themes\" />
+    <Folder Include="TemplateCore\Controls\SplitButton\Themes\" />
     <Folder Include="TemplateCore\Controls\SwitchBox\Converter\" />
     <Folder Include="TemplateCore\Controls\SwitchBox\Themes\" />
     <Folder Include="TemplateCore\Controls\TreeView\Converter\" />
