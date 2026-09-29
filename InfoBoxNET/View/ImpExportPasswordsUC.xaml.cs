@@ -15,6 +15,8 @@
 
 namespace InfoBoxNET.View
 {
+    using System.IO;
+    using System.Text.Json;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -45,13 +47,19 @@ namespace InfoBoxNET.View
         public CommandBase ImportCommand { get; private set; }
         public CommandBase ExportCommand { get; private set; }
 
-        public string ExportFilename
+        public bool IsProgressOverlay
+        {
+            get => base.GetValue<bool>();
+            set => base.SetValue(value);
+        }
+
+        public string ExportFolder
         {
             get => base.GetValue<string>();
             set => base.SetValue(value);
         }
 
-        public string ImportFilename
+        public string ImportFolder
         {
             get => base.GetValue<string>();
             set => base.SetValue(value);
@@ -91,12 +99,52 @@ namespace InfoBoxNET.View
 
         private void OnExport(object commandParam)
         {
+            try
+            {
+            }
+            catch (Exception ex)
+            {
+                App.ErrorMessage(ex, $"Dialog: {this.Name}");
+                App.ApplicationExit();
+            }
         }
 
         private void OnImport(object commandParam)
         {
+            try
+            {
+                //this.ImportAllRows(this.ImportFolder);
+                this.IsProgressOverlay = true;
+            }
+            catch (Exception ex)
+            {
+                App.ErrorMessage(ex, $"Dialog: {this.Name}");
+                App.ApplicationExit();
+            }
         }
         #endregion Command Events
+
+        private void ImportAllRows(string folder)
+        {
+            string importSyncFile = string.Empty;
+
+            try
+            {
+                importSyncFile = $"{this.ImportFolder}\\PasswortSync.Tag";
+                if (File.Exists(importSyncFile) == false)
+                {
+                    return;
+                }
+
+                string jsonText = File.ReadAllText(importSyncFile);
+                List<Region> importRegion = jsonText.JsonToList<Region>();
+
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("ImportAllRows:", ex);
+            }
+        }
 
     }
 }

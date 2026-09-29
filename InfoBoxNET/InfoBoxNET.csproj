@@ -40,6 +40,7 @@
     <Folder Include="TemplateCore\Controls\TreeView\Adapter\" />
     <Folder Include="TemplateCore\Controls\TreeView\Themes\" />
     <Folder Include="TemplateCore\Extension\Behaviors\" />
+    <Folder Include="TemplateCore\Extension\System.Text\" />
     <Folder Include="TemplateCore\Extension\System.DateTime\" />
     <Folder Include="TemplateCore\Extension\System.Integer\" />
     <Folder Include="TemplateCore\Extension\System.Enum\" />
