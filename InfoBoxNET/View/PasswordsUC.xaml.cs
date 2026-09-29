@@ -64,7 +64,7 @@ namespace InfoBoxNET.View
                 if (button == CommandButtons.GoBack)
                 {
                     ChangeViewEventArgs args = new();
-                    args.MenuButton = this.CurrentCtorArgs.FromPage;
+                    args.MenuButton = CommandButtons.Home;
                     args.FromPage = this.CurrentCtorArgs.MenuButton;
                     if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
                     {

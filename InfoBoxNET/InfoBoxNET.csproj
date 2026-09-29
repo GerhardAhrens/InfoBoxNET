@@ -29,6 +29,7 @@
     <Folder Include="Core\Enums\" />
     <Folder Include="Data\Model\" />
     <Folder Include="TemplateCore\ArgumentGuard\" />
+    <Folder Include="TemplateCore\Controls\ChooseBox\Themes\" />
     <Folder Include="TemplateCore\Controls\LoadingOverlay\" />
     <Folder Include="TemplateCore\Controls\ProgressOverlay\Converter\" />
     <Folder Include="TemplateCore\Controls\ProgressOverlay\Themes\" />
