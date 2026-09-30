@@ -160,10 +160,10 @@ namespace InfoBoxNET.View
                 }
 
                 string jsonText = File.ReadAllText(importSyncFile);
-                List<Region> importRegion = jsonText.JsonToList<Region>();
+                List<InfoBoxNET.Model.Region> importRegion = jsonText.JsonToList<InfoBoxNET.Model.Region>();
                 if (importRegion != null || importRegion.Count > 0)
                 {
-                    this.ProgressText = "Import Passwortdaten";
+                    this.ProgressText = "Import Passwortdaten [Region]";
                     this.ProgressValue = 0;
                     App.DoEvents();
 
@@ -175,19 +175,61 @@ namespace InfoBoxNET.View
                             return;
                         }
 
-                        ds.Connection.RecordSet<int>("DELETE FROM TAB_Region").Execute();
-
-                        double stepValue = 0;
-                        double maxValue = importRegion.Count;
-                        foreach (Region region in importRegion)
+                        int deleteCount = ds.Connection.RecordSet<int>("DELETE FROM TAB_Region").Execute().Result;
+                        if (deleteCount >= 0)
                         {
-                            stepValue++;
-                            this.ProgressValue = Convert.ToInt32(Math.Abs((stepValue / maxValue) * 100));
-                            Thread.Sleep(1000);
-                            App.DoEvents();
+                            double stepValue = 0;
+                            double maxValue = importRegion.Count;
+                            foreach (InfoBoxNET.Model.Region region in importRegion)
+                            {
+                                stepValue++;
+                                this.ProgressValue = Convert.ToInt32(Math.Abs((stepValue / maxValue) * 100));
+                                Thread.Sleep(500);
+                                App.DoEvents();
+                                ds.InsertRow<InfoBoxNET.Model.Region>(region);
+                            }
                         }
                     }
+                }
 
+                importSyncFile = $"{this.ImportFolder}\\PasswortSync.Passwort";
+                if (File.Exists(importSyncFile) == false)
+                {
+                    return;
+                }
+                jsonText = File.ReadAllText(importSyncFile);
+                List<InfoBoxNET.Model.PasswordPin> importPass = jsonText.JsonToList<InfoBoxNET.Model.PasswordPin>();
+                if (importPass != null || importPass.Count > 0)
+                {
+                    this.ProgressText = "Import Passwortdaten [Passwörter/Pin/Lizenzen]";
+                    this.ProgressValue = 0;
+                    App.DoEvents();
+
+                    using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                    {
+                        ds.OpenConnection();
+                        if (ds.Connection == null)
+                        {
+                            return;
+                        }
+
+                        int deleteCount = ds.Connection.RecordSet<int>("DELETE FROM TAB_PasswordPin").Execute().Result;
+                        if (deleteCount >= 0)
+                        {
+                            this.IsProgressOverlay = true;
+                            double stepValue = 0;
+                            double maxValue = importPass.Count;
+                            foreach (InfoBoxNET.Model.PasswordPin pass in importPass)
+                            {
+                                stepValue++;
+                                this.ProgressValue = Convert.ToInt32(Math.Abs((stepValue / maxValue) * 100));
+                                Thread.Sleep(500);
+                                App.DoEvents();
+                                ds.InsertRow<InfoBoxNET.Model.PasswordPin>(pass);
+                                App.DoEvents();
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)

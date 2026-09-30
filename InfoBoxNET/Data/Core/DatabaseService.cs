@@ -17,6 +17,7 @@ namespace System.Data.SQLite
     using System.Data;
     using System.Globalization;
     using System.IO;
+    using System.Reflection;
     using System.Threading.Tasks;
 
     public class DatabaseService : IDisposable
@@ -156,6 +157,82 @@ namespace System.Data.SQLite
             }
         }
 
+        public bool InsertRow<T>(T dataObject)
+        {
+            if (dataObject == null)
+            {
+                throw new ArgumentNullException(nameof(dataObject));
+            }
+
+            if (File.Exists(this.FullName) == false)
+            {
+                return false;
+            }
+
+            using (SQLiteConnection sqliteConnection = new SQLiteConnection(this.SqlConnectionString))
+            {
+                sqliteConnection.Open();
+                this.IsOpen = true;
+
+                Type type = typeof(T);
+
+                // [DataTable("TAB_Region")]
+                DataTableAttribute tableAttribute = type.GetCustomAttribute<DataTableAttribute>();
+
+                if (tableAttribute == null)
+                {
+                    throw new InvalidOperationException($"Die Klasse {type.Name} besitzt kein DataTable-Attribut.");
+                }
+
+                string tableName = tableAttribute.TableName;
+
+                // Alle Properties mit [TableColumn]
+                PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(p => p.GetCustomAttribute<TableColumnAttribute>() != null).ToArray();
+
+                if (properties.Length == 0)
+                {
+                    throw new InvalidOperationException($"Die Klasse {type.Name} besitzt keine TableColumn-Properties.");
+                }
+
+                List<string> columns = new List<string>();
+                List<string> parameters = new List<string>();
+
+                using (SQLiteCommand command = sqliteConnection.CreateCommand())
+                {
+                    foreach (PropertyInfo property in properties)
+                    {
+                        TableColumnAttribute columnAttribute = property.GetCustomAttribute<TableColumnAttribute>();
+
+                        // Falls TableColumnAttribute keinen Namen vorgibt,
+                        // wird der Property-Name als Spaltenname verwendet.
+                        string columnName = property.Name;
+
+                        string parameterName = "@" + property.Name;
+
+                        columns.Add($"[{columnName}]");
+                        parameters.Add(parameterName);
+
+                        object value = property.GetValue(dataObject, null);
+                        if (value != null && value.GetType() == typeof(Guid))
+                        {
+                            value = value.ToString();
+                        }
+
+                        command.Parameters.AddWithValue(parameterName, value ?? DBNull.Value);
+                    }
+
+                    command.CommandText = $"INSERT INTO [{tableName}] ({string.Join(", ", columns)}) VALUES ({string.Join(", ", parameters)})";
+                    command.ExecuteNonQuery();
+                }
+
+                sqliteConnection.Close();
+            }
+
+            return true;
+        }
+
+
         public void Insert(Action<SQLiteConnection> actionMethod)
         {
             try
@@ -186,6 +263,35 @@ namespace System.Data.SQLite
         }
 
         public void Insert(Action<SQLiteConnection, object> actionMethod, object parameter)
+        {
+            try
+            {
+                if (File.Exists(this.FullName) == true)
+                {
+                    using (SQLiteConnection sqliteConnection = new SQLiteConnection(this.SqlConnectionString))
+                    {
+                        if (sqliteConnection.State != ConnectionState.Open)
+                        {
+                            sqliteConnection.Open();
+                            this.IsOpen = true;
+                        }
+
+                        if (actionMethod != null)
+                        {
+                            actionMethod?.Invoke(sqliteConnection, parameter);
+                        }
+
+                        sqliteConnection.Close();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public void Insert(Action<SQLiteConnection, object> actionMethod, SQLiteParameterCollection parameter)
         {
             try
             {
