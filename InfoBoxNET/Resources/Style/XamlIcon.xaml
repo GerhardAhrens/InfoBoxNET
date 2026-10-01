@@ -529,7 +529,7 @@
     </DrawingImage>
     <!--#endregion Login DrawingImage-->
 
-    <!--#region Icons für die Funktion zur Passwort Verwaltung-->
+    <!--#region Main Menü Symbole-->
     <DrawingImage x:Key="ManagePasswordsIcon">
         <DrawingImage.Drawing>
             <DrawingGroup>
@@ -720,7 +720,179 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
+    
+    <DrawingImage x:Key="CatalogDataIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
 
+                <!--  =====================================  -->
+                <!--  Katalog / Dokumente  -->
+                <!--  =====================================  -->
+
+                <!--  Hinteres Dokument  -->
+                <GeometryDrawing Brush="#FFE8E8E8">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            LineJoin="Round"
+                            Thickness="1.0" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry
+                            RadiusX="1.2"
+                            RadiusY="1.2"
+                            Rect="3,3,13,18" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Vorderes Dokument  -->
+                <GeometryDrawing Brush="White">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            LineJoin="Round"
+                            Thickness="1.1" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry
+                            RadiusX="1.2"
+                            RadiusY="1.2"
+                            Rect="5,2,13,18" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Katalog-Kopf  -->
+                <GeometryDrawing Brush="#FF1F5AA6">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry
+                            RadiusX="1.2"
+                            RadiusY="1.2"
+                            Rect="5,2,13,4" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Untere gerade Kante des Kopfes  -->
+                <GeometryDrawing Brush="#FF1F5AA6">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="5,4,13,2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+
+                <!--  =====================================  -->
+                <!--  Katalogeinträge  -->
+                <!--  =====================================  -->
+
+                <!--  Eintrag 1  -->
+                <GeometryDrawing Brush="#FF707070">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry
+                            RadiusX="0.5"
+                            RadiusY="0.5"
+                            Rect="7,8,8,1.2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Eintrag 2  -->
+                <GeometryDrawing Brush="#FF707070">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry
+                            RadiusX="0.5"
+                            RadiusY="0.5"
+                            Rect="7,11,6.5,1.2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Eintrag 3  -->
+                <GeometryDrawing Brush="#FF707070">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry
+                            RadiusX="0.5"
+                            RadiusY="0.5"
+                            Rect="7,14,8,1.2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Eintrag 4  -->
+                <GeometryDrawing Brush="#FF707070">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry
+                            RadiusX="0.5"
+                            RadiusY="0.5"
+                            Rect="7,17,5,1.2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+
+                <!--  =====================================  -->
+                <!--  Datenbank  -->
+                <!--  =====================================  -->
+
+                <!--  Datenbankkörper  -->
+                <GeometryDrawing Brush="#FF4A90C2">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF155AA0" Thickness="0.8" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M15,15
+                            C15,13.8 17,13 19.5,13
+                            C22,13 24,13.8 24,15
+                            L24,20
+                            C24,21.2 22,22 19.5,22
+                            C17,22 15,21.2 15,20
+                            Z
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Oberseite der Datenbank  -->
+                <GeometryDrawing Brush="#FF64B5E8">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF155AA0" Thickness="0.8" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <EllipseGeometry
+                            Center="19.5,15"
+                            RadiusX="4.5"
+                            RadiusY="2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Mittlere Datenbanklinie  -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF155AA0" Thickness="0.7" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M15,17.4
+                            C15,18.6 17,19.4 19.5,19.4
+                            C22,19.4 24,18.6 24,17.4
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Untere Datenbanklinie  -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF155AA0" Thickness="0.7" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <Geometry>
+                            M15,19.8
+                            C15,21 17,21.8 19.5,21.8
+                            C22,21.8 24,21 24,19.8
+                        </Geometry>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <!--#endregion Main Menü Symbole-->
+
+    <!--#region Icons für die Funktion zur Passwort Verwaltung-->
     <DrawingImage x:Key="ImportExportIcon">
         <DrawingImage.Drawing>
             <DrawingGroup>

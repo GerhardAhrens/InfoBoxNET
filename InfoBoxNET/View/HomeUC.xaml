@@ -127,6 +127,12 @@
                 Image="{StaticResource ResourceKey=ManagePasswordsIcon}"
                 ToolTip="Passwort verwalten" />
 
+            <UI:SplitButton
+                Height="40"
+                UI:MenuBar.Dock="Right"
+                Header="Kataloge"
+                ToolTip="Kataloge bearbeiten" />
+
             <UI:MenuButton
                 UI:MenuBar.Dock="Right"
                 Command="{Binding Path=SettingsCommand}"
