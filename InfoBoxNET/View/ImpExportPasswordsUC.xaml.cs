@@ -197,6 +197,7 @@ namespace InfoBoxNET.View
                 {
                     return;
                 }
+
                 jsonText = File.ReadAllText(importSyncFile);
                 List<InfoBoxNET.Model.PasswordPin> importPass = jsonText.JsonToList<InfoBoxNET.Model.PasswordPin>();
                 if (importPass != null || importPass.Count > 0)
@@ -223,9 +224,66 @@ namespace InfoBoxNET.View
                             {
                                 stepValue++;
                                 this.ProgressValue = Convert.ToInt32(Math.Abs((stepValue / maxValue) * 100));
-                                Thread.Sleep(500);
+                                Thread.Sleep(100);
                                 App.DoEvents();
                                 ds.InsertRow<InfoBoxNET.Model.PasswordPin>(pass);
+                                App.DoEvents();
+                            }
+                        }
+                    }
+                }
+
+                importSyncFile = Path.Combine(this.ImportFolder, "Attachments");
+                if (Directory.Exists(importSyncFile) == false)
+                {
+                    return;
+                }
+
+                List<FileInfo> importFiles = new List<FileInfo>();
+                foreach (string file in Directory.GetFiles(importSyncFile))
+                {
+                    importFiles.Add(new FileInfo(file));
+                }
+
+                if (importFiles != null || importFiles.Count > 0)
+                {
+                    this.ProgressText = "Import Passwortdaten [Attachments]";
+                    this.ProgressValue = 0;
+                    App.DoEvents();
+
+                    using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                    {
+                        ds.OpenConnection();
+                        if (ds.Connection == null)
+                        {
+                            return;
+                        }
+
+                        int deleteCount = ds.Connection.RecordSet<int>("DELETE FROM TAB_Attachment").Execute().Result;
+                        if (deleteCount >= 0)
+                        {
+                            this.IsProgressOverlay = true;
+                            double stepValue = 0;
+                            double maxValue = importFiles.Count;
+                            foreach (FileInfo item in importFiles)
+                            {
+                                stepValue++;
+                                this.ProgressValue = Convert.ToInt32(Math.Abs((stepValue / maxValue) * 100));
+                                Thread.Sleep(100);
+                                App.DoEvents();
+                                byte[] fileData = File.ReadAllBytes(item.FullName);
+                                InfoBoxNET.Model.Attachment attachment = new InfoBoxNET.Model.Attachment()
+                                {
+                                    Filename = item.Name,
+                                    FileExtension = item.Extension,
+                                    FileDateTime = item.LastWriteTime,
+                                    FileSize = item.Length,
+                                    Content = fileData,
+                                    ObjectId = new Guid(Path.GetFileNameWithoutExtension(item.Name)),
+                                    ObjectName = "PasswordPin",
+                                };
+
+                                ds.InsertRow<InfoBoxNET.Model.Attachment>(attachment);
                                 App.DoEvents();
                             }
                         }
