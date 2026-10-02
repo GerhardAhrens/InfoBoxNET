@@ -1,10 +1,16 @@
 ﻿namespace System.Windows.Controls
 {
+    using System.Windows;
+    using System.Windows.Media;
+
     public class SplitButtonItem : Button
     {
         static SplitButtonItem()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(SplitButtonItem), new FrameworkPropertyMetadata(typeof(SplitButtonItem)));
+            DefaultStyleKeyProperty.OverrideMetadata(
+                typeof(SplitButtonItem),
+                new FrameworkPropertyMetadata(
+                    typeof(SplitButtonItem)));
         }
 
         #region Icon
@@ -12,13 +18,13 @@
         public static readonly DependencyProperty IconProperty =
             DependencyProperty.Register(
                 nameof(Icon),
-                typeof(object),
+                typeof(DrawingImage),
                 typeof(SplitButtonItem),
                 new PropertyMetadata(null));
 
-        public object Icon
+        public DrawingImage Icon
         {
-            get => GetValue(IconProperty);
+            get => (DrawingImage)GetValue(IconProperty);
             set => SetValue(IconProperty, value);
         }
 

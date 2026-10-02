@@ -43,6 +43,7 @@ namespace InfoBoxNET.View
             this.SelectionChangedCommand = new CommandBase(commandParam => this.OnSelectionChanged(commandParam), () => true);
             this.CloseTabCommand = new CommandBase(commandParam => this.OnCloseTab(commandParam), () => true);
             this.DropDownCommand = new CommandBase(commandParam => this.OnDropDown(commandParam), () => true);
+            this.MasterPasswordGroupCommand = new CommandBase(commandParam => this.OnMasterPasswordGroup(commandParam), () => true);
 
             this.DataContext = this;
         }
@@ -79,6 +80,7 @@ namespace InfoBoxNET.View
         public CommandBase SelectionChangedCommand { get; private set; }
         public CommandBase CloseTabCommand { get; private set; }
         public CommandBase DropDownCommand { get; private set; }
+        public CommandBase MasterPasswordGroupCommand { get; private set; }
 
         public string InstallFolder
         {
@@ -143,6 +145,10 @@ namespace InfoBoxNET.View
                     }
                 }
             }
+        }
+
+        private void OnMasterPasswordGroup(object commandParam)
+        {
         }
 
         private void OnPopup(object commandParam)

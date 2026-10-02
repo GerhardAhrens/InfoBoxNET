@@ -131,7 +131,14 @@
                 Height="40"
                 UI:MenuBar.Dock="Right"
                 Header="Kataloge"
-                ToolTip="Kataloge bearbeiten" />
+                ToolTip="Kataloge bearbeiten">
+                <UI:SplitButtonItem
+                    Command="{Binding Path=MasterPasswordGroupCommand}"
+                    CommandParameter="{x:Static core:CommandButtons.MasterPasswordGroup}"
+                    Content="Gruppen"
+                    Description="Passwortgruppen verwalten"
+                    Icon="{StaticResource ResourceKey=CatalogDataIcon}" />
+            </UI:SplitButton>
 
             <UI:MenuButton
                 UI:MenuBar.Dock="Right"

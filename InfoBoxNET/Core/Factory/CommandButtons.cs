@@ -24,5 +24,7 @@
         SettingsPopup = 21,
         [Description("Anmeldung")]
         Login = 22,
+        [Description("Stammdatenb Passwortgruppe")]
+        MasterPasswordGroup = 30,
     }
 }

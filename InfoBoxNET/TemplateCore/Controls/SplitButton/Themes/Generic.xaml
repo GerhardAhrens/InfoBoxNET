@@ -119,12 +119,14 @@
                             </Grid.ColumnDefinitions>
 
                             <!--  Icon  -->
-                            <ContentPresenter
+                            <Image
                                 Grid.Column="0"
+                                Width="16"
+                                Height="16"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Content="{TemplateBinding Icon}" />
-
+                                Source="{TemplateBinding Icon}"
+                                Stretch="Uniform" />
 
                             <!--  Text  -->
                             <StackPanel Grid.Column="1">
