@@ -109,7 +109,7 @@
             Grid.ColumnSpan="2"
             ButtonSpacing="5"
             Header="Hauptmenü"
-            ItemMinWidth="90"
+            ItemMinWidth="50"
             ItemPadding="8,2"
             ShowBorder="True">
 
@@ -125,7 +125,7 @@
                 Command="{Binding Path=PasswordsCommand}"
                 CommandParameter="{x:Static core:CommandButtons.Passwords}"
                 Image="{StaticResource ResourceKey=ManagePasswordsIcon}"
-                ToolTip="Passwort verwalten" />
+                ToolTip="Passwort und Lizenzen verwalten" />
 
             <UI:SplitButton
                 Height="40"
@@ -134,7 +134,7 @@
                 ToolTip="Kataloge bearbeiten">
                 <UI:SplitButtonItem
                     Command="{Binding Path=MasterPasswordGroupCommand}"
-                    CommandParameter="{x:Static core:CommandButtons.MasterPasswordGroup}"
+                    CommandParameter="{x:Static core:CommandButtons.CatPasswordGroup}"
                     Content="Gruppen"
                     Description="Passwortgruppen verwalten"
                     Icon="{StaticResource ResourceKey=CatalogDataIcon}" />

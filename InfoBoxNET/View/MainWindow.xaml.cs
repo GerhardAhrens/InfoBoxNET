@@ -175,7 +175,7 @@
                     {
                         this.OnQuit();
                     }
-                    else if (button.In(CommandButtons.Home, CommandButtons.Passwords))
+                    else if (button.In(CommandButtons.Home, CommandButtons.Passwords, CommandButtons.CatPasswordGroup))
                     {
                         if (App.EventAgg.IsSubscription<WindowsTitelEvent>() == true)
                         {
@@ -228,6 +228,7 @@
             Factory.RegisterSingleton<CommandButtons>(CommandButtons.Home, () => new HomeUC());
             Factory.RegisterTransient<CommandButtons>(CommandButtons.Passwords, (param) => new PasswordsUC((ChangeViewEventArgs)param!));
             Factory.RegisterTransient<CommandButtons>(CommandButtons.ImportExportPasswords, (param) => new ImpExportPasswordsUC((ChangeViewEventArgs)param!));
+            Factory.RegisterTransient<CommandButtons>(CommandButtons.CatPasswordGroup, (param) => new PasswordGroupUC((ChangeViewEventArgs)param!));
         }
     }
 }

@@ -25,6 +25,6 @@
         [Description("Anmeldung")]
         Login = 22,
         [Description("Stammdatenb Passwortgruppe")]
-        MasterPasswordGroup = 30,
+        CatPasswordGroup = 30,
     }
 }

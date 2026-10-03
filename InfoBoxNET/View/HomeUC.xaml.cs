@@ -114,41 +114,46 @@ namespace InfoBoxNET.View
         #region Command Events
         private async void OnQuit(object commandParam)
         {
-            if (commandParam != null && commandParam is CommandButtons button)
+            if (commandParam is CommandButtons button && button == CommandButtons.AppQuit)
             {
-                if (button == CommandButtons.AppQuit)
-                {
-                    ChangeViewEventArgs args = new();
-                    args.MenuButton = button;
+                ChangeViewEventArgs args = new();
+                args.MenuButton = button;
 
-                    if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
-                    {
-                        await App.EventAgg.PublishAsync(args);
-                    }
+                if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
+                {
+                    await App.EventAgg.PublishAsync(args);
                 }
             }
         }
 
         private async void OnPasswords(object commandParam)
         {
-            if (commandParam != null && commandParam is CommandButtons button)
+            if (commandParam is CommandButtons button && button == CommandButtons.Passwords)
             {
-                if (button == CommandButtons.Passwords)
-                {
-                    ChangeViewEventArgs args = new();
-                    args.FromPage = CommandButtons.Home;
-                    args.MenuButton = button;
+                ChangeViewEventArgs args = new();
+                args.FromPage = CommandButtons.Home;
+                args.MenuButton = button;
 
-                    if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
-                    {
-                        await App.EventAgg.PublishAsync(args);
-                    }
+                if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
+                {
+                    await App.EventAgg.PublishAsync(args);
                 }
             }
         }
 
-        private void OnMasterPasswordGroup(object commandParam)
+        private async void OnMasterPasswordGroup(object commandParam)
         {
+            if (commandParam is CommandButtons button && button == CommandButtons.CatPasswordGroup)
+            {
+                ChangeViewEventArgs args = new();
+                args.FromPage = CommandButtons.Home;
+                args.MenuButton = button;
+
+                if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
+                {
+                    await App.EventAgg.PublishAsync(args);
+                }
+            }
         }
 
         private void OnPopup(object commandParam)
