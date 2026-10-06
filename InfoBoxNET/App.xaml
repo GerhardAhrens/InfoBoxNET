@@ -16,16 +16,19 @@
                 <ResourceDictionary Source="Resources\Localization\Localization.xaml" />
                 <ResourceDictionary Source="TemplateCore\Themes\Generic.xaml" />
                 <ResourceDictionary Source="TemplateCore\Controls\Button\Themes\Generic.xaml" />
-                <ResourceDictionary Source="TemplateCore\Controls\ChooseBox\Themes\Generic.xaml" />
+                <ResourceDictionary Source="TemplateCore\Controls\SplitButton\Themes\Generic.xaml" />
                 <ResourceDictionary Source="TemplateCore\Controls\ComboBox\Themes\Generic.xaml" />
                 <ResourceDictionary Source="TemplateCore\Controls\CheckBox\Themes\Generic.xaml" />
+                <ResourceDictionary Source="TemplateCore\Controls\Listbox\Themes\Generic.xaml" />
                 <ResourceDictionary Source="TemplateCore\Controls\TextBox\Themes\Generic.xaml" />
+                <ResourceDictionary Source="TemplateCore\Controls\TextBoxDate\Themes\Generic.xaml" />
                 <ResourceDictionary Source="TemplateCore\Controls\MenuBar\Themes\Generic.xaml" />
                 <ResourceDictionary Source="TemplateCore\Controls\TabControl\Themes\Generic.xaml" />
                 <ResourceDictionary Source="TemplateCore\Controls\TreeView\Themes\Generic.xaml" />
                 <ResourceDictionary Source="TemplateCore\Controls\ProgressOverlay\Themes\Generic.xaml" />
                 <ResourceDictionary Source="TemplateCore\Controls\SwitchBox\Themes\Generic.xaml" />
-                <ResourceDictionary Source="TemplateCore\Controls\SplitButton\Themes\Generic.xaml" />
+                <ResourceDictionary Source="TemplateCore\Controls\WindowLine\Themes\Generic.xaml" />
+                <ResourceDictionary Source="TemplateCore\Controls\WindowLineHeader\Themes\Generic.xaml" />
 
                 <!--  Externe Styles aus Bibliotheken  -->
             </ResourceDictionary.MergedDictionaries>
