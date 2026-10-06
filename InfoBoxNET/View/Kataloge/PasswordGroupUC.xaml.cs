@@ -15,6 +15,8 @@
 
 namespace InfoBoxNET.View
 {
+    using System.ComponentModel;
+    using System.Data.SQLite;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -40,7 +42,19 @@ namespace InfoBoxNET.View
 
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
-        
+
+        public IEnumerable<InfoBoxNET.Model.Region> RegionDataSource
+        {
+            get => base.GetValue<IEnumerable<InfoBoxNET.Model.Region>>();
+            set => base.SetValue(value);
+        }
+
+        public InfoBoxNET.Model.Region SelectedRegionItem
+        {
+            get => base.GetValue<InfoBoxNET.Model.Region>();
+            set => base.SetValue(value);
+        }
+
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
         #endregion Properties
 
@@ -48,6 +62,11 @@ namespace InfoBoxNET.View
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            if ((bool)(DesignerProperties.IsInDesignModeProperty.GetMetadata(typeof(DependencyObject)).DefaultValue) == false)
+            {
+                this.LoadDataHandler();
+            }
+
             if (App.EventAgg.IsSubscription<StatusEvent>() == true)
             {
                 await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
@@ -71,5 +90,27 @@ namespace InfoBoxNET.View
         }
         #endregion Command Events
 
+        private void LoadDataHandler(bool isRefresh = false)
+        {
+            try
+            {
+                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                {
+                    ds.OpenConnection();
+                    if (ds.Connection == null)
+                    {
+                        return;
+                    }
+
+                    this.RegionDataSource = ds.Connection.RecordSet<List<InfoBoxNET.Model.Region>>("SELECT Id, Name FROM TAB_Region").Get().Result;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                string errorText = ex.Message;
+                throw;
+            }
+        }
     }
 }
