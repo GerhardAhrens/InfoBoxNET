@@ -720,7 +720,7 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
-    
+
     <DrawingImage x:Key="CatalogDataIcon">
         <DrawingImage.Drawing>
             <DrawingGroup>
@@ -1471,4 +1471,86 @@
 
     <!--#endregion Icons für die Funktion zur Passwort Verwaltung-->
 
+    <!--#region Icons für die Katalog Verwaltung-->
+    <DrawingImage x:Key="IconSaveData2">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Children>
+                    <GeometryDrawing Brush="#FF4A90E2">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M5,2L17,2L22,7L22,22L2,22L2,5L5,2z" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FFD9E1E8">
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="6,3,10,6" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FF90A4AE">
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="9,4.5,4,3" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FFFFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="6,12,12,7" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FF7FB3FF">
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <GeometryGroup.Children>
+                                    <RectangleGeometry Rect="8,14,8,1" />
+                                    <RectangleGeometry Rect="8,16.5,6,1" />
+                                </GeometryGroup.Children>
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FF4CAF50">
+                        <GeometryDrawing.Geometry>
+                            <EllipseGeometry
+                                Center="18.5,18.5"
+                                RadiusX="2"
+                                RadiusY="2" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FFFFFFFF">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M17.5,18.5L18.3,19.3L19.7,17.9" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup.Children>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="IconOffice_Add_64">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Transform>
+                    <ScaleTransform ScaleX="0.25" ScaleY="0.25" />
+                </DrawingGroup.Transform>
+
+                <GeometryDrawing Brush="#FF9AB601" Geometry="F1M211.862,80.193L141.571,80.193 141.571,9.9C141.571,4.455,137.116,0,131.67,0L90.092,0C84.647,0,80.192,4.455,80.192,9.9L80.192,80.193 9.9,80.193C4.455,80.193,0,84.648,0,90.093L0,131.672C0,137.118,4.455,141.573,9.9,141.573L80.192,141.573 80.192,211.862C80.192,217.307,84.647,221.762,90.092,221.762L131.67,221.762C137.116,221.762,141.571,217.307,141.571,211.862L141.571,141.573 211.862,141.573C217.307,141.573,221.762,137.118,221.762,131.672L221.762,90.093C221.762,84.648,217.307,80.193,211.862,80.193z" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+
+    <DrawingImage x:Key="IconDeleteEntry">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Transform>
+                    <ScaleTransform ScaleX="4" ScaleY="4" />
+                </DrawingGroup.Transform>
+
+                <GeometryDrawing Brush="#202020" Geometry="M4 6.12169L3 5.121V13C3 14.1046 3.89543 15 5 15H11C12.1046 15 13 14.1046 13 13V5.41421C13 5.01639 12.842 4.63486 12.5607 4.35355L9.64645 1.43934C9.36514 1.15804 8.98361 1 8.58579 1L6.91471 1C6.84081 1.20908 6.72078 1.4012 6.56099 1.56099L6.12168 2H8V4.5C8 5.32843 8.67157 6 9.5 6H12V13C12 13.5523 11.5523 14 11 14H5C4.44772 14 4 13.5523 4 13V6.12169ZM9.5 5H11.7929L9 2.20711V4.5C9 4.77614 9.22386 5 9.5 5Z" />
+                <GeometryDrawing Brush="#C50F1F" Geometry="M5.85402 5.14602C5.94791 5.23991 6.00065 5.36725 6.00065 5.50002C6.00065 5.6328 5.94791 5.76013 5.85402 5.85402C5.76013 5.94791 5.6328 6.00065 5.50002 6.00065C5.36725 6.00065 5.23991 5.94791 5.14602 5.85402L3.00002 3.70702L0.854021 5.85402C0.760135 5.94791 0.632797 6.00065 0.500021 6.00065C0.367245 6.00065 0.239908 5.94791 0.146021 5.85402C0.0521346 5.76013 -0.000610349 5.6328 -0.000610352 5.50002C-0.000610354 5.36725 0.0521346 5.23991 0.146021 5.14602L2.29302 3.00002L0.146021 0.854021C0.0521346 0.760135 -0.000610353 0.632797 -0.000610352 0.500021C-0.000610351 0.367245 0.0521346 0.239908 0.146021 0.146021C0.239908 0.0521346 0.367245 -0.000610351 0.500021 -0.000610352C0.632797 -0.000610353 0.760135 0.0521346 0.854021 0.146021L3.00002 2.29302L5.14602 0.146021C5.23991 0.0521346 5.36725 -0.000610354 5.50002 -0.000610352C5.6328 -0.000610349 5.76013 0.0521346 5.85402 0.146021C5.94791 0.239908 6.00065 0.367245 6.00065 0.500021C6.00065 0.632797 5.94791 0.760135 5.85402 0.854021L3.70702 3.00002L5.85402 5.14602Z" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!--#endregion Icons für die Katalog Verwaltung-->
 </ResourceDictionary>

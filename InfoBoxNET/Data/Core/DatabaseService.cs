@@ -118,7 +118,7 @@ namespace System.Data.SQLite
                 if (File.Exists(this.FullName) == true)
                 {
                     SQLiteConnection sqliteConnection = new SQLiteConnection(this.SqlConnectionString);
-                        if (sqliteConnection.State != ConnectionState.Open)
+                    if (sqliteConnection.State != ConnectionState.Open)
                     {
                         sqliteConnection.Open();
                         this.Connection = sqliteConnection;
@@ -231,6 +231,135 @@ namespace System.Data.SQLite
 
             return true;
         }
+
+
+        public bool UpdateRow<T>(T dataObject)
+        {
+            if (dataObject == null)
+            {
+                throw new ArgumentNullException(nameof(dataObject));
+            }
+
+            if (!File.Exists(this.FullName))
+            {
+                return false;
+            }
+
+            Type type = dataObject.GetType();
+
+            // Tabellenname aus dem DataTable-Attribut ermitteln
+            DataTableAttribute tableAttribute = type.GetCustomAttribute<DataTableAttribute>();
+
+            if (tableAttribute == null)
+            {
+                throw new InvalidOperationException($"Die Klasse {type.Name} besitzt kein DataTable-Attribut.");
+            }
+
+            string tableName = tableAttribute.TableName;
+
+            // Properties mit TableColumn-Attribut ermitteln
+            PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.GetCustomAttribute<TableColumnAttribute>() != null).ToArray();
+
+            if (properties.Length == 0)
+            {
+                throw new InvalidOperationException($"Die Klasse {type.Name} besitzt keine TableColumn-Properties.");
+            }
+
+            // Primärschlüssel ermitteln
+            PropertyInfo[] primaryKeys = properties
+                .Where(p => p.GetCustomAttribute<PrimaryKeyAttribute>() != null).ToArray();
+
+            if (primaryKeys.Length == 0)
+            {
+                throw new InvalidOperationException($"Die Klasse {type.Name} besitzt keinen Primärschlüssel.");
+            }
+
+            // SET: alle Spalten außer den Primärschlüsseln
+            PropertyInfo[] updateProperties = properties
+                .Where(p => p.GetCustomAttribute<PrimaryKeyAttribute>() == null).ToArray();
+
+            if (updateProperties.Length == 0)
+            {
+                return false;
+            }
+
+            using (SQLiteConnection sqliteConnection = new SQLiteConnection(this.SqlConnectionString))
+            {
+                sqliteConnection.Open();
+                this.IsOpen = true;
+
+                using (SQLiteCommand command = sqliteConnection.CreateCommand())
+                {
+                    List<string> setClauses = new List<string>();
+                    List<string> whereClauses = new List<string>();
+
+                    // SET-Klausel erstellen
+                    foreach (PropertyInfo property in updateProperties)
+                    {
+                        string parameterName = "@set_" + property.Name;
+                        setClauses.Add($"[{property.Name}] = {parameterName}");
+                        object value = property.GetValue(dataObject, null);
+                        command.Parameters.AddWithValue(parameterName, GetSQLiteValue(value));
+                    }
+
+                    // WHERE-Klausel für alle Primärschlüssel erstellen
+                    foreach (PropertyInfo property in primaryKeys)
+                    {
+                        string parameterName = "@key_" + property.Name;
+                        whereClauses.Add($"[{property.Name}] = {parameterName}");
+                        object value = property.GetValue(dataObject, null);
+                        command.Parameters.AddWithValue(parameterName, GetSQLiteValue(value));
+                    }
+
+                    command.CommandText = $"UPDATE [{tableName}] SET {string.Join(", ", setClauses)} WHERE {string.Join(" AND ", whereClauses)}";
+
+                    int affectedRows = command.ExecuteNonQuery();
+
+                    return affectedRows > 0;
+                }
+            }
+        }
+
+        private static object GetSQLiteValue(object value)
+        {
+            if (value == null)
+            {
+                return DBNull.Value;
+            }
+
+            Type type = value.GetType();
+
+            // Nullable<T> ist bei einem nicht-null-Wert bereits
+            // auf den tatsächlichen Werttyp reduziert.
+            if (type.IsEnum)
+            {
+                return Convert.ChangeType(value, Enum.GetUnderlyingType(type));
+            }
+
+            if (value is Guid guid)
+            {
+                return guid.ToString();
+            }
+
+            if (value is DateTime dateTime)
+            {
+                return dateTime.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
+            }
+
+            if (value is DateTimeOffset dateTimeOffset)
+            {
+                return dateTimeOffset.ToString("o");
+            }
+
+            if (value is bool boolean)
+            {
+                return boolean ? 1 : 0;
+            }
+
+            return value;
+        }
+
 
 
         public void Insert(Action<SQLiteConnection> actionMethod)
@@ -410,7 +539,7 @@ namespace System.Data.SQLite
                     FileInfo fi = new FileInfo(this.FullName);
                     if (string.IsNullOrEmpty(targetBackup) == true)
                     {
-                        targetBackup = $"{Path.GetDirectoryName(this.FullName)}\\{Path.GetFileNameWithoutExtension(this.FullName)}_{DateTime.Now.ToString("yyyyMMdd",CultureInfo.CurrentCulture)}{Path.GetExtension(this.FullName)}";
+                        targetBackup = $"{Path.GetDirectoryName(this.FullName)}\\{Path.GetFileNameWithoutExtension(this.FullName)}_{DateTime.Now.ToString("yyyyMMdd", CultureInfo.CurrentCulture)}{Path.GetExtension(this.FullName)}";
                     }
 
                     var result = this.CopyFileAsync(this.FullName, targetBackup);
@@ -565,7 +694,7 @@ namespace System.Data.SQLite
 
         public DateTime LastWriteTime()
         {
-            DateTime result = new DateTime(1900,1,1);
+            DateTime result = new DateTime(1900, 1, 1);
 
             if (File.Exists(this.FullName) == true)
             {
@@ -631,14 +760,14 @@ namespace System.Data.SQLite
             return result;
         }
 
-        public List<Tuple<string,string,object,Type>> MetadataInformation()
+        public List<Tuple<string, string, object, Type>> MetadataInformation()
         {
             List<Tuple<string, string, object, Type>> meta = new List<Tuple<string, string, object, Type>>();
 
             FileInfo fi = new FileInfo(this.FullName);
             if (fi.Exists == true)
             {
-                meta.Add(new Tuple<string, string,object, Type>("Name", "FileInfo", fi.Name, typeof(string)));
+                meta.Add(new Tuple<string, string, object, Type>("Name", "FileInfo", fi.Name, typeof(string)));
                 meta.Add(new Tuple<string, string, object, Type>("Path", "FileInfo", fi.FullName, typeof(string)));
                 meta.Add(new Tuple<string, string, object, Type>("Length", "FileInfo", fi.Length, typeof(long)));
                 meta.Add(new Tuple<string, string, object, Type>("LastWriteTime", "FileInfo", fi.LastWriteTime, typeof(DateTime)));

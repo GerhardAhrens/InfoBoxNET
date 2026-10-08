@@ -16,12 +16,16 @@
 namespace InfoBoxNET.View
 {
     using System.ComponentModel;
+    using System.Data;
     using System.Data.SQLite;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
+    using System.Xml.Linq;
 
     using InfoBoxNET.Core;
+
+    using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
     /// <summary>
     /// Interaktionslogik für PasswordGroupUC.xaml
@@ -39,14 +43,18 @@ namespace InfoBoxNET.View
             this.GoBackCommand = new CommandBase(commandParam => this.OnGoBack(commandParam), () => true);
             this.SelectedGruppeItem = new CommandBase(commandParam => this.OnSelectedGruppe(commandParam), () => true);
             this.ActionDeleteCommand = new CommandBase(commandParam => this.OnActionDelete(commandParam), () => true);
+            this.AddGruppeCommand = new CommandBase(commandParam => this.OnAddGruppe(commandParam), () => true);
+            this.UpdateGruppeCommand = new CommandBase(commandParam => this.OnUpdateGruppe(commandParam), () => true);
 
             this.DataContext = this;
         }
+
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
         public CommandBase SelectedGruppeItem { get; private set; }
         public CommandBase ActionDeleteCommand { get; private set; }
-
+        public CommandBase AddGruppeCommand { get; private set; }
+        public CommandBase UpdateGruppeCommand { get; private set; }
 
         public IEnumerable<InfoBoxNET.Model.Region> RegionDataSource
         {
@@ -131,12 +139,21 @@ namespace InfoBoxNET.View
             {
                 /* Eintrag löschen */
                 ID id = new ID(region.Id);
-                this.LoadDataHandler();
+                this.DeleteGruppe(id);
             }
         }
+
+        private void OnAddGruppe(object commandParam)
+        {
+        }
+
+        private void OnUpdateGruppe(object commandParam)
+        {
+        }
+
         #endregion Command Events
 
-        private void LoadDataHandler(bool isRefresh = false)
+        private void LoadDataHandler()
         {
             try
             {
@@ -150,6 +167,35 @@ namespace InfoBoxNET.View
 
                     this.RegionDataSource = ds.Connection.RecordSet<List<InfoBoxNET.Model.Region>>("SELECT Id, Name, Background FROM TAB_Region").Get().Result;
 
+                }
+            }
+            catch (Exception ex)
+            {
+                string errorText = ex.Message;
+                throw;
+            }
+        }
+
+        private void DeleteGruppe(ID id)
+        {
+            try
+            {
+                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                {
+                    ds.OpenConnection();
+                    if (ds.Connection == null)
+                    {
+                        return;
+                    }
+
+                    string sql = "DELETE FROM TAB_Region WHERE Id=@Id";
+                    Dictionary<string, object> parameterCollection = new();
+                    parameterCollection.Add("@Id", id.ToString());
+                    int rowsAffected = ds.Connection.RecordSet<int>(sql, parameterCollection).Execute().Result;
+                    if (rowsAffected > 0)
+                    {
+                        this.LoadDataHandler();
+                    }
                 }
             }
             catch (Exception ex)
