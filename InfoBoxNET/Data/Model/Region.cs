@@ -31,6 +31,7 @@ namespace InfoBoxNET.Model
         public Region()
         {
             this.LastExport = DateTime.Today.DefaultDate();
+            this.Id = Guid.CreateVersion7();
         }
 
         [PrimaryKey]

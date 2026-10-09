@@ -309,6 +309,11 @@ namespace System.Data.SQLite
                         string parameterName = "@key_" + property.Name;
                         whereClauses.Add($"[{property.Name}] = {parameterName}");
                         object value = property.GetValue(dataObject, null);
+                        if (value != null && value.GetType() == typeof(Guid))
+                        {
+                            value = value.ToString();
+                        }
+
                         command.Parameters.AddWithValue(parameterName, GetSQLiteValue(value));
                     }
 

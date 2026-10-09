@@ -23,6 +23,7 @@ namespace InfoBoxNET.View
     using System.Windows.Media;
 
     using InfoBoxNET.Core;
+    using InfoBoxNET.Model;
 
     using static System.Resources.ResXFileRef;
     using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -135,7 +136,7 @@ namespace InfoBoxNET.View
 
         private void OnActionDelete(object commandParam)
         {
-            if (commandParam is InfoBoxNET.Model.Region region)
+            if (commandParam is Region region)
             {
                 /* Eintrag löschen */
                 ID id = new ID(region.Id);
@@ -145,20 +146,58 @@ namespace InfoBoxNET.View
 
         private void OnAddGruppe(object commandParam)
         {
+            if (string.IsNullOrEmpty(this.GruppenText.Trim()) == false)
+            {
+                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                {
+                    ds.OpenConnection();
+                    if (ds.Connection == null)
+                    {
+                        return;
+                    }
+
+                    Dictionary<string, object> parameterCollection = new();
+                    parameterCollection.Add("@Name", this.GruppenText.Trim());
+                    int foundCount = ds.Connection.RecordSet<int>("SELECT Count(*) FROM TAB_Region WHERE Name=@Name", parameterCollection).Get().Result;
+                    if (foundCount == 0)
+                    {
+                        Region region = new();
+                        BrushConverter converter = new BrushConverter();
+                        Brush gruppenItemFarbe = (Brush)converter.ConvertFromString(this.SelectedBrush.ToString());
+                        SolidColorBrush solidPinsel = (SolidColorBrush)gruppenItemFarbe;
+
+                        region.Name = this.GruppenText;
+                        region.Background = GetBrushName(solidPinsel);
+                        region.CreatedBy = Environment.UserName;
+                        region.CreatedOn = DateTime.Now;
+
+                        ds.InsertRow<Region>(region);
+                    }
+
+                    this.LoadDataHandler();
+                }
+            }
         }
 
         private void OnUpdateGruppe(object commandParam)
         {
-            if (commandParam is InfoBoxNET.Model.Region region)
+            if (commandParam is Region region)
             {
                 BrushConverter converter = new BrushConverter();
-                Brush gruppenItemFarbe = (Brush)converter.ConvertFromString(region.Background);
+                Brush gruppenItemFarbe = (Brush)converter.ConvertFromString(this.SelectedBrush.ToString());
                 SolidColorBrush solidPinsel = (SolidColorBrush)gruppenItemFarbe;
 
                 region.Name = this.GruppenText;
                 region.Background = GetBrushName(solidPinsel);
                 region.ModifiedBy = Environment.UserName;
                 region.ModifiedOn = DateTime.Now;
+
+                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                {
+                    ds.UpdateRow<Region>(region);
+                }
+
+                this.LoadDataHandler();
             }
         }
 
@@ -176,7 +215,7 @@ namespace InfoBoxNET.View
                         return;
                     }
 
-                    this.RegionDataSource = ds.Connection.RecordSet<List<InfoBoxNET.Model.Region>>("SELECT Id, Name, Background FROM TAB_Region").Get().Result;
+                    this.RegionDataSource = ds.Connection.RecordSet<List<Region>>("SELECT Id, Name, Background FROM TAB_Region").Get().Result;
 
                 }
             }
