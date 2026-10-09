@@ -16,15 +16,15 @@
 namespace InfoBoxNET.View
 {
     using System.ComponentModel;
-    using System.Data;
     using System.Data.SQLite;
+    using System.Reflection;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
-    using System.Xml.Linq;
 
     using InfoBoxNET.Core;
 
+    using static System.Resources.ResXFileRef;
     using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
     /// <summary>
@@ -68,9 +68,9 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
-        public Brush SelectedBrush
+        public System.Windows.Media.Brush SelectedBrush
         {
-            get => base.GetValue<Brush>();
+            get => base.GetValue<System.Windows.Media.Brush>();
             set => base.SetValue(value);
         }
 
@@ -149,6 +149,17 @@ namespace InfoBoxNET.View
 
         private void OnUpdateGruppe(object commandParam)
         {
+            if (commandParam is InfoBoxNET.Model.Region region)
+            {
+                BrushConverter converter = new BrushConverter();
+                Brush gruppenItemFarbe = (Brush)converter.ConvertFromString(region.Background);
+                SolidColorBrush solidPinsel = (SolidColorBrush)gruppenItemFarbe;
+
+                region.Name = this.GruppenText;
+                region.Background = GetBrushName(solidPinsel);
+                region.ModifiedBy = Environment.UserName;
+                region.ModifiedOn = DateTime.Now;
+            }
         }
 
         #endregion Command Events
@@ -204,5 +215,28 @@ namespace InfoBoxNET.View
                 throw;
             }
         }
+
+        /// <summary>
+        /// Methode zur Namensermittlung via Reflection
+        /// </summary>
+        /// <param name="brush"></param>
+        /// <returns></returns>
+        string GetBrushName(System.Windows.Media.SolidColorBrush brush)
+        {
+            if (brush == null) return "Unbekannt";
+
+            // Alle statischen Eigenschaften der Brushes-Klasse durchlaufen
+            var properties = typeof(Brushes).GetProperties(BindingFlags.Public | BindingFlags.Static);
+
+            foreach (var prop in properties)
+            {
+                if (prop.GetValue(null) is System.Windows.Media.SolidColorBrush b && b.Color == brush.Color)
+                {
+                    return prop.Name;
+                }
+            }
+
+            return brush.Color.ToString(); // Gibt den Hex-Code zurück, falls kein Name gefunden wurde
+        }
     }
-}
+    }
