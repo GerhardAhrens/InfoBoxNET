@@ -15,10 +15,13 @@
 
 namespace InfoBoxNET.View
 {
+    using System.ComponentModel;
+    using System.Data.SQLite;
     using System.Windows;
     using System.Windows.Controls;
 
     using InfoBoxNET.Core;
+    using InfoBoxNET.Model;
 
     /// <summary>
     /// Interaktionslogik für PasswordsUC.xaml
@@ -42,6 +45,18 @@ namespace InfoBoxNET.View
         public CommandBase GoBackCommand { get; private set; }
         public CommandBase ImpExportPasswordsCommand { get; private set; }
 
+        public IEnumerable<PasswordPin> PasswordPinDataSource
+        {
+            get => base.GetValue<IEnumerable<PasswordPin>>();
+            set => base.SetValue(value);
+        }
+
+        public InfoBoxNET.Model.PasswordPin SelectedPasswordPinItem
+        {
+            get => base.GetValue<PasswordPin>();
+            set => base.SetValue(value);
+        }
+
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
         #endregion Properties
 
@@ -49,6 +64,11 @@ namespace InfoBoxNET.View
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            if ((bool)(DesignerProperties.IsInDesignModeProperty.GetMetadata(typeof(DependencyObject)).DefaultValue) == false)
+            {
+                this.LoadDataHandler();
+            }
+
             if (App.EventAgg.IsSubscription<StatusEvent>() == true)
             {
                 await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
@@ -92,5 +112,26 @@ namespace InfoBoxNET.View
         }
         #endregion Command Events
 
+        private void LoadDataHandler()
+        {
+            try
+            {
+                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                {
+                    ds.OpenConnection();
+                    if (ds.Connection == null)
+                    {
+                        return;
+                    }
+
+                    this.PasswordPinDataSource = ds.Connection.RecordSet<List<PasswordPin>>("SELECT * FROM TAB_PasswordPin").Get().Result;
+                }
+            }
+            catch (Exception ex)
+            {
+                string errorText = ex.Message;
+                throw;
+            }
+        }
     }
 }

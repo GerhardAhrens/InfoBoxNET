@@ -41,6 +41,9 @@ namespace InfoBoxNET.Model
         public Guid Id { get; set; }
 
         [TableColumn(SQLiteDataType.Integer)]
+        public int Version { get; set; }
+
+        [TableColumn(SQLiteDataType.Integer)]
         public AccessTyp AccessTyp { get; set; }
 
         [TableColumn(SQLiteDataType.VarChar)]

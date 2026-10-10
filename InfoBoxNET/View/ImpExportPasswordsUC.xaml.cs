@@ -226,6 +226,11 @@ namespace InfoBoxNET.View
                                 this.ProgressValue = Convert.ToInt32(Math.Abs((stepValue / maxValue) * 100));
                                 Thread.Sleep(100);
                                 App.DoEvents();
+                                pass.Version = 0;
+                                pass.LastExport = DateTime.MinValue;
+                                pass.ShowLast = DateTime.MinValue;
+                                pass.IsShowLast = false;
+                                pass.SyncHash = string.Empty;
                                 ds.InsertRow<InfoBoxNET.Model.PasswordPin>(pass);
                                 App.DoEvents();
                             }

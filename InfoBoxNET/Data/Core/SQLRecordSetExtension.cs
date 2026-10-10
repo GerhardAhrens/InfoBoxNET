@@ -647,6 +647,31 @@ namespace System.Data.SQLite
                                                 itemProperty.SetValue(instance, dr.GetBoolean(i), null);
                                             }
                                         }
+                                        else if (itemProperty.PropertyType.BaseType == typeof(Enum))
+                                        {
+                                            if (columnValue != DBNull.Value)
+                                            {
+                                                Type valueType = columnValue.GetType();
+                                                int intValue = 0;
+
+                                                if (valueType is Type type && type == typeof(int))
+                                                {
+                                                    // Holt den int-Wert direkt aus dem DataReader
+                                                    intValue = dr.GetInt32(i);
+                                                }
+                                                else if (valueType is Type type2 && type2 == typeof(string))
+                                                {
+                                                    // Holt den int-Wert aus dem DataReader
+                                                    intValue = Convert.ToInt32(dr.GetString(i));
+                                                }
+
+                                                // Konvertiert den int-Wert in den exakten Typ des Enums
+                                                object enumValue = Enum.ToObject(itemProperty.PropertyType, intValue);
+
+                                                // Weist den konvertierten Enum-Wert der Eigenschaft zu
+                                                itemProperty.SetValue(instance, enumValue, null);
+                                            }
+                                        }
                                         else if (itemProperty.PropertyType == typeof(byte[]))
                                         {
                                             if (columnValue != DBNull.Value)
