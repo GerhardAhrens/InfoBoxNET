@@ -124,7 +124,7 @@ namespace InfoBoxNET.View
                         return;
                     }
 
-                    this.PasswordPinDataSource = ds.Connection.RecordSet<List<PasswordPin>>("SELECT * FROM TAB_PasswordPin").Get().Result;
+                    this.PasswordPinDataSource = ds.Connection.RecordSet<List<PasswordPin>>("SELECT * FROM TAB_PasswordPin WHERE Version = 0").Get().Result;
                 }
             }
             catch (Exception ex)
