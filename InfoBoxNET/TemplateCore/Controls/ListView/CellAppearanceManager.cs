@@ -1,7 +1,6 @@
 ﻿namespace System.Windows.Controls
 {
     using System.Data;
-    using System.Diagnostics;
     using System.Windows.Media;
 
     internal static class CellAppearanceManager

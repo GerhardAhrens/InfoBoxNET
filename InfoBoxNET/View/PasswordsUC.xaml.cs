@@ -47,13 +47,13 @@ namespace InfoBoxNET.View
         public CommandBase GoBackCommand { get; private set; }
         public CommandBase ImpExportPasswordsCommand { get; private set; }
 
-        public ICollectionView PasswordPinDataSource
+        public ICollectionView DialogDataView
         {
             get => base.GetValue<ICollectionView>();
             set => base.SetValue(value);
         }
 
-        public InfoBoxNET.Model.PasswordPin SelectedPasswordPinItem
+        public InfoBoxNET.Model.PasswordPin CurrentSelectedItem
         {
             get => base.GetValue<PasswordPin>();
             set => base.SetValue(value);
@@ -63,6 +63,12 @@ namespace InfoBoxNET.View
         {
             get => base.GetValue<string>();
             set => base.SetValue(value,this.RefreschDataSource);
+        }
+
+        public ViewBase CustomView
+        {
+            get => base.GetValue<ViewBase>();
+            set => base.SetValue(value);
         }
 
         private int RowCount { get; set; }
@@ -131,17 +137,17 @@ namespace InfoBoxNET.View
 
                     string sql = ds.SelectRows<PasswordPin>(whereClause: "Version = 0");
                     List<PasswordPin> dataSource = ds.Connection.RecordSet<List<PasswordPin>>(sql).Get().Result;
-                    this.PasswordPinDataSource = CollectionViewSource.GetDefaultView(dataSource);
-                    if (this.PasswordPinDataSource != null)
+                    this.DialogDataView = CollectionViewSource.GetDefaultView(dataSource);
+                    if (this.DialogDataView != null)
                     {
-                        this.PasswordPinDataSource.Filter = rowItem => this.DataDefaultFilter(rowItem as PasswordPin);
-                        this.PasswordPinDataSource.SortDescriptions.Add(new SortDescription("AccessTyp", ListSortDirection.Ascending));
-                        this.PasswordPinDataSource.SortDescriptions.Add(new SortDescription("Title", ListSortDirection.Ascending));
-                        this.PasswordPinDataSource.MoveCurrentToFirst();
-                        var item = this.PasswordPinDataSource.CurrentItem;
+                        this.DialogDataView.Filter = rowItem => this.DataDefaultFilter(rowItem as PasswordPin);
+                        this.DialogDataView.SortDescriptions.Add(new SortDescription("AccessTyp", ListSortDirection.Ascending));
+                        this.DialogDataView.SortDescriptions.Add(new SortDescription("Title", ListSortDirection.Ascending));
+                        this.DialogDataView.MoveCurrentToFirst();
+                        var item = this.DialogDataView.CurrentItem;
                     }
 
-                    this.RowCount = this.PasswordPinDataSource?.Cast<PasswordPin>().Count() ?? 0;
+                    this.RowCount = this.DialogDataView?.Cast<PasswordPin>().Count() ?? 0;
                 }
 
                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
@@ -200,8 +206,8 @@ namespace InfoBoxNET.View
             {
                 if (string.IsNullOrEmpty(this.FilterDefaultSearch) == false)
                 {
-                    this.PasswordPinDataSource?.Refresh();
-                    this.RowFilterCount = this.PasswordPinDataSource?.Cast<PasswordPin>().Count() ?? 0;
+                    this.DialogDataView?.Refresh();
+                    this.RowFilterCount = this.DialogDataView?.Cast<PasswordPin>().Count() ?? 0;
 
                     if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                     {

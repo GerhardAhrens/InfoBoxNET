@@ -45,6 +45,7 @@
     <Folder Include="TemplateCore\Extension\System.Integer\" />
     <Folder Include="TemplateCore\Extension\System.Enum\" />
     <Folder Include="TemplateCore\Extension\System.Data\" />
+    <Folder Include="View\Converter\" />
   </ItemGroup>
 
 </Project>
