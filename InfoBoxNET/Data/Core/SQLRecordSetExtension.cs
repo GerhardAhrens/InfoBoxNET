@@ -398,7 +398,7 @@ namespace System.Data.SQLite
                         if (dr.HasRows == true && dr.VisibleFieldCount > 0)
                         {
                             dt = new DataTable();
-                            dt.Load(dr);
+                            dt.Load(dr, LoadOption.PreserveChanges, new FillErrorEventHandler(OnFillError));
                             if (dt.HasColumn("CreatedOn") == true && dt.HasColumn("CreatedBy") == true && dt.HasColumn("ModifiedOn") == true && dt.HasColumn("ModifiedBy") == true)
                             {
                                 if (dt.HasColumn("Timestamp") == false)
@@ -459,6 +459,18 @@ namespace System.Data.SQLite
             }
 
             return (T)result;
+        }
+
+        static void OnFillError(object sender, FillErrorEventArgs e)
+        {
+            // Den Fehler auf der Konsole ausgeben
+            Console.WriteLine($"\n[FEHLER] Beim Laden der Daten ist ein Problem aufgetreten!");
+            Console.WriteLine($"Fehlermeldung: {e.Errors.Message}");
+            Console.WriteLine($"Betroffene Zeile (Rohdaten): {string.Join(", ", e.Values)}");
+
+            // WICHTIG: Continue auf 'true' setzen, damit DataTable.Load() nicht abbricht, 
+            // sondern mit der nächsten Zeile weitermacht.
+            e.Continue = true;
         }
 
         private static T GetDataTable<T>(SQLiteConnection connection, string sql, Dictionary<string, object> parameterCollection)

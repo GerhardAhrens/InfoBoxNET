@@ -157,6 +157,66 @@ namespace System.Data.SQLite
             }
         }
 
+        public string SelectRows<T>(string whereClause = null, string orderBy = null)
+        {
+            Type type = typeof(T);
+
+            // Tabellenname ermitteln
+            DataTableAttribute tableAttribute = type.GetCustomAttribute<DataTableAttribute>();
+
+            if (tableAttribute == null)
+            {
+                throw new InvalidOperationException($"Die Klasse {type.Name} besitzt kein DataTable-Attribut.");
+            }
+
+            string tableName = tableAttribute.TableName;
+
+            // Properties mit TableColumn-Attribut ermitteln
+            PropertyInfo[] properties = type
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.GetCustomAttribute<TableColumnAttribute>() != null).ToArray();
+
+            if (properties.Length == 0)
+            {
+                throw new InvalidOperationException($"Die Klasse {type.Name} besitzt keine TableColumn-Properties.");
+            }
+
+            List<string> selectColumns = new List<string>();
+
+            foreach (PropertyInfo property in properties)
+            {
+                string columnName = property.Name;
+
+                Type propertyType =  Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+                if (propertyType == typeof(string))
+                {
+                    selectColumns.Add($"IFNULL([{columnName}], '') AS [{columnName}]");
+                }
+                else
+                {
+                    selectColumns.Add($"[{columnName}]");
+                }
+            }
+
+            // SELECT-Anweisung erstellen
+            string sql = $"SELECT {string.Join(", ", selectColumns)} FROM [{tableName}]";
+
+            // Optionaler WHERE-Filter
+            if (!string.IsNullOrWhiteSpace(whereClause))
+            {
+                sql += $" WHERE {whereClause}";
+            }
+
+            // Optionale Sortierung
+            if (!string.IsNullOrWhiteSpace(orderBy))
+            {
+                sql += $" ORDER BY {orderBy}";
+            }
+
+            return sql;
+        }
+
         public bool InsertRow<T>(T dataObject)
         {
             if (dataObject == null)

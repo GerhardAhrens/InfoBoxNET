@@ -45,9 +45,9 @@ namespace InfoBoxNET.View
         public CommandBase GoBackCommand { get; private set; }
         public CommandBase ImpExportPasswordsCommand { get; private set; }
 
-        public IEnumerable<PasswordPin> PasswordPinDataSource
+        public ICollectionView PasswordPinDataSource
         {
-            get => base.GetValue<IEnumerable<PasswordPin>>();
+            get => base.GetValue<ICollectionView>();
             set => base.SetValue(value);
         }
 
@@ -57,6 +57,13 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
+        public string SearchText
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value,this.RefreschDataSource);
+        }
+
+        private int RowCount { get; set; }
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
         #endregion Properties
 
@@ -67,11 +74,6 @@ namespace InfoBoxNET.View
             if ((bool)(DesignerProperties.IsInDesignModeProperty.GetMetadata(typeof(DependencyObject)).DefaultValue) == false)
             {
                 this.LoadDataHandler();
-            }
-
-            if (App.EventAgg.IsSubscription<StatusEvent>() == true)
-            {
-                await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
             }
         }
         #endregion Windows Events
@@ -112,7 +114,7 @@ namespace InfoBoxNET.View
         }
         #endregion Command Events
 
-        private void LoadDataHandler()
+        private async void LoadDataHandler()
         {
             try
             {
@@ -124,8 +126,16 @@ namespace InfoBoxNET.View
                         return;
                     }
 
-                    this.PasswordPinDataSource = ds.Connection.RecordSet<List<PasswordPin>>("SELECT * FROM TAB_PasswordPin WHERE Version = 0").Get().Result;
+                    string sql = ds.SelectRows<PasswordPin>(whereClause: "Version = 0");
+                    this.PasswordPinDataSource = ds.Connection.RecordSet<ICollectionView>(sql).Get().Result;
+                    this.RowCount = this.PasswordPinDataSource?.Cast<object>().Count() ?? 0;
                 }
+
+                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                {
+                    await App.EventAgg.PublishAsync(new StatusEvent($"Bereit: {this.RowCount} Einträge"));
+                }
+
             }
             catch (Exception ex)
             {
@@ -133,5 +143,17 @@ namespace InfoBoxNET.View
                 throw;
             }
         }
+
+        private void RefreschDataSource(string arg1, string arg2)
+        {
+            if (arg2 == nameof(this.SearchText))
+            {
+                if (string.IsNullOrEmpty(this.SearchText) == false)
+                {
+                    this.PasswordPinDataSource?.Refresh();
+                }
+            }
+        }
+
     }
 }
