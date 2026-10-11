@@ -16,9 +16,11 @@
 namespace InfoBoxNET.View
 {
     using System.ComponentModel;
+    using System.Data;
     using System.Data.SQLite;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Data;
 
     using InfoBoxNET.Core;
     using InfoBoxNET.Model;
@@ -57,13 +59,14 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
-        public string SearchText
+        public string FilterDefaultSearch
         {
             get => base.GetValue<string>();
             set => base.SetValue(value,this.RefreschDataSource);
         }
 
         private int RowCount { get; set; }
+        private int RowFilterCount { get; set; }
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
         #endregion Properties
 
@@ -127,15 +130,24 @@ namespace InfoBoxNET.View
                     }
 
                     string sql = ds.SelectRows<PasswordPin>(whereClause: "Version = 0");
-                    this.PasswordPinDataSource = ds.Connection.RecordSet<ICollectionView>(sql).Get().Result;
-                    this.RowCount = this.PasswordPinDataSource?.Cast<object>().Count() ?? 0;
+                    List<PasswordPin> dataSource = ds.Connection.RecordSet<List<PasswordPin>>(sql).Get().Result;
+                    this.PasswordPinDataSource = CollectionViewSource.GetDefaultView(dataSource);
+                    if (this.PasswordPinDataSource != null)
+                    {
+                        this.PasswordPinDataSource.Filter = rowItem => this.DataDefaultFilter(rowItem as PasswordPin);
+                        this.PasswordPinDataSource.SortDescriptions.Add(new SortDescription("AccessTyp", ListSortDirection.Ascending));
+                        this.PasswordPinDataSource.SortDescriptions.Add(new SortDescription("Title", ListSortDirection.Ascending));
+                        this.PasswordPinDataSource.MoveCurrentToFirst();
+                        var item = this.PasswordPinDataSource.CurrentItem;
+                    }
+
+                    this.RowCount = this.PasswordPinDataSource?.Cast<PasswordPin>().Count() ?? 0;
                 }
 
                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                 {
                     await App.EventAgg.PublishAsync(new StatusEvent($"Bereit: {this.RowCount} Einträge"));
                 }
-
             }
             catch (Exception ex)
             {
@@ -144,13 +156,64 @@ namespace InfoBoxNET.View
             }
         }
 
-        private void RefreschDataSource(string arg1, string arg2)
+        private bool DataDefaultFilter(PasswordPin rowItem)
         {
-            if (arg2 == nameof(this.SearchText))
+            bool found = false;
+
+            if (rowItem == null)
             {
-                if (string.IsNullOrEmpty(this.SearchText) == false)
+                return false;
+            }
+
+            string textFilterString = (this.FilterDefaultSearch ?? string.Empty).ToUpper();
+            if (string.IsNullOrEmpty(textFilterString) == false)
+            {
+                string fullRow = rowItem.ToSearchFilter.ToUpper();
+                if (string.IsNullOrEmpty(fullRow) == true)
+                {
+                    return true;
+                }
+
+                string[] words = textFilterString.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string word in words.AsParallel<string>())
+                {
+                    found = fullRow.Contains(word);
+
+                    if (found == false)
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                return true;
+            }
+
+            return found;
+        }
+
+
+        private async void RefreschDataSource(string arg1, string arg2)
+        {
+            if (arg2 == nameof(this.FilterDefaultSearch))
+            {
+                if (string.IsNullOrEmpty(this.FilterDefaultSearch) == false)
                 {
                     this.PasswordPinDataSource?.Refresh();
+                    this.RowFilterCount = this.PasswordPinDataSource?.Cast<PasswordPin>().Count() ?? 0;
+
+                    if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                    {
+                        await App.EventAgg.PublishAsync(new StatusEvent($"Bereit: {this.RowCount} Einträge / {this.RowFilterCount} gefiltert"));
+                    }
+                }
+                else
+                {
+                    if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                    {
+                        await App.EventAgg.PublishAsync(new StatusEvent($"Bereit: {this.RowCount} Einträge"));
+                    }
                 }
             }
         }
