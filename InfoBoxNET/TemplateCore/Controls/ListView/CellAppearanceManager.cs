@@ -1,6 +1,7 @@
 ﻿namespace System.Windows.Controls
 {
     using System.Data;
+    using System.Diagnostics;
     using System.Windows.Media;
 
     internal static class CellAppearanceManager
@@ -68,7 +69,7 @@
             ApplyStyle(tb, style);
         }
 
-        private static object GetCellValue(object item, AdvancedGridViewColumn column)
+        private static object GetCellValue(object item,AdvancedGridViewColumn column)
         {
             if (item is not DataRowView row)
                 return null;

@@ -47,6 +47,9 @@ namespace InfoBoxNET.Model
         [TableColumn(SQLiteDataType.Integer)]
         public AccessTyp AccessTyp { get; set; }
 
+        [TableColumn(SQLiteDataType.Text)]
+        public string AccessSymbol { get; set; }
+
         [TableColumn(SQLiteDataType.VarChar)]
         public string Title { get; set; }
 

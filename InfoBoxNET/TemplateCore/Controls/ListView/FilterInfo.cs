@@ -16,6 +16,6 @@
 
         public string FilterText { get; set; } = string.Empty;
 
-        public bool IsEmpty => string.IsNullOrWhiteSpace(FilterText);
+        public bool IsEmpty =>  string.IsNullOrWhiteSpace(FilterText);
     }
 }

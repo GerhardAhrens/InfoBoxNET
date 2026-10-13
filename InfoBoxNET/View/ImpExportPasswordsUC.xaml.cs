@@ -22,6 +22,7 @@ namespace InfoBoxNET.View
     using System.Windows.Controls;
 
     using InfoBoxNET.Core;
+    using InfoBoxNET.Core.Enums;
 
     /// <summary>
     /// Interaktionslogik für ImpExportPasswordsUC.xaml
@@ -150,9 +151,11 @@ namespace InfoBoxNET.View
         private void ImportAllRows(string folder)
         {
             string importSyncFile = string.Empty;
+            string symbol = string.Empty;
 
             try
             {
+                symbol = "<DrawingImage\r\n    xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"\r\n    xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"\r\n    x:Key=\"MySymbol\">\r\n    <DrawingImage.Drawing>\r\n        <GeometryDrawing\r\n            Brush=\"Transparent\"\r\n            Geometry=\"M 0,0 L 16,0 16,16 0,16 Z\" />\r\n    </DrawingImage.Drawing>\r\n</DrawingImage>";
                 importSyncFile = $"{this.ImportFolder}\\PasswortSync.Tag";
                 if (File.Exists(importSyncFile) == false)
                 {
@@ -226,6 +229,30 @@ namespace InfoBoxNET.View
                                 this.ProgressValue = Convert.ToInt32(Math.Abs((stepValue / maxValue) * 100));
                                 Thread.Sleep(100);
                                 App.DoEvents();
+
+                                string symbolColor = string.Empty;
+                                if (pass.AccessTyp == AccessTyp.None)
+                                {
+                                    symbolColor = symbol.Replace("Transparent", "Transparent");
+                                }
+                                else if (pass.AccessTyp == AccessTyp.Passwort)
+                                {
+                                    symbolColor = symbol.Replace("Transparent", "Orange");
+                                }
+                                else if (pass.AccessTyp == AccessTyp.Pin)
+                                {
+                                    symbolColor = symbol.Replace("Transparent", "Blue");
+                                }
+                                else if (pass.AccessTyp == AccessTyp.Website)
+                                {
+                                    symbolColor = symbol.Replace("Transparent", "Green");
+                                }
+                                else if (pass.AccessTyp == AccessTyp.License)
+                                {
+                                    symbolColor = symbol.Replace("Transparent", "Yellow");
+                                }
+
+                                pass.AccessSymbol = symbolColor;
                                 pass.Version = 0;
                                 pass.LastExport = DateTime.MinValue;
                                 pass.ShowLast = DateTime.MinValue;

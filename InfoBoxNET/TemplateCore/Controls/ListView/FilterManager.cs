@@ -145,7 +145,7 @@
                 return;
             }
 
-            ICollectionView view = CollectionViewSource.GetDefaultView(this._listView.ItemsSource);
+            ICollectionView view =CollectionViewSource.GetDefaultView(this._listView.ItemsSource);
 
             if (view is not BindingListCollectionView blcv)
             {
