@@ -37,6 +37,10 @@ namespace InfoBoxNET.View
             WeakEventManager<UserControl, RoutedEventArgs>.AddHandler(this, "Loaded", this.OnLoaded);
 
             this.GoBackCommand = new CommandBase(commandParam => this.OnGoBack(commandParam), () => true);
+            this.AddRowCommand = new CommandBase(commandParam => this.OnAddRow(commandParam), () => true);
+            this.DeleteEntryCommand = new CommandBase(commandParam => this.OnDeleteEntry(commandParam), () => true);
+            this.DoubleClickEntryCommand = new CommandBase(commandParam => this.OnDoubleClickEntry(commandParam), () => true);
+            this.SelectEntryCommand = new CommandBase(commandParam => this.OnSelectEntry(commandParam), () => true);
             this.ImpExportPasswordsCommand = new CommandBase(commandParam => this.OnImpExport(commandParam), () => true);
             this.CurrentCtorArgs = args;
 
@@ -45,6 +49,10 @@ namespace InfoBoxNET.View
 
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
+        public CommandBase AddRowCommand { get; private set; }
+        public CommandBase DeleteEntryCommand { get; private set; }
+        public CommandBase DoubleClickEntryCommand { get; private set; }
+        public CommandBase SelectEntryCommand { get; private set; }
         public CommandBase ImpExportPasswordsCommand { get; private set; }
 
         public ICollectionView DialogDataView
@@ -121,6 +129,39 @@ namespace InfoBoxNET.View
                 }
             }
         }
+
+        private void OnAddRow(object commandParam)
+        {
+            if (commandParam is CommandButtons button && button == CommandButtons.AddRow)
+            {
+
+            }
+        }
+
+        private async void OnDeleteEntry(object commandParam)
+        {
+            if (commandParam is CommandButtons button && button == CommandButtons.DeleteEntry)
+            {
+
+            }
+        }
+
+        private void OnDoubleClickEntry(object commandParam)
+        {
+            if (commandParam != null && commandParam is PasswordPin pw)
+            {
+
+            }
+        }
+
+        private void OnSelectEntry(object commandParam)
+        {
+            if (commandParam != null && commandParam is PasswordPin pw)
+            {
+
+            }
+        }
+
         #endregion Command Events
 
         private async void LoadDataHandler()

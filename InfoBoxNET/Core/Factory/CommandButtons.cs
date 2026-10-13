@@ -18,6 +18,10 @@
         Passwords = 10,
         [Description("Import / Export Passwörter")]
         ImportExportPasswords = 11,
+        [Description("Neuer Eintrag")]
+        AddRow = 12,
+        [Description("Löschen Eintrag")]
+        DeleteEntry = 13,
         [Description("Informationen")]
         InformationPopup = 20,
         [Description("Einstellungen")]

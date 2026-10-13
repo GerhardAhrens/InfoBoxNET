@@ -34,7 +34,7 @@ namespace InfoBoxNET.Model
         {
             get
             {
-                return $"{this.Title}|{this.Username}|{this.Description}|{this.Website}";
+                return $"{this.Title}|{this.Username}|{this.Description}|{this.Website}|{this.Company}|{this.Region}";
             }
         }
 
