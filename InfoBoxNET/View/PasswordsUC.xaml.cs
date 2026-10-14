@@ -40,9 +40,10 @@ namespace InfoBoxNET.View
             this.AddEntryCommand = new CommandBase(commandParam => this.OnAddEntry(commandParam), () => true);
             this.CopyEntryCommand = new CommandBase(commandParam => this.OnCopyEntry(commandParam), () => true);
             this.DeleteEntryCommand = new CommandBase(commandParam => this.OnDeleteEntry(commandParam), () => true);
+            this.ExportPasswordsCommand = new CommandBase(commandParam => this.OnExportPasswords(commandParam), () => true);
+            this.ImpExportPasswordsCommand = new CommandBase(commandParam => this.OnImpExport(commandParam), () => true);
             this.DoubleClickEntryCommand = new CommandBase(commandParam => this.OnDoubleClickEntry(commandParam), () => true);
             this.SelectEntryCommand = new CommandBase(commandParam => this.OnSelectEntry(commandParam), () => true);
-            this.ImpExportPasswordsCommand = new CommandBase(commandParam => this.OnImpExport(commandParam), () => true);
             this.CurrentCtorArgs = args;
 
             this.DataContext = this;
@@ -53,9 +54,10 @@ namespace InfoBoxNET.View
         public CommandBase AddEntryCommand { get; private set; }
         public CommandBase CopyEntryCommand { get; private set; }
         public CommandBase DeleteEntryCommand { get; private set; }
+        public CommandBase ExportPasswordsCommand { get; private set; }
+        public CommandBase ImpExportPasswordsCommand { get; private set; }
         public CommandBase DoubleClickEntryCommand { get; private set; }
         public CommandBase SelectEntryCommand { get; private set; }
-        public CommandBase ImpExportPasswordsCommand { get; private set; }
 
         public ICollectionView DialogDataView
         {
@@ -115,23 +117,6 @@ namespace InfoBoxNET.View
             }
         }
 
-        private async void OnImpExport(object commandParam)
-        {
-            if (commandParam != null && commandParam is CommandButtons button)
-            {
-                if (button == CommandButtons.ImportExportPasswords)
-                {
-                    ChangeViewEventArgs args = new();
-                    args.MenuButton = CommandButtons.ImportExportPasswords;
-                    args.FromPage = this.CurrentCtorArgs.MenuButton;
-                    if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
-                    {
-                        await App.EventAgg.PublishAsync(args);
-                    }
-                }
-            }
-        }
-
         private void OnAddEntry(object commandParam)
         {
             if (commandParam is CommandButtons button && button == CommandButtons.AddEntry)
@@ -151,6 +136,28 @@ namespace InfoBoxNET.View
             if (commandParam is CommandButtons button && button == CommandButtons.DeleteEntry)
             {
 
+            }
+        }
+
+        private void OnExportPasswords(object commandParam)
+        {
+            if (commandParam is CommandButtons button && button == CommandButtons.ExportPasswords)
+            {
+
+            }
+        }
+
+        private async void OnImpExport(object commandParam)
+        {
+            if (commandParam is CommandButtons button && button == CommandButtons.ExportPasswords)
+            {
+                ChangeViewEventArgs args = new();
+                args.MenuButton = CommandButtons.ImportExportPasswords;
+                args.FromPage = this.CurrentCtorArgs.MenuButton;
+                if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
+                {
+                    await App.EventAgg.PublishAsync(args);
+                }
             }
         }
 

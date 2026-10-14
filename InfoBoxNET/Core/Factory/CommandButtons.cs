@@ -24,6 +24,8 @@
         CopyEntry = 13,
         [Description("Lösche Eintrag")]
         DeleteEntry = 14,
+        [Description("Exportiere Passwörter")]
+        ExportPasswords = 15,
         [Description("Informationen")]
         InformationPopup = 20,
         [Description("Einstellungen")]
