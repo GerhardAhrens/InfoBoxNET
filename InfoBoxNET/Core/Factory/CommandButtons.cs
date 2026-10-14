@@ -19,9 +19,11 @@
         [Description("Import / Export Passwörter")]
         ImportExportPasswords = 11,
         [Description("Neuer Eintrag")]
-        AddRow = 12,
-        [Description("Löschen Eintrag")]
-        DeleteEntry = 13,
+        AddEntry = 12,
+        [Description("Kopieren Eintrag")]
+        CopyEntry = 13,
+        [Description("Lösche Eintrag")]
+        DeleteEntry = 14,
         [Description("Informationen")]
         InformationPopup = 20,
         [Description("Einstellungen")]
