@@ -26,6 +26,8 @@
         DeleteEntry = 14,
         [Description("Exportiere Passwörter")]
         ExportPasswords = 15,
+        [Description("Liste drucken")]
+        PrintDocument = 16,
         [Description("Informationen")]
         InformationPopup = 20,
         [Description("Einstellungen")]
