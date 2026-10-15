@@ -309,6 +309,7 @@ namespace InfoBoxNET.View
                 }
                 else
                 {
+                    this.DialogDataView?.Refresh();
                     if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                     {
                         await App.EventAgg.PublishAsync(new StatusEvent($"Bereit: {this.RowCount} Einträge"));
