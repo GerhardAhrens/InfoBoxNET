@@ -16,11 +16,11 @@
 namespace InfoBoxNET.Model
 {
     using System;
+    using System.Data.SQLite;
     using System.Diagnostics;
 
+    using InfoBoxNET.Core;
     using InfoBoxNET.Core.Enums;
-
-    using System.Data.SQLite;
 
     [DebuggerDisplay("Title={this.Title};Username={this.Username};Symbol={this.Symbol};Background={this.Background}")]
     [DataTable("TAB_PasswordPin")]
@@ -44,12 +44,14 @@ namespace InfoBoxNET.Model
         [TableColumn(SQLiteDataType.Integer)]
         public int Version { get; set; }
 
+        [ExportAttribute]
         [TableColumn(SQLiteDataType.Integer)]
         public AccessTyp AccessTyp { get; set; }
 
         [TableColumn(SQLiteDataType.Text)]
         public string AccessSymbol { get; set; }
 
+        [ExportAttribute]
         [TableColumn(SQLiteDataType.VarChar)]
         public string Title { get; set; }
 
@@ -62,15 +64,19 @@ namespace InfoBoxNET.Model
         [TableColumn(SQLiteDataType.Boolean)]
         public bool ShowDescription { get; set; }
 
+        [ExportAttribute]
         [TableColumn(SQLiteDataType.VarChar)]
         public string Username { get; set; }
 
+        [ExportAttribute]
         [TableColumn(SQLiteDataType.VarChar)]
         public string Passwort { get; set; }
 
+        [ExportAttribute]
         [TableColumn(SQLiteDataType.VarChar,20)]
         public string Pin { get; set; }
-
+        
+        [ExportAttribute]
         [TableColumn(SQLiteDataType.VarChar,100)]
         public string Website { get; set; }
 
@@ -83,6 +89,7 @@ namespace InfoBoxNET.Model
         [TableColumn(SQLiteDataType.Guid)]
         public Guid CompanyId { get; set; }
 
+        [ExportAttribute]
         [TableColumn(SQLiteDataType.VarChar)]
         public string Company { get; set; }
 

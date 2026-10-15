@@ -16,11 +16,8 @@
 namespace InfoBoxNET.View
 {
     using System.ComponentModel;
-    using System.ComponentModel.DataAnnotations.Schema;
     using System.Data;
     using System.Data.SQLite;
-    using System.Reflection;
-    using System.Text.Json.Serialization;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
@@ -44,7 +41,7 @@ namespace InfoBoxNET.View
             this.CopyEntryCommand = new CommandBase(commandParam => this.OnCopyEntry(commandParam), () => true);
             this.DeleteEntryCommand = new CommandBase(commandParam => this.OnDeleteEntry(commandParam), () => true);
             this.ExportPasswordsCommand = new CommandBase(commandParam => this.OnExportPasswords(commandParam), () => true);
-            this.PrintDocumentCommand = new CommandBase(commandParam => this.OnPrintDocument(commandParam), () => true);
+            this.PrintPasswordsCommand = new CommandBase(commandParam => this.OnPrintPasswords(commandParam), () => true);
             this.ImpExportPasswordsCommand = new CommandBase(commandParam => this.OnImpExport(commandParam), () => true);
             this.DoubleClickEntryCommand = new CommandBase(commandParam => this.OnDoubleClickEntry(commandParam), () => true);
             this.SelectEntryCommand = new CommandBase(commandParam => this.OnSelectEntry(commandParam), () => true);
@@ -59,7 +56,7 @@ namespace InfoBoxNET.View
         public CommandBase CopyEntryCommand { get; private set; }
         public CommandBase DeleteEntryCommand { get; private set; }
         public CommandBase ExportPasswordsCommand { get; private set; }
-        public CommandBase PrintDocumentCommand { get; private set; }
+        public CommandBase PrintPasswordsCommand { get; private set; }
         public CommandBase ImpExportPasswordsCommand { get; private set; }
         public CommandBase DoubleClickEntryCommand { get; private set; }
         public CommandBase SelectEntryCommand { get; private set; }
@@ -85,6 +82,12 @@ namespace InfoBoxNET.View
         public ViewBase CustomView
         {
             get => base.GetValue<ViewBase>();
+            set => base.SetValue(value);
+        }
+
+        public bool IsLoadingOverlay
+        {
+            get => base.GetValue<bool>();
             set => base.SetValue(value);
         }
 
@@ -144,7 +147,7 @@ namespace InfoBoxNET.View
             }
         }
 
-        private void OnPrintDocument(object commandParam)
+        private void OnPrintPasswords(object commandParam)
         {
             if (commandParam is CommandButtons button && button == CommandButtons.PrintDocument)
             {
@@ -152,11 +155,32 @@ namespace InfoBoxNET.View
             }
         }
 
-        private void OnExportPasswords(object commandParam)
+        private async void OnExportPasswords(object commandParam)
         {
             if (commandParam is CommandButtons button && button == CommandButtons.ExportPasswords)
             {
+                var dialog = new SaveFileDialog
+                {
+                    Title = "PasswordPins exportieren",
+                    Filter = "Excel-Datei (*.xlsx)|*.xlsx",
+                    DefaultExt = ".xlsx",
+                    AddExtension = true,
+                    FileName = "PasswordPins.xlsx"
+                };
 
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    this.IsLoadingOverlay = true;
+
+                    // 2. Warten, bis der Dispatcher das UI-Layout und die Container im Hintergrund gerendert hat
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        ExcelExportService.Export<PasswordPin>(this.DialogDataView, dialog.FileName);
+
+                    }, System.Windows.Threading.DispatcherPriority.Background);
+
+                    this.IsLoadingOverlay = false;
+                }
             }
         }
 
@@ -293,100 +317,5 @@ namespace InfoBoxNET.View
             }
         }
 
-    }
-
-    // 1. Definition der benutzerdefinierten Steuerungs-Attribute
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ExportAttribute : Attribute { }
-
-    [AttributeUsage(AttributeTargets.Property)]
-    public class PrintAttribute : Attribute { }
-
-    public static class CollectionViewExtensions
-    {
-        /// <summary>
-        /// Konvertiert eine ICollectionView in eine DataTable unter Beibehaltung der Datentypen.
-        /// Unterstützt Filterung nach Export- und Print-Attributen sowie den Ausschluss ignorierter Properties.
-        /// </summary>
-        /// <param name="forExport">Wenn true, werden NUR Properties mit [Export] einbezogen.</param>
-        /// <param name="forPrint">Wenn true, werden NUR Properties mit [Print] einbezogen.</param>
-        public static DataTable ToDataTable<T>(this ICollectionView collectionView, bool forExport = false, bool forPrint = false)
-        {
-            DataTable dataTable = new DataTable();
-
-            if (collectionView == null)
-                return dataTable;
-
-            // Spaltenstruktur ermitteln
-            Type targetType = typeof(T);
-            if (targetType == typeof(object))
-            {
-                object firstItem = collectionView.Cast<object>().FirstOrDefault();
-                if (firstItem != null)
-                {
-                    targetType = firstItem.GetType();
-                }
-                else
-                {
-                    return dataTable;
-                }
-            }
-
-            // Alle öffentlichen Instanz-Properties abrufen
-            var allProperties = targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-            // Filter-Logik anwenden
-            var filteredProperties = allProperties.Where(prop =>
-            {
-                // Modus 1: Gezielter Export (White-Listing)
-                if (forExport && !prop.IsDefined(typeof(ExportAttribute), true))
-                    return false;
-
-                // Modus 2: Gezielter Druck (White-Listing)
-                if (forPrint && !prop.IsDefined(typeof(PrintAttribute), true))
-                    return false;
-
-                // Modus 3: Standard-Ausschluss (Black-Listing), falls kein White-Listing aktiv ist
-                if (!forExport && !forPrint)
-                {
-                    if (prop.IsDefined(typeof(NotMappedAttribute), true) ||
-                        prop.IsDefined(typeof(JsonIgnoreAttribute), true))
-                        return false;
-                }
-
-                return true;
-            }).ToArray();
-
-            // Spalten in der DataTable anlegen
-            foreach (PropertyInfo prop in filteredProperties)
-            {
-                Type columnType = prop.PropertyType;
-
-                if (columnType.IsGenericType && columnType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                {
-                    columnType = Nullable.GetUnderlyingType(columnType);
-                }
-
-                dataTable.Columns.Add(prop.Name, columnType);
-            }
-
-            // Daten zeilenweise befüllen
-            foreach (object item in collectionView)
-            {
-                if (item == null)
-                    continue;
-
-                DataRow row = dataTable.NewRow();
-                foreach (PropertyInfo prop in filteredProperties)
-                {
-                    object value = prop.GetValue(item, null);
-                    row[prop.Name] = value ?? DBNull.Value;
-                }
-
-                dataTable.Rows.Add(row);
-            }
-
-            return dataTable;
-        }
     }
 }
