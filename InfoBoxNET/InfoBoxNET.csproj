@@ -28,6 +28,9 @@
 
   <ItemGroup>
     <Folder Include="Core\Enums\" />
+    <Folder Include="Data\FixedDocument\Extension\" />
+    <Folder Include="Data\FixedDocument\ReportControls\" />
+    <Folder Include="Data\FixedDocument\ReportBase\" />
     <Folder Include="Data\Model\" />
     <Folder Include="TemplateCore\ArgumentGuard\" />
     <Folder Include="TemplateCore\Controls\ChooseBox\Themes\" />
