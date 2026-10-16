@@ -19,8 +19,8 @@ namespace InfoBoxNET.Model
     using System.Data.SQLite;
     using System.Diagnostics;
 
-    using InfoBoxNET.Core;
     using InfoBoxNET.Core.Enums;
+    using InfoBoxNET.Data;
 
     [DebuggerDisplay("Title={this.Title};Username={this.Username};Symbol={this.Symbol};Background={this.Background}")]
     [DataTable("TAB_PasswordPin")]

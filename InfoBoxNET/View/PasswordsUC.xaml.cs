@@ -23,6 +23,7 @@ namespace InfoBoxNET.View
     using System.Windows.Data;
 
     using InfoBoxNET.Core;
+    using InfoBoxNET.Data;
     using InfoBoxNET.Model;
 
     /// <summary>

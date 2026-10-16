@@ -13,8 +13,9 @@
 // </summary>
 //-----------------------------------------------------------------------
 
-namespace InfoBoxNET.Core
+namespace InfoBoxNET.Data
 {
+    // 1. Definition der benutzerdefinierten Steuerungs-Attribute
     [AttributeUsage(AttributeTargets.Property)]
-    public class PrintAttribute : Attribute { }
+    public class ExportAttribute : Attribute { }
 }

@@ -21,6 +21,8 @@ namespace InfoBoxNET.Core
     using System.Reflection;
     using System.Text.Json.Serialization;
 
+    using InfoBoxNET.Data;
+
     public static class CollectionViewExtensions
     {
         /// <summary>

@@ -1,4 +1,4 @@
-﻿namespace InfoBoxNET.Core
+﻿namespace InfoBoxNET.Data
 {
     using System;
     using System.ComponentModel;
