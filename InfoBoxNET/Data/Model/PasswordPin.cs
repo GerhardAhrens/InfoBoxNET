@@ -44,6 +44,7 @@ namespace InfoBoxNET.Model
         [TableColumn(SQLiteDataType.Integer)]
         public int Version { get; set; }
 
+        [PrintAttribute]
         [ExportAttribute]
         [TableColumn(SQLiteDataType.Integer)]
         public AccessTyp AccessTyp { get; set; }
@@ -51,6 +52,7 @@ namespace InfoBoxNET.Model
         [TableColumn(SQLiteDataType.Text)]
         public string AccessSymbol { get; set; }
 
+        [PrintAttribute]
         [ExportAttribute]
         [TableColumn(SQLiteDataType.VarChar)]
         public string Title { get; set; }
@@ -64,6 +66,7 @@ namespace InfoBoxNET.Model
         [TableColumn(SQLiteDataType.Boolean)]
         public bool ShowDescription { get; set; }
 
+        [PrintAttribute]
         [ExportAttribute]
         [TableColumn(SQLiteDataType.VarChar)]
         public string Username { get; set; }
@@ -72,10 +75,12 @@ namespace InfoBoxNET.Model
         [TableColumn(SQLiteDataType.VarChar)]
         public string Passwort { get; set; }
 
+        [PrintAttribute]
         [ExportAttribute]
         [TableColumn(SQLiteDataType.VarChar,20)]
         public string Pin { get; set; }
-        
+
+        [PrintAttribute]
         [ExportAttribute]
         [TableColumn(SQLiteDataType.VarChar,100)]
         public string Website { get; set; }
@@ -89,6 +94,7 @@ namespace InfoBoxNET.Model
         [TableColumn(SQLiteDataType.Guid)]
         public Guid CompanyId { get; set; }
 
+        [PrintAttribute]
         [ExportAttribute]
         [TableColumn(SQLiteDataType.VarChar)]
         public string Company { get; set; }

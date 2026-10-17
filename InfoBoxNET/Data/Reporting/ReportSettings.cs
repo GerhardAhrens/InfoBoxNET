@@ -3,7 +3,7 @@
     using System;
     using System.Globalization;
     using System.Windows;
-
+    using System.Windows.Media;
     public enum ReportOrientation
     {
         Portrait,
@@ -50,10 +50,10 @@
         public double TitleFontSize { get; set; } = 18;
 
         // Parameter: aktuelle Seite, Gesamtseitenzahl.
-        // Pro Seite muss eine neue UIElement-Instanz erzeugt werden.
-        public Func<int, int, UIElement> HeaderFactory { get; set; }
+        // Pro Seite muss eine neue FrameworkElement-Instanz erzeugt werden.
+        public Func<int, int, FrameworkElement> HeaderFactory { get; set; }
 
-        public Func<int, int, UIElement> FooterFactory { get; set; }
+        public Func<int, int, FrameworkElement> FooterFactory { get; set; }
 
         public Size EffectivePaperSize
         {

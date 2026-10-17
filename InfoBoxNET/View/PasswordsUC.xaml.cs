@@ -152,7 +152,16 @@ namespace InfoBoxNET.View
         {
             if (commandParam is CommandButtons button && button == CommandButtons.PrintDocument)
             {
+                var settings = new ReportSettings
+                {
+                    Title = "Password-PIN-Übersicht",
+                    Orientation = ReportOrientation.Landscape,
+                    PrintJobName = "Password-PIN-Übersicht"
+                };
 
+                var document = GenericReportBuilder.Build<PasswordPin>(this.DialogDataView, settings);
+
+                ReportPrintService.Print(document, settings.PrintJobName);
             }
         }
 
