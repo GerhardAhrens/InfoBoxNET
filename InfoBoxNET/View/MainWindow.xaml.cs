@@ -175,7 +175,17 @@
                     {
                         this.OnQuit();
                     }
-                    else if (button.In(CommandButtons.Home, CommandButtons.Passwords, CommandButtons.CatPasswordGroup))
+                    else if (button.In(CommandButtons.Passwords, CommandButtons.ImportExportPasswords, CommandButtons.PrintDocument))
+                    {
+                        if (App.EventAgg.IsSubscription<WindowsTitelEvent>() == true)
+                        {
+                            await App.EventAgg.PublishAsync(new WindowsTitelEvent(button.ToDescription()));
+                        }
+
+                        this.WorkContent = null;
+                        this.WorkContent = (UserControl)Factory.Get<UserControlBase, CommandButtons>((CommandButtons)commandParam.MenuButton, commandParam);
+                    }
+                    else if (button.In(CommandButtons.CatPasswordGroup))
                     {
                         if (App.EventAgg.IsSubscription<WindowsTitelEvent>() == true)
                         {
@@ -186,17 +196,6 @@
                         this.WorkContent = (UserControl)Factory.Get<UserControlBase, CommandButtons>((CommandButtons)commandParam.MenuButton, commandParam);
                     }
                     else if (button.In(CommandButtons.Home, CommandButtons.GoBack))
-                    {
-
-                        if (App.EventAgg.IsSubscription<WindowsTitelEvent>() == true)
-                        {
-                            await App.EventAgg.PublishAsync(new WindowsTitelEvent(button.ToDescription()));
-                        }
-
-                        this.WorkContent = null;
-                        this.WorkContent = (UserControl)Factory.Get<UserControlBase, CommandButtons>((CommandButtons)commandParam.MenuButton, commandParam);
-                    }
-                    else if (button.In(CommandButtons.Home, CommandButtons.ImportExportPasswords))
                     {
 
                         if (App.EventAgg.IsSubscription<WindowsTitelEvent>() == true)
@@ -229,6 +228,7 @@
             Factory.RegisterTransient<CommandButtons>(CommandButtons.Passwords, (param) => new PasswordsUC((ChangeViewEventArgs)param!));
             Factory.RegisterTransient<CommandButtons>(CommandButtons.ImportExportPasswords, (param) => new ImpExportPasswordsUC((ChangeViewEventArgs)param!));
             Factory.RegisterTransient<CommandButtons>(CommandButtons.CatPasswordGroup, (param) => new PasswordGroupUC((ChangeViewEventArgs)param!));
+            Factory.RegisterTransient<CommandButtons>(CommandButtons.PrintDocument, (param) => new ReportingViewUC((ChangeViewEventArgs)param!));
         }
     }
 }

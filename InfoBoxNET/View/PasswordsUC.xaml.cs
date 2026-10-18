@@ -46,6 +46,7 @@ namespace InfoBoxNET.View
             this.ImpExportPasswordsCommand = new CommandBase(commandParam => this.OnImpExport(commandParam), () => true);
             this.DoubleClickEntryCommand = new CommandBase(commandParam => this.OnDoubleClickEntry(commandParam), () => true);
             this.SelectEntryCommand = new CommandBase(commandParam => this.OnSelectEntry(commandParam), () => true);
+
             this.CurrentCtorArgs = args;
 
             this.DataContext = this;
@@ -148,10 +149,19 @@ namespace InfoBoxNET.View
             }
         }
 
-        private void OnPrintPasswords(object commandParam)
+        private async void OnPrintPasswords(object commandParam)
         {
             if (commandParam is CommandButtons button && button == CommandButtons.PrintDocument)
             {
+                ChangeViewEventArgs args = new();
+                args.MenuButton = CommandButtons.PrintDocument;
+                args.FromPage = this.CurrentCtorArgs.MenuButton;
+                if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
+                {
+                    await App.EventAgg.PublishAsync(args);
+                }
+
+                /*
                 var settings = new ReportSettings
                 {
                     Title = "Password-PIN-Übersicht",
@@ -162,6 +172,7 @@ namespace InfoBoxNET.View
                 var document = GenericReportBuilder.Build<PasswordPin>(this.DialogDataView, settings);
 
                 ReportPrintService.Print(document, settings.PrintJobName);
+                */
             }
         }
 
@@ -196,7 +207,7 @@ namespace InfoBoxNET.View
 
         private async void OnImpExport(object commandParam)
         {
-            if (commandParam is CommandButtons button && button == CommandButtons.ExportPasswords)
+            if (commandParam is CommandButtons button && button == CommandButtons.ImportExportPasswords)
             {
                 ChangeViewEventArgs args = new();
                 args.MenuButton = CommandButtons.ImportExportPasswords;

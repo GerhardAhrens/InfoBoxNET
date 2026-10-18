@@ -15,6 +15,8 @@
 
 namespace InfoBoxNET.Core
 {
+    using System.ComponentModel;
+
     public partial class ChangeViewEventArgs : System.EventArgs
     {
         /// <summary>
@@ -41,5 +43,7 @@ namespace InfoBoxNET.Core
         /// ID des Entity Objektes
         /// </summary>
         public Guid EntityId { get; set; }
+
+        public ICollectionView DataSource { get; set; }
     }
 }
