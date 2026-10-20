@@ -90,6 +90,18 @@
 
         #endregion
 
+        #region MaxDropDownHeight
+        public static readonly DependencyProperty MaxDropDownHeightProperty =
+            DependencyProperty.Register(nameof(MaxDropDownHeight), typeof(double), typeof(SplitButton), new FrameworkPropertyMetadata(300.0));
+
+        public double MaxDropDownHeight
+        {
+            get => (double)GetValue(MaxDropDownHeightProperty);
+            set => SetValue(MaxDropDownHeightProperty, value);
+        }
+
+        #endregion MaxDropDownHeight
+
         #region Click
 
         public static readonly RoutedEvent ClickEvent =

@@ -15,14 +15,20 @@
 
 namespace InfoBoxNET.View
 {
+    using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Data;
     using System.Data.SQLite;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
+    using System.Windows.Markup;
+    using System.Windows.Media;
+
+    using DocumentFormat.OpenXml.Spreadsheet;
 
     using InfoBoxNET.Core;
+    using InfoBoxNET.Core.Enums;
     using InfoBoxNET.Data;
     using InfoBoxNET.Model;
 
@@ -46,6 +52,7 @@ namespace InfoBoxNET.View
             this.ImpExportPasswordsCommand = new CommandBase(commandParam => this.OnImpExport(commandParam), () => true);
             this.DoubleClickEntryCommand = new CommandBase(commandParam => this.OnDoubleClickEntry(commandParam), () => true);
             this.SelectEntryCommand = new CommandBase(commandParam => this.OnSelectEntry(commandParam), () => true);
+            this.FilterButtonCommand = new CommandBase(commandParam => this.OnFilterButtonClicked(commandParam), () => true);
 
             this.CurrentCtorArgs = args;
 
@@ -62,6 +69,7 @@ namespace InfoBoxNET.View
         public CommandBase ImpExportPasswordsCommand { get; private set; }
         public CommandBase DoubleClickEntryCommand { get; private set; }
         public CommandBase SelectEntryCommand { get; private set; }
+        public CommandBase FilterButtonCommand { get; private set; }
 
         public ICollectionView DialogDataView
         {
@@ -81,6 +89,12 @@ namespace InfoBoxNET.View
             set => base.SetValue(value,this.RefreschDataSource);
         }
 
+        public AccessTyp AccessTypStateSearch
+        {
+            get => base.GetValue<AccessTyp>();
+            set => base.SetValue(value, this.RefreschType);
+        }
+
         public ViewBase CustomView
         {
             get => base.GetValue<ViewBase>();
@@ -92,6 +106,14 @@ namespace InfoBoxNET.View
             get => base.GetValue<bool>();
             set => base.SetValue(value);
         }
+
+        public IEnumerable<Region> RegionSource
+        {
+            get => base.GetValue<IEnumerable<Region>>();
+            set => base.SetValue(value);
+        }
+
+        public ObservableCollection<object> ButtonItem { get; } = new();
 
         private int RowCount { get; set; }
         private int RowFilterCount { get; set; }
@@ -235,18 +257,65 @@ namespace InfoBoxNET.View
             }
         }
 
+        private void OnFilterButtonClicked(object commandParam)
+        {
+            if (commandParam != null && commandParam is string filterParam)
+            {
+                if (filterParam.StartsWith("FILTER_"))
+                {
+                    string filterValue = filterParam.Substring("FILTER_".Length);
+                    if (filterValue == "1")
+                    {
+                        this.AccessTypStateSearch = AccessTyp.Website;
+                    }
+                    else if (filterValue == "2")
+                    {
+                        this.AccessTypStateSearch = AccessTyp.Passwort;
+                    }
+                    else if (filterValue == "3")
+                    {
+                        this.AccessTypStateSearch = AccessTyp.Pin;
+                    }
+                    else if (filterValue == "4")
+                    {
+                        this.AccessTypStateSearch = AccessTyp.License;
+                    }
+                }
+            }
+        }
+
         #endregion Command Events
 
         private async void LoadDataHandler()
         {
             try
             {
+                DrawingImage iconWeb = this.CreateDrawingImageFromString("W");
+                DrawingImage iconPasswort = this.CreateDrawingImageFromString("PA");
+                DrawingImage iconPin = this.CreateDrawingImageFromString("PI");
+                DrawingImage iconLizenz = this.CreateDrawingImageFromString("L");
+
+                this.ButtonItem.Add(new SplitButtonItem { Content = "Web",  Icon = iconWeb, Command = this.FilterButtonCommand, CommandParameter = "FILTER_1" });
+                this.ButtonItem.Add(new SplitButtonItem { Content = "Passwort", Icon = iconPasswort, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_2" });
+                this.ButtonItem.Add(new SplitButtonItem { Content = "Pin", Icon = iconPin, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_3" });
+                this.ButtonItem.Add(new SplitButtonItem { Content = "Lizenz", Icon = iconLizenz, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_4" });
+                this.ButtonItem.Add(new SplitButtonSeparator());
+
                 using (DatabaseService ds = new DatabaseService(App.DatabasePath))
                 {
                     ds.OpenConnection();
                     if (ds.Connection == null)
                     {
                         return;
+                    }
+
+                    this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
+                    if (this.RegionSource != null && this.RegionSource.Any() == true)
+                    {
+                        foreach (Region region in this.RegionSource)
+                        {
+                            this.ButtonItem.Add(new SplitButtonItem { Content = region.Name, Icon = iconWeb, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_{region.Name}" });
+                        }
                     }
 
                     string sql = ds.SelectRows<PasswordPin>(whereClause: "Version = 0");
@@ -283,6 +352,55 @@ namespace InfoBoxNET.View
             if (rowItem == null)
             {
                 return false;
+            }
+
+            if (this.AccessTypStateSearch == AccessTyp.Website)
+            {
+                if (rowItem.AccessTyp == AccessTyp.Website)
+                {
+                    return true;
+                }
+                else
+                {
+                    found = false;
+                }
+            }
+            else if (this.AccessTypStateSearch == AccessTyp.All)
+            {
+                found = true;
+            }
+            else if (this.AccessTypStateSearch == AccessTyp.Pin)
+            {
+                if (rowItem.AccessTyp == AccessTyp.Pin)
+                {
+                    return true;
+                }
+                else
+                {
+                    found = false;
+                }
+            }
+            else if (this.AccessTypStateSearch == AccessTyp.Passwort)
+            {
+                if (rowItem.AccessTyp == AccessTyp.Passwort)
+                {
+                    return true;
+                }
+                else
+                {
+                    found = false;
+                }
+            }
+            else if (this.AccessTypStateSearch == AccessTyp.License)
+            {
+                if (rowItem.AccessTyp == AccessTyp.License)
+                {
+                    return true;
+                }
+                else
+                {
+                    found = false;
+                }
             }
 
             string textFilterString = (this.FilterDefaultSearch ?? string.Empty).ToUpper();
@@ -339,5 +457,92 @@ namespace InfoBoxNET.View
             }
         }
 
+        private async void RefreschType(AccessTyp typ, string arg2)
+        {
+            if (arg2 == nameof(this.AccessTypStateSearch))
+            {
+                if (AccessTypStateSearch != AccessTyp.All)
+                {
+                    this.DialogDataView?.Refresh();
+                    this.RowFilterCount = this.DialogDataView?.Cast<PasswordPin>().Count() ?? 0;
+
+                    if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                    {
+                        await App.EventAgg.PublishAsync(new StatusEvent($"Bereit: {this.RowCount} Einträge / {this.RowFilterCount} gefiltert"));
+                    }
+                }
+                else
+                {
+                    this.DialogDataView?.Refresh();
+                    if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                    {
+                        await App.EventAgg.PublishAsync(new StatusEvent($"Bereit: {this.RowCount} Einträge"));
+                    }
+                }
+            }
+        }
+
+        public DrawingImage CreateDrawingImageFromString(string typ)
+        {
+            return (DrawingImage)XamlReader.Parse(GetIconText(typ));
+        }
+
+        private string GetIconText(string typ)
+        {
+            string iconText = string.Empty;
+
+            if (typ == "W")
+            {
+                iconText = @"
+                <DrawingImage
+                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
+                    <DrawingImage.Drawing>
+                        <GeometryDrawing Brush = ""Green"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
+                    </DrawingImage.Drawing>
+                </DrawingImage>";
+            }
+            else if (typ == "PI")
+            {
+                iconText = @"
+                <DrawingImage
+                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
+                    <DrawingImage.Drawing>
+                        <GeometryDrawing Brush = ""Blue"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
+                    </DrawingImage.Drawing>
+                </DrawingImage>";
+            }
+            else if (typ == "PA")
+            {
+                iconText = @"
+                <DrawingImage
+                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
+                    <DrawingImage.Drawing>
+                        <GeometryDrawing Brush = ""Magenta"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
+                    </DrawingImage.Drawing>
+                </DrawingImage>";
+            }
+            else if (typ == "L")
+            {
+                iconText = @"
+                <DrawingImage
+                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
+                    <DrawingImage.Drawing>
+                        <GeometryDrawing Brush = ""Yellow"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
+                    </DrawingImage.Drawing>
+                </DrawingImage>";
+            }
+            else 
+            {
+                iconText = @"
+                <DrawingImage
+                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
+                    <DrawingImage.Drawing>
+                        <GeometryDrawing Brush = ""Black"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
+                    </DrawingImage.Drawing>
+                </DrawingImage>";
+            }
+
+            return iconText;
+        }
     }
 }
