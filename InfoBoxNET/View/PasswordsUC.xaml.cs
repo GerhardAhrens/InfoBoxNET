@@ -89,12 +89,6 @@ namespace InfoBoxNET.View
             set => base.SetValue(value,this.RefreschDataSource);
         }
 
-        public AccessTyp AccessTypStateSearch
-        {
-            get => base.GetValue<AccessTyp>();
-            set => base.SetValue(value, this.RefreschType);
-        }
-
         public ViewBase CustomView
         {
             get => base.GetValue<ViewBase>();
@@ -257,28 +251,57 @@ namespace InfoBoxNET.View
             }
         }
 
-        private void OnFilterButtonClicked(object commandParam)
+        private async void OnFilterButtonClicked(object commandParam)
         {
             if (commandParam != null && commandParam is string filterParam)
             {
                 if (filterParam.StartsWith("FILTER_"))
                 {
+                    AccessTyp selectTyp = AccessTyp.None;
                     string filterValue = filterParam.Substring("FILTER_".Length);
                     if (filterValue == "1")
                     {
-                        this.AccessTypStateSearch = AccessTyp.Website;
+                        selectTyp = AccessTyp.Website;
                     }
                     else if (filterValue == "2")
                     {
-                        this.AccessTypStateSearch = AccessTyp.Passwort;
+                        selectTyp = AccessTyp.Passwort;
                     }
                     else if (filterValue == "3")
                     {
-                        this.AccessTypStateSearch = AccessTyp.Pin;
+                        selectTyp = AccessTyp.Pin;
                     }
                     else if (filterValue == "4")
                     {
-                        this.AccessTypStateSearch = AccessTyp.License;
+                        selectTyp = AccessTyp.License;
+                    }
+
+                    using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                    {
+                        ds.OpenConnection();
+                        if (ds.Connection == null)
+                        {
+                            return;
+                        }
+
+                        string sql = ds.SelectRows<PasswordPin>(whereClause: $"Version = 0 AND AccessTyp = {(int)selectTyp}");
+                        List<PasswordPin> dataSource = ds.Connection.RecordSet<List<PasswordPin>>(sql).Get().Result;
+                        this.DialogDataView = CollectionViewSource.GetDefaultView(dataSource);
+                        if (this.DialogDataView != null)
+                        {
+                            this.DialogDataView.Filter = rowItem => this.DataDefaultFilter(rowItem as PasswordPin);
+                            this.DialogDataView.SortDescriptions.Add(new SortDescription("AccessTyp", ListSortDirection.Ascending));
+                            this.DialogDataView.SortDescriptions.Add(new SortDescription("Title", ListSortDirection.Ascending));
+                            this.DialogDataView.MoveCurrentToFirst();
+                            var item = this.DialogDataView.CurrentItem;
+                        }
+
+                        this.RowCount = this.DialogDataView?.Cast<PasswordPin>().Count() ?? 0;
+                    }
+
+                    if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                    {
+                        await App.EventAgg.PublishAsync(new StatusEvent($"Bereit: {this.RowCount} Einträge"));
                     }
                 }
             }
@@ -354,55 +377,6 @@ namespace InfoBoxNET.View
                 return false;
             }
 
-            if (this.AccessTypStateSearch == AccessTyp.Website)
-            {
-                if (rowItem.AccessTyp == AccessTyp.Website)
-                {
-                    return true;
-                }
-                else
-                {
-                    found = false;
-                }
-            }
-            else if (this.AccessTypStateSearch == AccessTyp.All)
-            {
-                found = true;
-            }
-            else if (this.AccessTypStateSearch == AccessTyp.Pin)
-            {
-                if (rowItem.AccessTyp == AccessTyp.Pin)
-                {
-                    return true;
-                }
-                else
-                {
-                    found = false;
-                }
-            }
-            else if (this.AccessTypStateSearch == AccessTyp.Passwort)
-            {
-                if (rowItem.AccessTyp == AccessTyp.Passwort)
-                {
-                    return true;
-                }
-                else
-                {
-                    found = false;
-                }
-            }
-            else if (this.AccessTypStateSearch == AccessTyp.License)
-            {
-                if (rowItem.AccessTyp == AccessTyp.License)
-                {
-                    return true;
-                }
-                else
-                {
-                    found = false;
-                }
-            }
-
             string textFilterString = (this.FilterDefaultSearch ?? string.Empty).ToUpper();
             if (string.IsNullOrEmpty(textFilterString) == false)
             {
@@ -437,31 +411,6 @@ namespace InfoBoxNET.View
             if (arg2 == nameof(this.FilterDefaultSearch))
             {
                 if (string.IsNullOrEmpty(this.FilterDefaultSearch) == false)
-                {
-                    this.DialogDataView?.Refresh();
-                    this.RowFilterCount = this.DialogDataView?.Cast<PasswordPin>().Count() ?? 0;
-
-                    if (App.EventAgg.IsSubscription<StatusEvent>() == true)
-                    {
-                        await App.EventAgg.PublishAsync(new StatusEvent($"Bereit: {this.RowCount} Einträge / {this.RowFilterCount} gefiltert"));
-                    }
-                }
-                else
-                {
-                    this.DialogDataView?.Refresh();
-                    if (App.EventAgg.IsSubscription<StatusEvent>() == true)
-                    {
-                        await App.EventAgg.PublishAsync(new StatusEvent($"Bereit: {this.RowCount} Einträge"));
-                    }
-                }
-            }
-        }
-
-        private async void RefreschType(AccessTyp typ, string arg2)
-        {
-            if (arg2 == nameof(this.AccessTypStateSearch))
-            {
-                if (AccessTypStateSearch != AccessTyp.All)
                 {
                     this.DialogDataView?.Refresh();
                     this.RowFilterCount = this.DialogDataView?.Cast<PasswordPin>().Count() ?? 0;
