@@ -21,7 +21,7 @@
         <UI:MenuBar
             Grid.Row="0"
             Grid.ColumnSpan="2"
-            ButtonSpacing="5"
+            ButtonSpacing="2"
             Header="Reporting View"
             ItemPadding="8,2"
             ShowBorder="True">
@@ -31,6 +31,25 @@
                 CommandParameter="{x:Static core:CommandButtons.GoBack}"
                 Image="{StaticResource ResourceKey=IconGoBack}"
                 ToolTipText="Zurück" />
+
+            <UI:MenuBarSeparator />
+
+            <UI:MenuButton
+                UI:MenuBar.Dock="Left"
+                Command="{Binding Path=GoBackCommand}"
+                CommandParameter="{x:Static core:CommandButtons.GoBack}"
+                Image="{StaticResource ResourceKey=IconGoBack}"
+                ToolTipText="Zurück" />
+
+            <UI:ZoomControl
+                Margin="4,0,2,0"
+                UI:MenuBar.Dock="Left"
+                Background="#FFF3F3F3"
+                Foreground="#FF202020"
+                MaxValue="200"
+                MinValue="25"
+                Step="25"
+                Value="{Binding ZoomValue, Mode=TwoWay}" />
         </UI:MenuBar>
 
         <!--#endregion Menü  Reporting View-->

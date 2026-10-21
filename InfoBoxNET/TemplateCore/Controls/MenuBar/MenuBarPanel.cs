@@ -26,7 +26,7 @@ namespace System.Windows.Controls
 
             MenuBar menuBar = ItemsControl.GetItemsOwner(this) as MenuBar;
 
-            double spacing = menuBar?.ButtonSpacing ?? 4;
+            double spacing = menuBar?.ButtonSpacing ?? 2;
             double minWidth = menuBar?.ItemMinWidth ?? 0;
 
             bool firstLeft = true;
@@ -104,7 +104,7 @@ namespace System.Windows.Controls
 
                 Thickness margin = element.Margin;
 
-                double width = Math.Max(minWidth, element.DesiredSize.Width);
+                double width = element is MenuBarSeparator ? element.DesiredSize.Width : Math.Max(minWidth, element.DesiredSize.Width);
 
                 if (first == false)
                 {
@@ -115,9 +115,18 @@ namespace System.Windows.Controls
 
                 left += margin.Left;
 
-                double y = (finalSize.Height - element.DesiredSize.Height) / 2;
+                if (element is MenuBarSeparator)
+                {
+                    double separatorHeight = Math.Max(0, finalSize.Height - margin.Top - margin.Bottom);
 
-                element.Arrange(new Rect(left, y, width, element.DesiredSize.Height));
+                    element.Arrange(new Rect(left, margin.Top, width, separatorHeight));
+                }
+                else
+                {
+                    double y = (finalSize.Height - element.DesiredSize.Height) / 2;
+
+                    element.Arrange(new Rect(left, y, width, element.DesiredSize.Height));
+                }
 
                 left += width + margin.Right;
             }
@@ -142,7 +151,7 @@ namespace System.Windows.Controls
 
                 Thickness margin = element.Margin;
 
-                double width = Math.Max(minWidth, element.DesiredSize.Width);
+                double width = element is MenuBarSeparator ? element.DesiredSize.Width : Math.Max(minWidth, element.DesiredSize.Width);
 
                 if (first == false)
                 {
@@ -154,9 +163,18 @@ namespace System.Windows.Controls
                 right -= margin.Right;
                 right -= width;
 
-                double y = (finalSize.Height - element.DesiredSize.Height) / 2;
+                if (element is MenuBarSeparator)
+                {
+                    double separatorHeight = Math.Max(0, finalSize.Height - margin.Top - margin.Bottom);
 
-                element.Arrange(new Rect(right, y, width, element.DesiredSize.Height));
+                    element.Arrange(new Rect(right, margin.Top, width, separatorHeight));
+                }
+                else
+                {
+                    double y = (finalSize.Height - element.DesiredSize.Height) / 2;
+
+                    element.Arrange(new Rect(right, y, width, element.DesiredSize.Height));
+                }
 
                 right -= margin.Left;
             }
@@ -171,30 +189,27 @@ namespace System.Windows.Controls
                 return;
             }
 
-            //--------------------------------------------------
-            // MinWidth
-            //--------------------------------------------------
+            // Separator nicht wie einen Menübutton behandeln
+            if (element is MenuBarSeparator)
+            {
+                return;
+            }
 
+            // MinWidth
             if (double.IsNaN(element.MinWidth) ||
                 element.MinWidth == 0)
             {
                 element.MinWidth = menuBar.ItemMinWidth;
             }
 
-            //--------------------------------------------------
             // Padding (nur Controls)
-            //--------------------------------------------------
-
             if (element is Control control)
             {
                 if (control.Padding == default)
                     control.Padding = menuBar.ItemPadding;
             }
 
-            //--------------------------------------------------
             // Vertikal zentrieren
-            //--------------------------------------------------
-
             if (element.VerticalAlignment == VerticalAlignment.Stretch)
             {
                 element.VerticalAlignment = VerticalAlignment.Center;

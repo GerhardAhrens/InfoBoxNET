@@ -98,7 +98,7 @@ namespace System.Windows.Controls
                 typeof(double),
                 typeof(MenuBar),
                 new FrameworkPropertyMetadata(
-                    4.0,
+                    2.0,
                     FrameworkPropertyMetadataOptions.AffectsMeasure |
                     FrameworkPropertyMetadataOptions.AffectsArrange));
 
