@@ -25,8 +25,6 @@ namespace InfoBoxNET.View
     using System.Windows.Markup;
     using System.Windows.Media;
 
-    using DocumentFormat.OpenXml.Spreadsheet;
-
     using InfoBoxNET.Core;
     using InfoBoxNET.Core.Enums;
     using InfoBoxNET.Data;
@@ -253,29 +251,49 @@ namespace InfoBoxNET.View
 
         private async void OnFilterButtonClicked(object commandParam)
         {
+            string filterValue = string.Empty;
+            AccessTyp selectTyp = AccessTyp.None;
+            bool isTagFilter = false;
+
             if (commandParam != null && commandParam is string filterParam)
             {
                 if (filterParam.StartsWith("FILTER_"))
                 {
-                    AccessTyp selectTyp = AccessTyp.None;
-                    string filterValue = filterParam.Substring("FILTER_".Length);
-                    if (filterValue == "1")
+                    filterValue = filterParam.Substring("FILTER_".Length);
+                    if (filterValue == "0")
                     {
+                        isTagFilter = false;
+                        selectTyp = AccessTyp.All;
+                    }
+                    else if (filterValue == "1")
+                    {
+                        isTagFilter = false;
                         selectTyp = AccessTyp.Website;
                     }
                     else if (filterValue == "2")
                     {
+                        isTagFilter = false;
                         selectTyp = AccessTyp.Passwort;
                     }
                     else if (filterValue == "3")
                     {
+                        isTagFilter = false;
                         selectTyp = AccessTyp.Pin;
                     }
                     else if (filterValue == "4")
                     {
+                        isTagFilter = false;
                         selectTyp = AccessTyp.License;
                     }
+                }
+                else if (filterParam.StartsWith("TAG_"))
+                {
+                    isTagFilter = true;
+                    filterValue = filterParam.Substring("TAG_".Length);
+                }
 
+                if (string.IsNullOrEmpty(filterValue) == false)
+                {
                     using (DatabaseService ds = new DatabaseService(App.DatabasePath))
                     {
                         ds.OpenConnection();
@@ -284,7 +302,24 @@ namespace InfoBoxNET.View
                             return;
                         }
 
-                        string sql = ds.SelectRows<PasswordPin>(whereClause: $"Version = 0 AND AccessTyp = {(int)selectTyp}");
+                        string sql = string.Empty;
+
+                        if (isTagFilter == false)
+                        {
+                            if (selectTyp.In(AccessTyp.All) == true)
+                            {
+                                sql = ds.SelectRows<PasswordPin>(whereClause: $"Version = 0");
+                            }
+                            else
+                            {
+                                sql = ds.SelectRows<PasswordPin>(whereClause: $"Version = 0 AND AccessTyp = {(int)selectTyp}");
+                            }
+                        }
+                        else
+                        {
+                            sql = ds.SelectRows<PasswordPin>(whereClause: $"Version = 0 AND Region = '{filterValue}'");
+                        }
+
                         List<PasswordPin> dataSource = ds.Connection.RecordSet<List<PasswordPin>>(sql).Get().Result;
                         this.DialogDataView = CollectionViewSource.GetDefaultView(dataSource);
                         if (this.DialogDataView != null)
@@ -337,7 +372,7 @@ namespace InfoBoxNET.View
                     {
                         foreach (Region region in this.RegionSource)
                         {
-                            this.ButtonItem.Add(new SplitButtonItem { Content = region.Name, Icon = iconWeb, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_{region.Name}" });
+                            this.ButtonItem.Add(new SplitButtonItem { Content = region.Name, Icon = iconWeb, Command = this.FilterButtonCommand, CommandParameter = $"TAG_{region.Name.Replace(" ", "_")}" });
                         }
                     }
 
