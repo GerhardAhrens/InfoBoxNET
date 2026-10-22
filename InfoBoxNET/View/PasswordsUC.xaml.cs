@@ -170,23 +170,11 @@ namespace InfoBoxNET.View
                 ChangeViewEventArgs args = new();
                 args.MenuButton = CommandButtons.PrintDocument;
                 args.FromPage = this.CurrentCtorArgs.MenuButton;
+                args.DataSource = this.DialogDataView;
                 if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
                 {
                     await App.EventAgg.PublishAsync(args);
                 }
-
-                /*
-                var settings = new ReportSettings
-                {
-                    Title = "Password-PIN-Übersicht",
-                    Orientation = ReportOrientation.Landscape,
-                    PrintJobName = "Password-PIN-Übersicht"
-                };
-
-                var document = GenericReportBuilder.Build<PasswordPin>(this.DialogDataView, settings);
-
-                ReportPrintService.Print(document, settings.PrintJobName);
-                */
             }
         }
 

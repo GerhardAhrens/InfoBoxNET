@@ -3,6 +3,7 @@
     using System.Windows.Controls;
     using System.Windows.Documents;
 
+    using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
     public static class ReportPrintService
     {

@@ -17,8 +17,14 @@ namespace InfoBoxNET.View
 {
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Documents;
+
+    using DocumentFormat.OpenXml.Drawing.Charts;
+    using DocumentFormat.OpenXml.Wordprocessing;
 
     using InfoBoxNET.Core;
+    using InfoBoxNET.Data;
+    using InfoBoxNET.Model;
 
     /// <summary>
     /// Interaktionslogik für ReportingViewUC.xaml
@@ -32,15 +38,32 @@ namespace InfoBoxNET.View
             WeakEventManager<UserControl, RoutedEventArgs>.AddHandler(this, "Loaded", this.OnLoaded);
 
             this.GoBackCommand = new CommandBase(commandParam => this.OnGoBack(commandParam), () => true);
+            this.PrintCommand = new CommandBase(commandParam => this.OnPrint(commandParam), () => true);
 
             this.CurrentCtorArgs = args;
+
+            this.ZoomValue = 100;
 
             this.DataContext = this;
         }
 
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
-        
+        public CommandBase PrintCommand { get; private set; }
+
+        public FixedDocument Document
+        {
+            get => base.GetValue<FixedDocument>();
+            set => base.SetValue(value);
+        }
+
+        public double ZoomValue
+        {
+            get => base.GetValue<double>();
+            set => base.SetValue(value);
+        }
+
+        private ReportSettings ReportSetting { get; set; }
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
         #endregion Properties
 
@@ -48,6 +71,41 @@ namespace InfoBoxNET.View
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                /*
+                DocumentViewer.FitToWidthCommand.Execute(null, this.ReportViewer);
+                */
+                var settings = new ReportSettings
+                {
+                    Orientation = ReportOrientation.Landscape,
+                    PrintJobName = "Password-PIN-Übersicht",
+                    HeaderFactory = (page, total) => 
+                    new StackPanel 
+                        { Children = 
+                            {
+                                new TextBlock {Text = "Password-PIN-Übersicht", FontSize = 18, FontWeight = FontWeights.Bold},
+                                new TextBlock {Text = $"Erstellt am: {DateTime.Now:dd.MM.yyyy}"}
+                            }
+                        },
+
+                    FooterFactory = (page, total) =>
+                        new TextBlock
+                        {
+                            Text = $"Seite {page} von {total}",
+                            HorizontalAlignment = HorizontalAlignment.Right
+                        }
+                };
+
+                this.Document = GenericReportBuilder.Build<PasswordPin>(this.CurrentCtorArgs.DataSource, settings);
+
+            }
+            catch (Exception ex)
+            {
+                string errorText = ex.Message;
+                throw;
+            }
+
             if (App.EventAgg.IsSubscription<StatusEvent>() == true)
             {
                 await App.EventAgg.PublishAsync(new StatusEvent("Bereit"));
@@ -62,6 +120,9 @@ namespace InfoBoxNET.View
             {
                 if (button == CommandButtons.GoBack)
                 {
+                    // Viewer zuerst vom Dokument lösen.
+                    ReportViewer.Document = null;
+
                     ChangeViewEventArgs args = new();
                     args.MenuButton = CommandButtons.Passwords;
                     args.FromPage = this.CurrentCtorArgs.MenuButton;
@@ -72,6 +133,20 @@ namespace InfoBoxNET.View
                 }
             }
         }
+
+        private void OnPrint(object commandParam)
+        {
+            try
+            {
+                ReportPrintService.Print(this.Document, this.ReportSetting.PrintJobName);
+            }
+            catch (Exception ex)
+            {
+                string errorText = ex.Message;
+                throw;
+            }
+        }
+
         #endregion Command Events
 
     }
