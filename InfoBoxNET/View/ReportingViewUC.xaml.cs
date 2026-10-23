@@ -147,7 +147,7 @@ namespace InfoBoxNET.View
         {
             try
             {
-                ReportPrintService.Print(this.Document, this.ReportSetting.PrintJobName);
+                ReportPrintService.Print(this.ReportViewer.Document.DocumentPaginator, this.ReportSetting, this.ReportSetting.PrintJobName);
             }
             catch (Exception ex)
             {
