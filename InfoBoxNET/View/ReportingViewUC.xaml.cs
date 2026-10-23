@@ -15,10 +15,14 @@
 
 namespace InfoBoxNET.View
 {
+    using System.Globalization;
+    using System.IO;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Documents;
     using System.Windows.Input;
+    using System.Windows.Xps;
+    using System.Windows.Xps.Packaging;
 
     using InfoBoxNET.Core;
     using InfoBoxNET.Data;
@@ -37,9 +41,11 @@ namespace InfoBoxNET.View
 
             this.GoBackCommand = new CommandBase(commandParam => this.OnGoBack(commandParam), () => true);
             this.PrintCommand = new CommandBase(commandParam => this.OnPrint(commandParam), () => true);
+            this.ZoomCommand = new CommandBase(commandParam => this.OnZoom(commandParam), () => true);
             this.FitToWidthCommand = new CommandBase(commandParam => this.OnFitToWidth(commandParam), () => true);
             this.FitToMaxPagesAcrossCommand = new CommandBase(commandParam => this.OnFitToMaxPagesAcross(commandParam), () => true);
-            this.ZoomCommand = new CommandBase(commandParam => this.OnZoom(commandParam), () => true);
+            this.LoadXPSCommand = new CommandBase(commandParam => this.OnLoadXPS(commandParam), () => true);
+            this.SaveXPSCommand = new CommandBase(commandParam => this.OnSaveXPS(commandParam), () => true);
 
             this.CurrentCtorArgs = args;
 
@@ -54,6 +60,8 @@ namespace InfoBoxNET.View
         public CommandBase FitToWidthCommand { get; private set; }
         public CommandBase FitToMaxPagesAcrossCommand { get; private set; }
         public CommandBase ZoomCommand { get; private set; }
+        public CommandBase LoadXPSCommand { get; private set; }
+        public CommandBase SaveXPSCommand { get; private set; }
 
         public FixedDocument Document
         {
@@ -77,7 +85,7 @@ namespace InfoBoxNET.View
         {
             try
             {
-                var settings = new ReportSettings
+                this.ReportSetting = new ReportSettings
                 {
                     Orientation = ReportOrientation.Landscape,
                     PrintJobName = "Password-PIN-Übersicht",
@@ -98,7 +106,7 @@ namespace InfoBoxNET.View
                         }
                 };
 
-                this.Document = GenericReportBuilder.Build<PasswordPin>(this.CurrentCtorArgs.DataSource, settings);
+                this.Document = GenericReportBuilder.Build<PasswordPin>(this.CurrentCtorArgs.DataSource, this.ReportSetting);
 
             }
             catch (Exception ex)
@@ -162,6 +170,39 @@ namespace InfoBoxNET.View
         {
             NavigationCommands.Zoom.Execute("100.0", this.ReportViewer);
         }
+
+        private void OnSaveXPS(object commandParam)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Report Dokument (*.xps)|*.xps|All files (*.*)|*.*";
+            saveFileDialog.Title = "Report Dokument";
+            saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            saveFileDialog.FileName = $"PrintPasswords_{DateTime.Today.ToString("yyyyMMdd", CultureInfo.CurrentCulture)}";
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                DocumentPaginator paginator = this.Document.DocumentPaginator;
+                XpsDocument xpsDocument = new XpsDocument(saveFileDialog.FileName, FileAccess.Write);
+                XpsDocumentWriter documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+                documentWriter.Write(paginator);
+                xpsDocument.Close();
+            }
+        }
+
+        private void OnLoadXPS(object commandParam)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Report Dokument (*.xps)|*.xps|All files (*.*)|*.*";
+            openFileDialog.Multiselect = false;
+            openFileDialog.Title = "Report Dokument";
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                XpsDocument document = new XpsDocument(openFileDialog.FileName, FileAccess.Read);
+                FixedDocumentSequence sequence = document.GetFixedDocumentSequence();
+                this.ReportViewer.Document = sequence.References[0].GetDocument(false).DocumentPaginator.Source;
+            }
+        }
+
         #endregion Command Events
 
     }
