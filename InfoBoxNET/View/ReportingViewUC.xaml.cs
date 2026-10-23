@@ -18,9 +18,7 @@ namespace InfoBoxNET.View
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Documents;
-
-    using DocumentFormat.OpenXml.Drawing.Charts;
-    using DocumentFormat.OpenXml.Wordprocessing;
+    using System.Windows.Input;
 
     using InfoBoxNET.Core;
     using InfoBoxNET.Data;
@@ -39,6 +37,9 @@ namespace InfoBoxNET.View
 
             this.GoBackCommand = new CommandBase(commandParam => this.OnGoBack(commandParam), () => true);
             this.PrintCommand = new CommandBase(commandParam => this.OnPrint(commandParam), () => true);
+            this.FitToWidthCommand = new CommandBase(commandParam => this.OnFitToWidth(commandParam), () => true);
+            this.FitToMaxPagesAcrossCommand = new CommandBase(commandParam => this.OnFitToMaxPagesAcross(commandParam), () => true);
+            this.ZoomCommand = new CommandBase(commandParam => this.OnZoom(commandParam), () => true);
 
             this.CurrentCtorArgs = args;
 
@@ -50,6 +51,9 @@ namespace InfoBoxNET.View
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
         public CommandBase PrintCommand { get; private set; }
+        public CommandBase FitToWidthCommand { get; private set; }
+        public CommandBase FitToMaxPagesAcrossCommand { get; private set; }
+        public CommandBase ZoomCommand { get; private set; }
 
         public FixedDocument Document
         {
@@ -73,9 +77,6 @@ namespace InfoBoxNET.View
         {
             try
             {
-                /*
-                DocumentViewer.FitToWidthCommand.Execute(null, this.ReportViewer);
-                */
                 var settings = new ReportSettings
                 {
                     Orientation = ReportOrientation.Landscape,
@@ -147,6 +148,20 @@ namespace InfoBoxNET.View
             }
         }
 
+        private void OnFitToWidth(object commandParam)
+        {
+            DocumentViewer.FitToWidthCommand.Execute(null, this.ReportViewer);
+        }
+
+        private void OnFitToMaxPagesAcross(object commandParam)
+        {
+            DocumentViewer.FitToMaxPagesAcrossCommand.Execute(commandParam, this.ReportViewer);
+        }
+
+        private void OnZoom(object commandParam)
+        {
+            NavigationCommands.Zoom.Execute("100.0", this.ReportViewer);
+        }
         #endregion Command Events
 
     }

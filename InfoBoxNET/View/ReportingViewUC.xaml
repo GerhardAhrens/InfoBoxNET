@@ -68,6 +68,45 @@
                 MinValue="25"
                 Step="25"
                 Value="{Binding Path=ZoomValue, Mode=TwoWay}" />
+
+            <UI:MenuButton
+                UI:MenuBar.Dock="Left"
+                Command="{Binding Path=ZoomCommand}"
+                CommandParameter="100.0"
+                Image="{StaticResource ResourceKey=IconPercent100}"
+                ToolTipText="Seite mit 100% darstellen" />
+
+            <UI:MenuButton
+                UI:MenuBar.Dock="Left"
+                Command="{Binding Path=FitToWidthCommand}"
+                Image="{StaticResource ResourceKey=IconFitToWidth}"
+                ToolTipText="An Breite anpassen" />
+
+            <UI:MenuButton
+                UI:MenuBar.Dock="Left"
+                Command="{Binding Path=FitToMaxPagesAcrossCommand}"
+                CommandParameter="1"
+                Image="{StaticResource ResourceKey=IconOnePage}"
+                ToolTipText="Eine Seite anzeigen" />
+
+            <UI:MenuButton
+                UI:MenuBar.Dock="Left"
+                Command="{Binding Path=FitToMaxPagesAcrossCommand}"
+                CommandParameter="2"
+                Image="{StaticResource ResourceKey=IconTwoPage}"
+                ToolTipText="Zwei Seiten anzeigen" />
+
+            <UI:MenuButton
+                UI:MenuBar.Dock="Left"
+                Command="{Binding Path=LoadXPSCommand}"
+                Image="{StaticResource ResourceKey=IconLoadXPS}"
+                ToolTipText="XPS Datei laden" />
+
+            <UI:MenuButton
+                UI:MenuBar.Dock="Left"
+                Command="{Binding Path=SaveXPSCommand}"
+                Image="{StaticResource ResourceKey=IconSaveXPS}"
+                ToolTipText="Report als XPS Datei speichern" />
         </UI:MenuBar>
 
         <!--#endregion Menü  Reporting View-->

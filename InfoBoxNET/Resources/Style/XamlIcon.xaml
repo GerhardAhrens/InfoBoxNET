@@ -947,6 +947,9 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
+    <!--#endregion Icons für verschiedene Funktion-->
+
+    <!--#region Report Viewer-->
     <DrawingImage x:Key="IconPrintDocument">
         <DrawingImage.Drawing>
             <DrawingGroup>
@@ -961,7 +964,84 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
-    <!--#endregion Icons für verschiedene Funktion-->
+    <DrawingImage x:Key="IconFitToWidth">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Transform>
+                    <ScaleTransform ScaleX="4" ScaleY="4" />
+                </DrawingGroup.Transform>
+
+                <GeometryDrawing Brush="Black" Geometry="M20,2H4C2.89,2 2,2.89 2,4V20C2,21.11 2.89,22 4,22H20C21.11,22 22,21.11 22,20V4C22,2.89 21.11,2 20,2M20,20H4V4H20M13,8V10H11V8H9L12,5L15,8M16,15V13H14V11H16V9L19,12M10,13H8V15L5,12L8,9V11H10M15,16L12,19L9,16H11V14H13V16" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="IconPercent100">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Transform>
+                    <ScaleTransform ScaleX="4" ScaleY="4" />
+                </DrawingGroup.Transform>
+
+                <GeometryDrawing Brush="Black" Geometry="M20,2 H4 C2.89,2 2,2.89 2,4 V20 C2,21.11 2.89,22 4,22 H20 C21.11,22 22,21.11 22,20 V4 C22,2.89 21.11,2 20,2 Z M20,4 V20 H4 V4 Z M6,9 H18 V15 H6 Z M8,11 H9.2V13 H8 Z M10.2,11 H11.4 V13 H10.2 Z M12.4,11 H13.6 V13 H12.4 Z M14.6,11 H15.8 V13 H14.6 Z" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="IconOnePage">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Transform>
+                    <ScaleTransform ScaleX="4" ScaleY="4" />
+                </DrawingGroup.Transform>
+
+                <GeometryDrawing Brush="Black" Geometry="M19,19H5V5H19M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,17H14V7H10V9H12" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="IconTwoPage">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Transform>
+                    <ScaleTransform ScaleX="4" ScaleY="4" />
+                </DrawingGroup.Transform>
+
+                <GeometryDrawing Brush="Black" Geometry="M17,13H13V11H15A2,2 0 0,0 17,9V7C17,5.89 16.1,5 15,5H11V7H15V9H13A2,2 0 0,0 11,11V15H17M21,17H7V3H21M21,1H7A2,2 0 0,0 5,3V17A2,2 0 0,0 7,19H21A2,2 0 0,0 23,17V3A2,2 0 0,0 21,1M3,5H1V21A2,2 0 0,0 3,23H19V21H3V5Z" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="IconLoadXPS">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Transform>
+                    <ScaleTransform ScaleX="4" ScaleY="4" />
+                </DrawingGroup.Transform>
+
+                <GeometryDrawing Brush="Black" Geometry="M22,3H5A2,2 0 0,0 3,5V9H5V5H22V19H5V15H3V19A2,2 0 0,0 5,21H22A2,2 0 0,0 24,19V5A2,2 0 0,0 22,3M7,15V13H0V11H7V9L11,12L7,15M20,13H13V11H20V13M20,9H13V7H20V9M17,17H13V15H17V17Z" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="IconSaveXPS">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Transform>
+                    <ScaleTransform ScaleX="4" ScaleY="4" />
+                </DrawingGroup.Transform>
+
+                <GeometryDrawing Brush="Black" Geometry="M17 3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V7L17 3M19 19H5V5H16.17L19 7.83V19M12 12C10.34 12 9 13.34 9 15S10.34 18 12 18 15 16.66 15 15 13.66 12 12 12M6 6H15V10H6V6Z" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <!--#endregion Report Viewer-->
 
     <!--#region Icons für die Funktion zur Passwort Verwaltung-->
     <DrawingImage x:Key="ImportExportIcon">
