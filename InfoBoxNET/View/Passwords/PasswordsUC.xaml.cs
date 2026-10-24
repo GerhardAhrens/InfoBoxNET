@@ -22,6 +22,7 @@ namespace InfoBoxNET.View
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
+    using System.Windows.Input;
     using System.Windows.Markup;
     using System.Windows.Media;
 
@@ -105,7 +106,8 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
-        public ObservableCollection<object> ButtonItem { get; } = new();
+        public ObservableCollection<object> FilterButtonItem { get; } = new();
+        public ObservableCollection<object> AddButtonItem { get; } = new();
 
         private int RowCount { get; set; }
         private int RowFilterCount { get; set; }
@@ -118,7 +120,24 @@ namespace InfoBoxNET.View
         {
             if ((bool)(DesignerProperties.IsInDesignModeProperty.GetMetadata(typeof(DependencyObject)).DefaultValue) == false)
             {
+                this.IsLoadingOverlay = true;
+
                 this.LoadDataHandler();
+
+                // 2. Warten, bis der Dispatcher das UI-Layout und die Container im Hintergrund gerendert hat
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    this.lvwMain.SelectedIndex = 0;
+
+                    var firstItem = lvwMain.ItemContainerGenerator.ContainerFromIndex(0) as ListViewItem;
+                    if (firstItem != null)
+                    {
+                        firstItem.Focus();
+                        Keyboard.Focus(firstItem);
+                    }
+                }, System.Windows.Threading.DispatcherPriority.Background);
+
+                this.IsLoadingOverlay = false;
             }
         }
         #endregion Windows Events
@@ -145,6 +164,14 @@ namespace InfoBoxNET.View
         {
             if (commandParam is CommandButtons button && button == CommandButtons.AddEntry)
             {
+                AdvancedTabItem passwordsTab = new AdvancedTabItem()
+                {
+                    Header = $"Neu",
+                    HeaderImage = (ImageSource)Application.Current.FindResource("IconPlus"),
+                };
+
+                this.PasswordsTabControl.Items.Add(passwordsTab);
+                this.PasswordsTabControl.SelectedItem = passwordsTab;
             }
         }
 
@@ -341,47 +368,53 @@ namespace InfoBoxNET.View
                 DrawingImage iconPin = this.CreateDrawingImageFromString("PI");
                 DrawingImage iconLizenz = this.CreateDrawingImageFromString("L");
 
-                this.ButtonItem.Add(new SplitButtonItem { Content = "Web",  Icon = iconWeb, Command = this.FilterButtonCommand, CommandParameter = "FILTER_1" });
-                this.ButtonItem.Add(new SplitButtonItem { Content = "Passwort", Icon = iconPasswort, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_2" });
-                this.ButtonItem.Add(new SplitButtonItem { Content = "Pin", Icon = iconPin, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_3" });
-                this.ButtonItem.Add(new SplitButtonItem { Content = "Lizenz", Icon = iconLizenz, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_4" });
-                this.ButtonItem.Add(new SplitButtonSeparator());
+                this.AddButtonItem.Add(new SplitButtonItem { Content = "Neuer Eintrag Webseite", Icon = iconWeb, Command = this.AddEntryCommand, CommandParameter = "ADD_1" });
 
-                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                this.FilterButtonItem.Add(new SplitButtonItem { Content = "Web",  Icon = iconWeb, Command = this.FilterButtonCommand, CommandParameter = "FILTER_1" });
+                this.FilterButtonItem.Add(new SplitButtonItem { Content = "Passwort", Icon = iconPasswort, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_2" });
+                this.FilterButtonItem.Add(new SplitButtonItem { Content = "Pin", Icon = iconPin, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_3" });
+                this.FilterButtonItem.Add(new SplitButtonItem { Content = "Lizenz", Icon = iconLizenz, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_4" });
+                this.FilterButtonItem.Add(new SplitButtonSeparator());
+
+                TimeSpan t = Performance.Measure(() =>
                 {
-                    ds.OpenConnection();
-                    if (ds.Connection == null)
+                    using (DatabaseService ds = new DatabaseService(App.DatabasePath))
                     {
-                        return;
-                    }
-
-                    this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
-                    if (this.RegionSource != null && this.RegionSource.Any() == true)
-                    {
-                        foreach (Region region in this.RegionSource)
+                        ds.OpenConnection();
+                        if (ds.Connection == null)
                         {
-                            this.ButtonItem.Add(new SplitButtonItem { Content = region.Name, Icon = iconWeb, Command = this.FilterButtonCommand, CommandParameter = $"TAG_{region.Name.Replace(" ", "_")}" });
+                            return;
                         }
-                    }
 
-                    string sql = ds.SelectRows<PasswordPin>(whereClause: "Version = 0");
-                    List<PasswordPin> dataSource = ds.Connection.RecordSet<List<PasswordPin>>(sql).Get().Result;
-                    this.DialogDataView = CollectionViewSource.GetDefaultView(dataSource);
-                    if (this.DialogDataView != null)
-                    {
-                        this.DialogDataView.Filter = rowItem => this.DataDefaultFilter(rowItem as PasswordPin);
-                        this.DialogDataView.SortDescriptions.Add(new SortDescription("AccessTyp", ListSortDirection.Ascending));
-                        this.DialogDataView.SortDescriptions.Add(new SortDescription("Title", ListSortDirection.Ascending));
-                        this.DialogDataView.MoveCurrentToFirst();
-                        var item = this.DialogDataView.CurrentItem;
-                    }
+                        this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
+                        if (this.RegionSource != null && this.RegionSource.Any() == true)
+                        {
+                            foreach (Region region in this.RegionSource)
+                            {
+                                this.FilterButtonItem.Add(new SplitButtonItem { Content = region.Name, Icon = iconWeb, Command = this.FilterButtonCommand, CommandParameter = $"TAG_{region.Name.Replace(" ", "_")}" });
+                            }
+                        }
 
-                    this.RowCount = this.DialogDataView?.Cast<PasswordPin>().Count() ?? 0;
-                }
+                        string sql = ds.SelectRows<PasswordPin>(whereClause: "Version = 0");
+                        List<PasswordPin> dataSource = ds.Connection.RecordSet<List<PasswordPin>>(sql).Get().Result;
+                        this.DialogDataView = CollectionViewSource.GetDefaultView(dataSource);
+                        if (this.DialogDataView != null)
+                        {
+                            this.DialogDataView.Filter = rowItem => this.DataDefaultFilter(rowItem as PasswordPin);
+                            this.DialogDataView.SortDescriptions.Add(new SortDescription("AccessTyp", ListSortDirection.Ascending));
+                            this.DialogDataView.SortDescriptions.Add(new SortDescription("Title", ListSortDirection.Ascending));
+                            this.DialogDataView.MoveCurrentToFirst();
+                            var item = this.DialogDataView.CurrentItem;
+                        }
+
+                        this.RowCount = this.DialogDataView?.Cast<PasswordPin>().Count() ?? 0;
+                    }
+                });
+
 
                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                 {
-                    await App.EventAgg.PublishAsync(new StatusEvent($"Bereit: {this.RowCount} Einträge"));
+                    await App.EventAgg.PublishAsync(new StatusEvent($"Bereit: {this.RowCount} Einträge; {t.TotalMilliseconds:N1} ms"));
                 }
             }
             catch (Exception ex)

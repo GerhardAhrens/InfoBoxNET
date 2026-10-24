@@ -15,17 +15,10 @@
 
         static SplitButton()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(
-                typeof(SplitButton),
-                new FrameworkPropertyMetadata(
-                    typeof(SplitButton)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(SplitButton), new FrameworkPropertyMetadata(typeof(SplitButton)));
 
-            ItemsControl.ItemsPanelProperty.OverrideMetadata(
-                typeof(SplitButton),
-                new FrameworkPropertyMetadata(
-                    new ItemsPanelTemplate(
-                        new FrameworkElementFactory(
-                            typeof(SplitButtonMenuPanel)))));
+            ItemsControl.ItemsPanelProperty.OverrideMetadata(typeof(SplitButton), 
+                new FrameworkPropertyMetadata(new ItemsPanelTemplate(new FrameworkElementFactory(typeof(SplitButtonMenuPanel)))));
         }
 
         #region Command
