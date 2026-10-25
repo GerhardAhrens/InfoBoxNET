@@ -52,6 +52,7 @@ namespace InfoBoxNET.View
             this.DoubleClickEntryCommand = new CommandBase(commandParam => this.OnDoubleClickEntry(commandParam), () => true);
             this.SelectEntryCommand = new CommandBase(commandParam => this.OnSelectEntry(commandParam), () => true);
             this.FilterButtonCommand = new CommandBase(commandParam => this.OnFilterButtonClicked(commandParam), () => true);
+            this.CloseTabCommand = new CommandBase(commandParam => this.OnCloseTab(commandParam), () => true);
 
             this.CurrentCtorArgs = args;
 
@@ -69,6 +70,7 @@ namespace InfoBoxNET.View
         public CommandBase DoubleClickEntryCommand { get; private set; }
         public CommandBase SelectEntryCommand { get; private set; }
         public CommandBase FilterButtonCommand { get; private set; }
+        public CommandBase CloseTabCommand { get; private set; }
 
         public ICollectionView DialogDataView
         {
@@ -162,12 +164,61 @@ namespace InfoBoxNET.View
 
         private void OnAddEntry(object commandParam)
         {
+
+            DrawingImage iconWeb = this.CreateDrawingImageFromString("W");
+            DrawingImage iconPasswort = this.CreateDrawingImageFromString("PA");
+            DrawingImage iconPin = this.CreateDrawingImageFromString("PI");
+            DrawingImage iconLizenz = this.CreateDrawingImageFromString("L");
             if (commandParam is CommandButtons button && button == CommandButtons.AddEntry)
             {
                 AdvancedTabItem passwordsTab = new AdvancedTabItem()
                 {
-                    Header = $"Neu",
-                    HeaderImage = (ImageSource)Application.Current.FindResource("IconPlus"),
+                    Header = $"Neu Webseite",
+                    HeaderImage = iconWeb,
+                };
+
+                this.PasswordsTabControl.Items.Add(passwordsTab);
+                this.PasswordsTabControl.SelectedItem = passwordsTab;
+            }
+            else if (commandParam is string addParamWeb && addParamWeb == "ADD_WEB")
+            {
+                AdvancedTabItem passwordsTab = new AdvancedTabItem()
+                {
+                    Header = $"Neu Webseite",
+                    HeaderImage = iconWeb,
+                };
+
+                this.PasswordsTabControl.Items.Add(passwordsTab);
+                this.PasswordsTabControl.SelectedItem = passwordsTab;
+            }
+            else if (commandParam is string addParamPass && addParamPass == "ADD_PASS")
+            {
+                AdvancedTabItem passwordsTab = new AdvancedTabItem()
+                {
+                    Header = $"Neu Passwort",
+                    HeaderImage = iconPasswort,
+                };
+
+                this.PasswordsTabControl.Items.Add(passwordsTab);
+                this.PasswordsTabControl.SelectedItem = passwordsTab;
+            }
+            else if (commandParam is string addParamPin && addParamPin == "ADD_PIN")
+            {
+                AdvancedTabItem passwordsTab = new AdvancedTabItem()
+                {
+                    Header = $"Neu Pin",
+                    HeaderImage = iconPin,
+                };
+
+                this.PasswordsTabControl.Items.Add(passwordsTab);
+                this.PasswordsTabControl.SelectedItem = passwordsTab;
+            }
+            else if (commandParam is string addParamLizenz && addParamLizenz == "ADD_LIZENZ")
+            {
+                AdvancedTabItem passwordsTab = new AdvancedTabItem()
+                {
+                    Header = $"Neu Lizenz",
+                    HeaderImage = iconLizenz,
                 };
 
                 this.PasswordsTabControl.Items.Add(passwordsTab);
@@ -357,6 +408,13 @@ namespace InfoBoxNET.View
             }
         }
 
+        private async void OnCloseTab(object commandParam)
+        {
+            if (commandParam is AdvancedTabItem tabItem)
+            {
+                this.PasswordsTabControl.Items.Remove(tabItem);
+            }
+        }
         #endregion Command Events
 
         private async void LoadDataHandler()
@@ -368,7 +426,10 @@ namespace InfoBoxNET.View
                 DrawingImage iconPin = this.CreateDrawingImageFromString("PI");
                 DrawingImage iconLizenz = this.CreateDrawingImageFromString("L");
 
-                this.AddButtonItem.Add(new SplitButtonItem { Content = "Neuer Eintrag Webseite", Icon = iconWeb, Command = this.AddEntryCommand, CommandParameter = "ADD_1" });
+                this.AddButtonItem.Add(new SplitButtonItem { Content = "Neuer Eintrag Webseite", Icon = iconWeb, Command = this.AddEntryCommand, CommandParameter = "ADD_WEB" });
+                this.AddButtonItem.Add(new SplitButtonItem { Content = "Neuer Eintrag Passwort", Icon = iconPasswort, Command = this.AddEntryCommand, CommandParameter = "ADD_PASS" });
+                this.AddButtonItem.Add(new SplitButtonItem { Content = "Neuer Eintrag Pin", Icon = iconPin, Command = this.AddEntryCommand, CommandParameter = "ADD_PIN" });
+                this.AddButtonItem.Add(new SplitButtonItem { Content = "Neuer Eintrag Lizenz", Icon = iconLizenz, Command = this.AddEntryCommand, CommandParameter = "ADD_LIZENZ" });
 
                 this.FilterButtonItem.Add(new SplitButtonItem { Content = "Web",  Icon = iconWeb, Command = this.FilterButtonCommand, CommandParameter = "FILTER_1" });
                 this.FilterButtonItem.Add(new SplitButtonItem { Content = "Passwort", Icon = iconPasswort, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_2" });
@@ -522,7 +583,7 @@ namespace InfoBoxNET.View
                 <DrawingImage
                     xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
                     <DrawingImage.Drawing>
-                        <GeometryDrawing Brush = ""Magenta"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
+                        <GeometryDrawing Brush = ""Orange"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
                     </DrawingImage.Drawing>
                 </DrawingImage>";
             }
