@@ -169,6 +169,7 @@ namespace InfoBoxNET.View
             DrawingImage iconPasswort = this.CreateDrawingImageFromString("PA");
             DrawingImage iconPin = this.CreateDrawingImageFromString("PI");
             DrawingImage iconLizenz = this.CreateDrawingImageFromString("L");
+
             if (commandParam is CommandButtons button && button == CommandButtons.AddEntry)
             {
                 AdvancedTabItem passwordsTab = new AdvancedTabItem()
@@ -299,11 +300,95 @@ namespace InfoBoxNET.View
             }
         }
 
-        private void OnDoubleClickEntry(object commandParam)
+        private async void OnDoubleClickEntry(object commandParam)
         {
             if (commandParam != null && commandParam is PasswordPin pw)
             {
+                DrawingImage iconWeb = this.CreateDrawingImageFromString("W");
+                DrawingImage iconPasswort = this.CreateDrawingImageFromString("PA");
+                DrawingImage iconPin = this.CreateDrawingImageFromString("PI");
+                DrawingImage iconLizenz = this.CreateDrawingImageFromString("L");
 
+                if (pw.AccessTyp == AccessTyp.Website)
+                {
+                    AdvancedTabItem passwordsTab = new AdvancedTabItem()
+                    {
+                        Header = $"Eintrag [{pw.Title}]",
+                        HeaderImage = iconWeb,
+                    };
+
+                    bool isTabFound = PasswordsTabControl.Items.OfType<AdvancedTabItem>().Any(tab => tab.Header?.ToString() == passwordsTab.Header.ToString());
+                    if (isTabFound == false)
+                    {
+                        this.PasswordsTabControl.Items.Add(passwordsTab);
+                        if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                        {
+                            await App.EventAgg.PublishAsync(new StatusEvent($"Bereit"));
+                        }
+                    }
+
+                    this.PasswordsTabControl.SelectedItem = passwordsTab;
+                }
+                else if (pw.AccessTyp == AccessTyp.Passwort)
+                {
+                    AdvancedTabItem passwordsTab = new AdvancedTabItem()
+                    {
+                        Header = $"Eintrag [{pw.Title}]",
+                        HeaderImage = iconPasswort,
+                    };
+
+                    bool isTabFound = PasswordsTabControl.Items.OfType<AdvancedTabItem>().Any(tab => tab.Header?.ToString() == passwordsTab.Header.ToString());
+                    if (isTabFound == false)
+                    {
+                        this.PasswordsTabControl.Items.Add(passwordsTab);
+                        if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                        {
+                            await App.EventAgg.PublishAsync(new StatusEvent($"Bereit"));
+                        }
+                    }
+
+                    this.PasswordsTabControl.SelectedItem = passwordsTab;
+                }
+                else if (pw.AccessTyp == AccessTyp.Pin)
+                {
+                    AdvancedTabItem passwordsTab = new AdvancedTabItem()
+                    {
+                        Header = $"Eintrag [{pw.Title}]",
+                        HeaderImage = iconPin,
+                    };
+
+                    bool isTabFound = PasswordsTabControl.Items.OfType<AdvancedTabItem>().Any(tab => tab.Header?.ToString() == passwordsTab.Header.ToString());
+                    if (isTabFound == false)
+                    {
+                        this.PasswordsTabControl.Items.Add(passwordsTab);
+                        if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                        {
+                            await App.EventAgg.PublishAsync(new StatusEvent($"Bereit"));
+                        }
+                    }
+
+                    this.PasswordsTabControl.SelectedItem = passwordsTab;
+                }
+                else if (pw.AccessTyp == AccessTyp.License)
+                {
+                    AdvancedTabItem passwordsTab = new AdvancedTabItem()
+                    {
+                        Header = $"Eintrag [{pw.Title}]",
+                        HeaderImage = iconLizenz,
+                    };
+
+                    bool isTabFound = PasswordsTabControl.Items.OfType<AdvancedTabItem>().Any(tab => tab.Header?.ToString() == passwordsTab.Header.ToString());
+                    if (isTabFound == false)
+                    {
+                        this.PasswordsTabControl.Items.Add(passwordsTab);
+                        if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                        {
+                            await App.EventAgg.PublishAsync(new StatusEvent($"Bereit"));
+                        }
+                    }
+
+                    this.PasswordsTabControl.SelectedItem = passwordsTab;
+                }
             }
         }
 
