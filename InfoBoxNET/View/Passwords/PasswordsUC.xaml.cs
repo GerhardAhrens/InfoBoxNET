@@ -52,6 +52,7 @@ namespace InfoBoxNET.View
             this.DoubleClickEntryCommand = new CommandBase(commandParam => this.OnDoubleClickEntry(commandParam), () => true);
             this.SelectEntryCommand = new CommandBase(commandParam => this.OnSelectEntry(commandParam), () => true);
             this.FilterButtonCommand = new CommandBase(commandParam => this.OnFilterButtonClicked(commandParam), () => true);
+            this.SelectionTabChangedCommand = new CommandBase(commandParam => this.OnSelectionTabChanged(commandParam), () => true);
             this.CloseTabCommand = new CommandBase(commandParam => this.OnCloseTab(commandParam), () => true);
 
             this.CurrentCtorArgs = args;
@@ -70,7 +71,14 @@ namespace InfoBoxNET.View
         public CommandBase DoubleClickEntryCommand { get; private set; }
         public CommandBase SelectEntryCommand { get; private set; }
         public CommandBase FilterButtonCommand { get; private set; }
+        public CommandBase SelectionTabChangedCommand { get; private set; }
         public CommandBase CloseTabCommand { get; private set; }
+
+        public ID Id
+        {
+            get => base.GetValue<ID>();
+            set => base.SetValue(value);
+        }
 
         public ICollectionView DialogDataView
         {
@@ -212,7 +220,12 @@ namespace InfoBoxNET.View
                 };
 
                 this.PasswordsTabControl.Items.Add(passwordsTab);
+                passwordsTab.Content = new PasswordPASSDetailUC(this.CurrentSelectedItem, DataRowAction.Add);
                 this.PasswordsTabControl.SelectedItem = passwordsTab;
+                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                {
+                    await App.EventAgg.PublishAsync(new StatusEvent($"Neuer Eintrag"));
+                }
             }
             else if (commandParam is string addParamPin && addParamPin == "ADD_PIN")
             {
@@ -223,7 +236,12 @@ namespace InfoBoxNET.View
                 };
 
                 this.PasswordsTabControl.Items.Add(passwordsTab);
+                passwordsTab.Content = new PasswordPINDetailUC(this.CurrentSelectedItem, DataRowAction.Add);
                 this.PasswordsTabControl.SelectedItem = passwordsTab;
+                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                {
+                    await App.EventAgg.PublishAsync(new StatusEvent($"Neuer Eintrag"));
+                }
             }
             else if (commandParam is string addParamLizenz && addParamLizenz == "ADD_LIZENZ")
             {
@@ -234,7 +252,12 @@ namespace InfoBoxNET.View
                 };
 
                 this.PasswordsTabControl.Items.Add(passwordsTab);
+                passwordsTab.Content = new PasswordLICDetailUC(this.CurrentSelectedItem, DataRowAction.Add);
                 this.PasswordsTabControl.SelectedItem = passwordsTab;
+                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                {
+                    await App.EventAgg.PublishAsync(new StatusEvent($"Neuer Eintrag"));
+                }
             }
         }
 
@@ -331,6 +354,7 @@ namespace InfoBoxNET.View
                     bool isTabFound = PasswordsTabControl.Items.OfType<AdvancedTabItem>().Any(tab => tab.Header?.ToString() == passwordsTab.Header.ToString());
                     if (isTabFound == false)
                     {
+                        passwordsTab.Tag = this.CurrentSelectedItem;
                         this.PasswordsTabControl.Items.Add(passwordsTab);
                         if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                         {
@@ -351,6 +375,7 @@ namespace InfoBoxNET.View
                     bool isTabFound = PasswordsTabControl.Items.OfType<AdvancedTabItem>().Any(tab => tab.Header?.ToString() == passwordsTab.Header.ToString());
                     if (isTabFound == false)
                     {
+                        passwordsTab.Tag = this.CurrentSelectedItem;
                         this.PasswordsTabControl.Items.Add(passwordsTab);
                         if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                         {
@@ -371,6 +396,7 @@ namespace InfoBoxNET.View
                     bool isTabFound = PasswordsTabControl.Items.OfType<AdvancedTabItem>().Any(tab => tab.Header?.ToString() == passwordsTab.Header.ToString());
                     if (isTabFound == false)
                     {
+                        passwordsTab.Tag = this.CurrentSelectedItem;
                         this.PasswordsTabControl.Items.Add(passwordsTab);
                         if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                         {
@@ -391,6 +417,7 @@ namespace InfoBoxNET.View
                     bool isTabFound = PasswordsTabControl.Items.OfType<AdvancedTabItem>().Any(tab => tab.Header?.ToString() == passwordsTab.Header.ToString());
                     if (isTabFound == false)
                     {
+                        passwordsTab.Tag = this.CurrentSelectedItem;
                         this.PasswordsTabControl.Items.Add(passwordsTab);
                         if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                         {
@@ -405,9 +432,9 @@ namespace InfoBoxNET.View
 
         private void OnSelectEntry(object commandParam)
         {
-            if (commandParam != null && commandParam is PasswordPin pw)
+            if (commandParam is PasswordPin rowView)
             {
-
+                this.Id = rowView.Id;
             }
         }
 
@@ -499,6 +526,40 @@ namespace InfoBoxNET.View
                     if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                     {
                         await App.EventAgg.PublishAsync(new StatusEvent($"Bereit: {this.RowCount} Einträge"));
+                    }
+                }
+            }
+        }
+
+        private void OnSelectionTabChanged(object commandParam)
+        {
+            if (commandParam is SelectionChangedEventArgs tabControl)
+            {
+                DrawingImage iconWeb = this.CreateDrawingImageFromString("W");
+                DrawingImage iconPasswort = this.CreateDrawingImageFromString("PA");
+                DrawingImage iconPin = this.CreateDrawingImageFromString("PI");
+                DrawingImage iconLizenz = this.CreateDrawingImageFromString("L");
+
+                AdvancedTabControl tab = (AdvancedTabControl)tabControl.Source;
+                AdvancedTabItem selectedTab = tab.SelectedItem as AdvancedTabItem;
+
+                if (selectedTab != null && selectedTab.Tag is PasswordPin rowView)
+                {
+                    if (rowView.AccessTyp == AccessTyp.Website)
+                    {
+                        selectedTab.Content = new PasswordWEBDetailUC(rowView, DataRowAction.Change);
+                    }
+                    else if (rowView.AccessTyp == AccessTyp.Passwort)
+                    {
+                        selectedTab.Content = new PasswordPASSDetailUC(rowView, DataRowAction.Change);
+                    }
+                    else if (rowView.AccessTyp == AccessTyp.Pin)
+                    {
+                        selectedTab.Content = new PasswordPINDetailUC(rowView, DataRowAction.Change);
+                    }
+                    else if (rowView.AccessTyp == AccessTyp.License)
+                    {
+                        selectedTab.Content = new PasswordLICDetailUC(rowView, DataRowAction.Change);
                     }
                 }
             }
