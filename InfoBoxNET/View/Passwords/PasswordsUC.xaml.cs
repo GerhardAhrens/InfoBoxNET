@@ -78,7 +78,7 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
-        public InfoBoxNET.Model.PasswordPin CurrentSelectedItem
+        public PasswordPin CurrentSelectedItem
         {
             get => base.GetValue<PasswordPin>();
             set => base.SetValue(value);
@@ -162,7 +162,7 @@ namespace InfoBoxNET.View
             }
         }
 
-        private void OnAddEntry(object commandParam)
+        private async void OnAddEntry(object commandParam)
         {
 
             DrawingImage iconWeb = this.CreateDrawingImageFromString("W");
@@ -179,7 +179,13 @@ namespace InfoBoxNET.View
                 };
 
                 this.PasswordsTabControl.Items.Add(passwordsTab);
+                passwordsTab.Content = new PasswordWEBDetailUC(this.CurrentSelectedItem, DataRowAction.Add);
                 this.PasswordsTabControl.SelectedItem = passwordsTab;
+                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                {
+                    await App.EventAgg.PublishAsync(new StatusEvent($"Neuer Eintrag"));
+                }
+
             }
             else if (commandParam is string addParamWeb && addParamWeb == "ADD_WEB")
             {
@@ -190,7 +196,12 @@ namespace InfoBoxNET.View
                 };
 
                 this.PasswordsTabControl.Items.Add(passwordsTab);
+                passwordsTab.Content = new PasswordWEBDetailUC(this.CurrentSelectedItem, DataRowAction.Add);
                 this.PasswordsTabControl.SelectedItem = passwordsTab;
+                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                {
+                    await App.EventAgg.PublishAsync(new StatusEvent($"Neuer Eintrag"));
+                }
             }
             else if (commandParam is string addParamPass && addParamPass == "ADD_PASS")
             {
