@@ -31,6 +31,26 @@
 
         #endregion
 
+        #region AcceptsReturn
+
+        public static readonly DependencyProperty AcceptsReturnProperty =
+            DependencyProperty.Register(
+                nameof(AcceptsReturn),
+                typeof(bool),
+                typeof(IconTextBox),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        /// <summary>
+        /// Der eingegebene Text.
+        /// </summary>
+        public bool AcceptsReturn
+        {
+            get => (bool)GetValue(AcceptsReturnProperty);
+            set => SetValue(AcceptsReturnProperty, value);
+        }
+
+        #endregion
+
         #region Text
 
         public static readonly DependencyProperty TextProperty =
@@ -38,9 +58,7 @@
                 nameof(Text),
                 typeof(string),
                 typeof(IconTextBox),
-                new FrameworkPropertyMetadata(
-                    string.Empty,
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+                new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         /// <summary>
         /// Der eingegebene Text.

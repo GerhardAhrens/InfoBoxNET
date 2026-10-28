@@ -44,15 +44,28 @@ namespace InfoBoxNET.View
         }
 
         #region Properties
-        public PasswordPin CurrentRow
+
+        public string Title
         {
-            get => base.GetValue<PasswordPin>();
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
+        public bool ShowDescription
+        {
+            get => base.GetValue<bool>();
+            set => base.SetValue(value);
+        }
+
+        public string Description
+        {
+            get => base.GetValue<string>();
             set => base.SetValue(value);
         }
 
         public DataRowAction RowAction { get; set; }
         public PasswordPin OriginalRow { get; set; }
-        private PasswordPin CopyRow { get; set; }
+        public PasswordPin CurrentRow { get; set; }
         private MessageBase Message { get; } = new MessageBase();
 
         #endregion Properties
@@ -61,6 +74,12 @@ namespace InfoBoxNET.View
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            if (this.CurrentRow != null && this.RowAction == DataRowAction.Change)
+            {
+                this.Title = this.CurrentRow.Title;
+                this.ShowDescription = this.CurrentRow.ShowDescription;
+                this.Description = this.CurrentRow.Description;
+            }
         }
         #endregion Windows Events
 

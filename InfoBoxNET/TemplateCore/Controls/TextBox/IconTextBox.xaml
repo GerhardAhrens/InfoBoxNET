@@ -138,6 +138,7 @@
                     Padding="0"
                     VerticalAlignment="Stretch"
                     VerticalContentAlignment="Center"
+                    AcceptsReturn="{Binding AcceptsReturn, ElementName=Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     CaretBrush="{Binding Foreground, RelativeSource={RelativeSource Self}}"
                     Style="{StaticResource InnerTextBoxStyle}"
                     Text="{Binding Text, ElementName=Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
