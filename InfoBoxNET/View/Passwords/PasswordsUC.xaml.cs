@@ -19,6 +19,7 @@ namespace InfoBoxNET.View
     using System.ComponentModel;
     using System.Data;
     using System.Data.SQLite;
+    using System.Text.Json;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
@@ -119,6 +120,7 @@ namespace InfoBoxNET.View
         public ObservableCollection<object> FilterButtonItem { get; } = new();
         public ObservableCollection<object> AddButtonItem { get; } = new();
 
+        private AdvancedTabItem CurrentTabItem { get; set; }
         private int RowCount { get; set; }
         private int RowFilterCount { get; set; }
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
@@ -562,6 +564,8 @@ namespace InfoBoxNET.View
                         selectedTab.Content = new PasswordLICDetailUC(rowView, DataRowAction.Change);
                     }
                 }
+
+                this.CurrentTabItem = selectedTab;
             }
         }
 
@@ -569,9 +573,45 @@ namespace InfoBoxNET.View
         {
             if (commandParam is AdvancedTabItem tabItem)
             {
-                this.PasswordsTabControl.Items.Remove(tabItem);
+                if (this.CurrentSelectedItem.AccessTyp == AccessTyp.Website)
+                {
+                    PasswordPin rowView = ((PasswordWEBDetailUC)tabItem.Content).CurrentRow;
+                    PasswordPin rowViewOrig = ((PasswordWEBDetailUC)tabItem.Content).OriginalRow;
+                    DataRowAction rowAction = ((PasswordWEBDetailUC)tabItem.Content).RowAction;
+                    bool areEqual = JsonSerializer.Serialize(rowView) == JsonSerializer.Serialize(rowViewOrig);
+                    if (areEqual == false)
+                    {
+                        MessageBoxResult result = MessageBox.Show($"Die Änderungen am Eintrag [{rowView.Title}] wurden noch nicht gespeichert. Wollen Sie die Änderungen verwerfen und den Tab schließen?", "Änderungen verwerfen", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            /* Änderungen speichern */
+
+                            this.PasswordsTabControl.Items.Remove(tabItem);
+                        }
+                    }
+                    else
+                    {
+                        this.PasswordsTabControl.Items.Remove(tabItem);
+                    }
+                }
+            }
+            else
+            {
+                if (((RelativeSource)commandParam).AncestorType == typeof(TabItem))
+                {
+                    if (this.CurrentSelectedItem.AccessTyp == AccessTyp.Website)
+                    {
+                        PasswordPin rowView = ((PasswordWEBDetailUC)this.CurrentTabItem.Content).CurrentRow;
+                        PasswordPin rowViewOrig = ((PasswordWEBDetailUC)this.CurrentTabItem.Content).OriginalRow;
+                        DataRowAction rowAction = ((PasswordWEBDetailUC)this.CurrentTabItem.Content).RowAction;
+                        bool areEqual = JsonSerializer.Serialize(rowView) == JsonSerializer.Serialize(rowViewOrig);
+
+                        this.PasswordsTabControl.Items.Remove(this.CurrentTabItem);
+                    }
+                }
             }
         }
+
         #endregion Command Events
 
         private async void LoadDataHandler()

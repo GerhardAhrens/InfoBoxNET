@@ -36,6 +36,7 @@ namespace InfoBoxNET.View
             WeakEventManager<UserControl, RoutedEventArgs>.AddHandler(this, "Loaded", this.OnLoaded);
 
             this.CurrentRow = rowView;
+            this.OriginalRow = rowView;
             this.RowAction = rowAction;
             this.Background = System.Windows.Media.Brushes.LightGreen;
 
@@ -49,9 +50,9 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
-        private PasswordPin OriginalRow { get; set; }
+        public DataRowAction RowAction { get; set; }
+        public PasswordPin OriginalRow { get; set; }
         private PasswordPin CopyRow { get; set; }
-        private DataRowAction RowAction { get; set; }
         private MessageBase Message { get; } = new MessageBase();
 
         #endregion Properties
