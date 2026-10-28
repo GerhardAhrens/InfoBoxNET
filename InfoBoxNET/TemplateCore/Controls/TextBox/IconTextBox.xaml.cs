@@ -31,22 +31,23 @@
 
         #endregion
 
-        #region AcceptsReturn
+        #region IconBackground
 
-        public static readonly DependencyProperty AcceptsReturnProperty =
+        public static readonly DependencyProperty IconBackgroundProperty =
             DependencyProperty.Register(
-                nameof(AcceptsReturn),
-                typeof(bool),
+                nameof(IconBackground),
+                typeof(Brush),
                 typeof(IconTextBox),
-                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+                new FrameworkPropertyMetadata(Brushes.LightBlue));
 
         /// <summary>
-        /// Der eingegebene Text.
+        /// Die Hintergrundfarbe des Symbolbereichs.
+        /// Standard: LightBlue.
         /// </summary>
-        public bool AcceptsReturn
+        public Brush IconBackground
         {
-            get => (bool)GetValue(AcceptsReturnProperty);
-            set => SetValue(AcceptsReturnProperty, value);
+            get => (Brush)GetValue(IconBackgroundProperty);
+            set => SetValue(IconBackgroundProperty, value);
         }
 
         #endregion

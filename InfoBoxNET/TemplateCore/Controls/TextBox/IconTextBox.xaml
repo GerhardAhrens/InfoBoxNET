@@ -67,53 +67,66 @@
         <Grid ColumnDefinitions="24,12,1,12,*">
 
             <!--  Icon oder Standardsymbol T  -->
-            <Grid
+            <!--  Symbolbereich mit konfigurierbarer Hintergrundfarbe  -->
+            <Border
                 Grid.Column="0"
-                Width="22"
-                Height="22"
-                VerticalAlignment="Center">
+                VerticalAlignment="Stretch"
+                Background="{Binding IconBackground, ElementName=Root}"
+                CornerRadius="3">
 
-                <Image
-                    x:Name="IconImage"
+                <Grid
+                    Width="30"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Source="{Binding Icon, ElementName=Root}"
-                    Stretch="Uniform">
+                    ShowGridLines="False">
 
-                    <Image.Style>
-                        <Style TargetType="{x:Type Image}">
-                            <Setter Property="Visibility" Value="Visible" />
+                    <!--  Icon  -->
+                    <Image
+                        x:Name="IconImage"
+                        Width="30"
+                        Height="30"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Source="{Binding Icon, ElementName=Root}"
+                        Stretch="Uniform">
 
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Icon, ElementName=Root}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Image.Style>
+                        <Image.Style>
+                            <Style TargetType="{x:Type Image}">
+                                <Setter Property="Visibility" Value="Visible" />
 
-                </Image>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Icon, ElementName=Root}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
 
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="20"
-                    FontWeight="SemiBold"
-                    Foreground="Gray"
-                    Text="T">
+                    <!--  Standardsymbol T  -->
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="20"
+                        FontWeight="SemiBold"
+                        Foreground="Gray"
+                        Text="T">
 
-                    <TextBlock.Style>
-                        <Style TargetType="{x:Type TextBlock}">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Icon, ElementName=Root}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-            </Grid>
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Icon, ElementName=Root}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </Border>
 
             <!--  Abstand vor dem Trennstrich  -->
             <Border Grid.Column="1" />
@@ -138,7 +151,6 @@
                     Padding="0"
                     VerticalAlignment="Stretch"
                     VerticalContentAlignment="Center"
-                    AcceptsReturn="{Binding AcceptsReturn, ElementName=Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     CaretBrush="{Binding Foreground, RelativeSource={RelativeSource Self}}"
                     Style="{StaticResource InnerTextBoxStyle}"
                     Text="{Binding Text, ElementName=Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
