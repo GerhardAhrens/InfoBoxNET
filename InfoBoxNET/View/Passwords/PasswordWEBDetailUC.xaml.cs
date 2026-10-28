@@ -22,6 +22,7 @@ namespace InfoBoxNET.View
     using System.Windows;
     using System.Windows.Controls;
 
+    using InfoBoxNET.Core;
     using InfoBoxNET.Model;
 
     /// <summary>
@@ -63,6 +64,18 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
+        public Dictionary<int, string> SymbolSource
+        {
+            get => base.GetValue<Dictionary<int, string>>();
+            set => base.SetValue(value);
+        }
+
+        public int SelectedSymbol
+        {
+            get => base.GetValue<int>();
+            set => base.SetValue(value);
+        }
+
         public DataRowAction RowAction { get; set; }
         public PasswordPin OriginalRow { get; set; }
         public PasswordPin CurrentRow { get; set; }
@@ -74,11 +87,20 @@ namespace InfoBoxNET.View
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            using (SymbolsList sl = new SymbolsList())
+            {
+                this.SymbolSource = sl.GetSymbols();
+            }
+
             if (this.CurrentRow != null && this.RowAction == DataRowAction.Change)
             {
                 this.Title = this.CurrentRow.Title;
                 this.ShowDescription = this.CurrentRow.ShowDescription;
                 this.Description = this.CurrentRow.Description;
+                this.SelectedSymbol = this.CurrentRow.Symbol;
+                this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
+                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
+                this.HorizontalImageList.UpdateLayout();
             }
         }
         #endregion Windows Events

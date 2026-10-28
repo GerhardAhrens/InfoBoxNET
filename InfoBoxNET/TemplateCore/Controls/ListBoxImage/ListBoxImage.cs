@@ -8,6 +8,25 @@
 
     public class ListBoxImage : ListBox
     {
+        #region Constructor
+
+        public ListBoxImage()
+        {
+            this.SelectionMode = SelectionMode.Single;
+            VirtualizingStackPanel.SetIsVirtualizing(this, true);
+            VirtualizingStackPanel.SetVirtualizationMode(this, VirtualizationMode.Recycling);
+
+            ScrollViewer.SetCanContentScroll(this, true);
+            // Der Key des Dictionary-Eintrags wird automatisch
+            // als SelectedValue verwendet.
+            this.SelectedValuePath = "Key";
+
+            CreateControlTemplate();
+            CreateItemTemplate();
+            UpdateItemsPanel();
+        }
+
+        #endregion
 
         #region Orientation
 
@@ -96,26 +115,6 @@
         }
 
         #endregion SymbolColor
-
-        #region Constructor
-
-        public ListBoxImage()
-        {
-            this.SelectionMode = SelectionMode.Single;
-            VirtualizingStackPanel.SetIsVirtualizing(this, true);
-            VirtualizingStackPanel.SetVirtualizationMode(this, VirtualizationMode.Recycling);
-
-            ScrollViewer.SetCanContentScroll(this, true);
-            // Der Key des Dictionary-Eintrags wird automatisch
-            // als SelectedValue verwendet.
-            this.SelectedValuePath = "Key";
-
-            CreateControlTemplate();
-            CreateItemTemplate();
-            UpdateItemsPanel();
-        }
-
-        #endregion
 
         #region Template
 
