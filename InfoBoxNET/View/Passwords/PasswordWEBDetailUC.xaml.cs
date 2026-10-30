@@ -24,6 +24,7 @@ namespace InfoBoxNET.View
     using System.Windows.Controls;
 
     using InfoBoxNET.Core;
+    using InfoBoxNET.Core.Enums;
     using InfoBoxNET.Model;
 
     /// <summary>
@@ -95,6 +96,35 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
+        public IEnumerable<string> UsernameSource
+        {
+            get => base.GetValue<IEnumerable<string>>();
+            set => base.SetValue(value);
+        }
+
+        public string Username
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
+        public string Passwort
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
+        public Brush SelectedBackgroundColor
+        {
+            get => base.GetValue<Brush>();
+            set => base.SetValue(value);
+        }
+
+        public byte[] Photo
+        {
+            get => base.GetValue<byte[]>();
+            set => base.SetValue(value);
+        }
         public DataRowAction RowAction { get; set; }
         public PasswordPin OriginalRow { get; set; }
         public PasswordPin CurrentRow { get; set; }
@@ -121,6 +151,12 @@ namespace InfoBoxNET.View
 
                 this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
 
+                var usernamesAll = ds.Connection.RecordSet<List<PasswordPin>>("SELECT Username, AccessTyp FROM TAB_PasswordPin").Get().Result;
+                if (usernamesAll != null)
+                {
+                    var usernames = usernamesAll.Where(w => w.AccessTyp == AccessTyp.Website).OrderBy(o => o.Username).DistinctBy(d => d.Username).Select(s => s.Username).ToList();
+                    this.UsernameSource = usernames;
+                }
             }
 
             if (this.CurrentRow != null && this.RowAction == DataRowAction.Change)
