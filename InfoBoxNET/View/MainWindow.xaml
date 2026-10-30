@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="{Binding Path=WindowTitel, FallbackValue=~WindowTitel}"
     Width="950"
-    Height="600"
+    Height="700"
     mc:Ignorable="d">
 
     <Grid

@@ -76,6 +76,12 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
+        public string Website
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value);
+        }
+
         public DataRowAction RowAction { get; set; }
         public PasswordPin OriginalRow { get; set; }
         public PasswordPin CurrentRow { get; set; }
@@ -101,6 +107,7 @@ namespace InfoBoxNET.View
                 this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
                 this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
                 this.HorizontalImageList.UpdateLayout();
+                this.Website = this.CurrentRow.Website;
             }
         }
         #endregion Windows Events
