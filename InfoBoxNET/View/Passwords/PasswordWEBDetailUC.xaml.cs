@@ -19,6 +19,7 @@
 namespace InfoBoxNET.View
 {
     using System.Data;
+    using System.Data.SQLite;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -45,6 +46,18 @@ namespace InfoBoxNET.View
         }
 
         #region Properties
+
+        public IEnumerable<Region> RegionSource
+        {
+            get => base.GetValue<IEnumerable<Region>>();
+            set => base.SetValue(value);
+        }
+
+        public Region SelectedRegion
+        {
+            get => base.GetValue<Region>();
+            set => base.SetValue(value);
+        }
 
         public string Title
         {
@@ -96,6 +109,18 @@ namespace InfoBoxNET.View
             using (SymbolsList sl = new SymbolsList())
             {
                 this.SymbolSource = sl.GetSymbols();
+            }
+
+            using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+            {
+                ds.OpenConnection();
+                if (ds.Connection == null)
+                {
+                    return;
+                }
+
+                this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
+
             }
 
             if (this.CurrentRow != null && this.RowAction == DataRowAction.Change)
