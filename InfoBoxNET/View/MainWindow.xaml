@@ -8,8 +8,8 @@
     xmlns:local="clr-namespace:InfoBoxNET"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="{Binding Path=WindowTitel, FallbackValue=~WindowTitel}"
-    Width="950"
-    Height="700"
+    Width="900"
+    Height="650"
     mc:Ignorable="d">
 
     <Grid
@@ -38,6 +38,9 @@
         <!--#endregion Contentbereich-->
 
         <!--  StatusBar  -->
-        <UI:StatusInfoBar x:Name="StatusBar" Grid.Row="4" Height="25" />
+        <UI:StatusInfoBar
+            x:Name="StatusBar"
+            Grid.Row="4"
+            Height="25" />
     </Grid>
 </base:WindowBase>
