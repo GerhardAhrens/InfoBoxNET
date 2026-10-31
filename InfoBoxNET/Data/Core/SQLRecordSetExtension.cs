@@ -1226,6 +1226,10 @@ namespace System.Data.SQLite
             {
                 result = true;
             }
+            else if (type.Name == typeof(byte[]).Name)
+            {
+                result = true;
+            }
             else if (type.Name == typeof(int).Name)
             {
                 result = true;

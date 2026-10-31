@@ -1,13 +1,16 @@
 ﻿namespace System.Windows.Controls
 {
-
+    using System.Globalization;
     using System.Windows.Data;
+    using System.Windows.Media;
 
     /// <summary>
     /// Erweiterte GridViewColumn für das AdvancedListView.
     /// </summary>
     public class AdvancedGridViewColumn : GridViewColumn
     {
+        private static readonly ColorStringToBrushConverter ColorConverter = new();
+
         #region AllowSorting
 
         public static readonly DependencyProperty AllowSortingProperty =
@@ -210,6 +213,47 @@
         }
         #endregion FilterPlaceholder
 
+        #region BackgroundColor
+
+        public static readonly DependencyProperty BackgroundColorProperty =
+            DependencyProperty.Register(
+                nameof(BackgroundColor),
+                typeof(Brush),
+                typeof(AdvancedGridViewColumn),
+                new PropertyMetadata(Brushes.Transparent, OnBackgroundColorChanged));
+
+        public Brush BackgroundColor
+        {
+            get => (Brush)GetValue(BackgroundColorProperty);
+            set => SetValue(BackgroundColorProperty, value);
+        }
+
+        private static void OnBackgroundColorChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
+        {
+            if (d is AdvancedGridViewColumn column)
+                column.CreateDefaultCellTemplate();
+        }
+
+        #endregion BackgroundColor
+
+        #region BackgroundColorString
+
+        private BindingBase _backgroundColorBinding;
+
+        public BindingBase BackgroundColorString
+        {
+            get => _backgroundColorBinding;
+            set
+            {
+                _backgroundColorBinding = value;
+                this.CreateDefaultCellTemplate();
+            }
+        }
+
+        #endregion BackgroundColorString
+
         public bool IsFilterVisible { get; set; } = true;
 
         internal string BindingPath
@@ -242,9 +286,25 @@
             BindingPath = binding.Path?.Path;
 
             FrameworkElementFactory gridFactory = new FrameworkElementFactory(typeof(Grid));
+
+            // Hintergrundfarbe
+            if (_backgroundColorBinding != null)
+            {
+                gridFactory.SetBinding(Panel.BackgroundProperty, new Binding
+                    {
+                        Path = (_backgroundColorBinding as Binding)?.Path,
+                        Converter = new ColorStringToBrushConverter()
+                    });
+            }
+            else
+            {
+                gridFactory.SetValue(Panel.BackgroundProperty, BackgroundColor);
+            }
+
             FrameworkElementFactory textFactory = new FrameworkElementFactory(typeof(TextBlock));
 
             textFactory.SetValue(CellAppearanceManager.ColumnProperty, this);
+
             textFactory.AddHandler(FrameworkElement.LoadedEvent, new RoutedEventHandler(CellAppearanceManager.OnCellLoaded));
 
             var newBinding = new Binding
@@ -279,6 +339,36 @@
             };
 
             DisplayMemberBinding = null;
+        }
+    }
+
+    public class ColorStringToBrushConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is not string colorString || string.IsNullOrWhiteSpace(colorString))
+            {
+                return Brushes.Transparent;
+            }
+
+            try
+            {
+                return new BrushConverter().ConvertFromString(colorString) as Brush ?? Brushes.Transparent;
+            }
+            catch
+            {
+                return Brushes.Transparent;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is SolidColorBrush brush)
+            {
+                return brush.Color.ToString();
+            }
+
+            return string.Empty;
         }
     }
 

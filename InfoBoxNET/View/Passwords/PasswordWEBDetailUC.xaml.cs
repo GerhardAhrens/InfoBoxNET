@@ -22,6 +22,7 @@ namespace InfoBoxNET.View
     using System.Data.SQLite;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Media;
 
     using InfoBoxNET.Core;
     using InfoBoxNET.Core.Enums;
@@ -141,26 +142,28 @@ namespace InfoBoxNET.View
                 this.SymbolSource = sl.GetSymbols();
             }
 
-            using (DatabaseService ds = new DatabaseService(App.DatabasePath))
-            {
-                ds.OpenConnection();
-                if (ds.Connection == null)
-                {
-                    return;
-                }
-
-                this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
-
-                var usernamesAll = ds.Connection.RecordSet<List<PasswordPin>>("SELECT Username, AccessTyp FROM TAB_PasswordPin").Get().Result;
-                if (usernamesAll != null)
-                {
-                    var usernames = usernamesAll.Where(w => w.AccessTyp == AccessTyp.Website).OrderBy(o => o.Username).DistinctBy(d => d.Username).Select(s => s.Username).ToList();
-                    this.UsernameSource = usernames;
-                }
-            }
-
             if (this.CurrentRow != null && this.RowAction == DataRowAction.Change)
             {
+                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                {
+                    ds.OpenConnection();
+                    if (ds.Connection == null)
+                    {
+                        return;
+                    }
+
+                    this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
+
+                    var usernamesAll = ds.Connection.RecordSet<List<PasswordPin>>("SELECT Username, AccessTyp FROM TAB_PasswordPin").Get().Result;
+                    if (usernamesAll != null)
+                    {
+                        var usernames = usernamesAll.Where(w => w.AccessTyp == AccessTyp.Website).OrderBy(o => o.Username).DistinctBy(d => d.Username).Select(s => s.Username).ToList();
+                        this.UsernameSource = usernames;
+                    }
+
+                    this.Photo = ds.Connection.RecordSet<byte[]>($"SELECT Content FROM TAB_Attachment WHERE ObjectId = '{this.CurrentRow.Id.ToString()}'").Get().Result;
+                }
+
                 this.Title = this.CurrentRow.Title;
                 this.ShowDescription = this.CurrentRow.ShowDescription;
                 this.Description = this.CurrentRow.Description;
@@ -169,6 +172,7 @@ namespace InfoBoxNET.View
                 this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
                 this.HorizontalImageList.UpdateLayout();
                 this.Website = this.CurrentRow.Website;
+                this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
             }
         }
         #endregion Windows Events
