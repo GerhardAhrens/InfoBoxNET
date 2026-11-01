@@ -1,0 +1,167 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:UI="clr-namespace:System.Windows.Controls">
+
+    <UI:WindowTextMaxHeightConverter x:Key="WindowTextMaxHeightConverter" />
+
+    <Style TargetType="{x:Type UI:WindowText}">
+
+        <!--  Grundeinstellungen  -->
+
+        <Setter Property="FontFamily">
+            <Setter.Value>
+                <FontFamily xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">Segoe UI</FontFamily>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Normal" />
+
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="TextAlignment" Value="Left" />
+        <Setter Property="TextTrimming" Value="None" />
+
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Background" Value="Transparent" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type UI:WindowText}">
+
+                    <Border
+                        x:Name="PART_Border"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        ClipToBounds="True">
+
+                        <TextBlock
+                            x:Name="PART_TextBlock"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            FontSize="{TemplateBinding FontSize}"
+                            FontWeight="{TemplateBinding FontWeight}"
+                            Foreground="{TemplateBinding Foreground}"
+                            LineHeight="{TemplateBinding LineHeight}"
+                            LineStackingStrategy="{TemplateBinding LineStackingStrategy}"
+                            Text="{TemplateBinding Text}"
+                            TextAlignment="{TemplateBinding TextAlignment}"
+                            TextTrimming="{TemplateBinding TextTrimming}"
+                            TextWrapping="{TemplateBinding TextWrapping}">
+
+                            <TextBlock.MaxHeight>
+                                <MultiBinding Converter="{StaticResource WindowTextMaxHeightConverter}">
+                                    <Binding Path="MaxLines" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="FontSize" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="LineHeight" RelativeSource="{RelativeSource TemplatedParent}" />
+                                </MultiBinding>
+                            </TextBlock.MaxHeight>
+
+                        </TextBlock>
+
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+
+                        <!--  Hyperlink Underline  -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="StyleType" Value="Hyperlink" />
+                                <Condition Property="IsEnabled" Value="True" />
+                            </MultiTrigger.Conditions>
+
+                            <Setter TargetName="PART_TextBlock" Property="TextDecorations" Value="Underline" />
+                        </MultiTrigger>
+
+                        <!--  Hyperlink Hover  -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="StyleType" Value="Hyperlink" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+
+                            <Setter TargetName="PART_TextBlock" Property="Opacity" Value="0.75" />
+                        </MultiTrigger>
+
+                        <!--  Hyperlink Fokus  -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="StyleType" Value="Hyperlink" />
+                                <Condition Property="IsKeyboardFocused" Value="True" />
+                            </MultiTrigger.Conditions>
+
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+
+                            <Setter TargetName="PART_Border" Property="BorderThickness" Value="1" />
+                        </MultiTrigger>
+
+                        <!--  Disabled  -->
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PART_TextBlock" Property="Opacity" Value="0.45" />
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <!--  Typografie  -->
+
+        <Style.Triggers>
+
+            <Trigger Property="StyleType" Value="Display">
+                <Setter Property="FontSize" Value="28" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Trigger>
+
+            <Trigger Property="StyleType" Value="Title">
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Trigger>
+
+            <Trigger Property="StyleType" Value="Subtitle">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Trigger>
+
+            <Trigger Property="StyleType" Value="Body">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontWeight" Value="Normal" />
+            </Trigger>
+
+            <Trigger Property="StyleType" Value="Caption">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontWeight" Value="Normal" />
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+            </Trigger>
+
+            <Trigger Property="StyleType" Value="Small">
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="FontWeight" Value="Normal" />
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+            </Trigger>
+
+            <Trigger Property="StyleType" Value="Hyperlink">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}" />
+
+            </Trigger>
+            <Trigger Property="StyleType" Value="Emphasized">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Trigger>
+
+            <Trigger Property="StyleType" Value="Strong">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontWeight" Value="Bold" />
+            </Trigger>
+
+        </Style.Triggers>
+
+    </Style>
+
+</ResourceDictionary>
