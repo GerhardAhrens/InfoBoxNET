@@ -23,6 +23,9 @@ namespace InfoBoxNET.View
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
+    using System.Windows.Threading;
+
+    using Accessibility;
 
     using InfoBoxNET.Core;
     using InfoBoxNET.Core.Enums;
@@ -97,9 +100,15 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
-        public IEnumerable<string> UsernameSource
+        public IEnumerable<PasswordPin> UsernameSource
         {
-            get => base.GetValue<IEnumerable<string>>();
+            get => base.GetValue<IEnumerable<PasswordPin>>();
+            set => base.SetValue(value);
+        }
+
+        public PasswordPin UsernameItem
+        {
+            get => base.GetValue<PasswordPin>();
             set => base.SetValue(value);
         }
 
@@ -157,8 +166,7 @@ namespace InfoBoxNET.View
                     var usernamesAll = ds.Connection.RecordSet<List<PasswordPin>>("SELECT Username, AccessTyp FROM TAB_PasswordPin").Get().Result;
                     if (usernamesAll != null)
                     {
-                        var usernames = usernamesAll.Where(w => w.AccessTyp == AccessTyp.Website).OrderBy(o => o.Username).DistinctBy(d => d.Username).Select(s => s.Username).ToList();
-                        this.UsernameSource = usernames;
+                        this.UsernameSource = usernamesAll.Where(w => w.AccessTyp == AccessTyp.Website).OrderBy(o => o.Username).DistinctBy(d => d.Username); //.ToList<PasswordPin>; //.Select(s => new { s.Username });
                     }
 
                     this.Photo = ds.Connection.RecordSet<byte[]>($"SELECT Content FROM TAB_Attachment WHERE ObjectId = '{this.CurrentRow.Id.ToString()}'").Get().Result;
@@ -173,6 +181,10 @@ namespace InfoBoxNET.View
                 this.HorizontalImageList.UpdateLayout();
                 this.Website = this.CurrentRow.Website;
                 this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
+                this.UsernameItem = UsernameSource.FirstOrDefault(u => u.Username == this.CurrentRow.Username);
+                this.cbUsername.IsDropDownOpen = false;
+                this.Username = this.CurrentRow.Username;
+                this.Passwort = this.CurrentRow.Passwort;
             }
         }
         #endregion Windows Events
@@ -180,5 +192,22 @@ namespace InfoBoxNET.View
         #region Command Events
         #endregion Command Events
 
+        private void WindowComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            WindowComboBox comboBox = sender as WindowComboBox;
+
+            Dispatcher.Invoke(() =>
+            {
+                comboBox.Focus();
+                if (comboBox.IsDropDownOpen == true)
+                {
+                    comboBox.IsDropDownOpen = false;
+                }
+
+                this.TitelField.PART_TextBox.Focus();
+                this.TitelField.PART_TextBox.CaretIndex = 0;
+
+            }, DispatcherPriority.Send);
+        }
     }
 }
