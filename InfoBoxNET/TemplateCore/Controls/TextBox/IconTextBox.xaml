@@ -64,7 +64,7 @@
             </Style>
         </Border.Style>
 
-        <Grid ColumnDefinitions="24,12,1,12,*">
+        <Grid ColumnDefinitions="24,12,1,12,*" ShowGridLines="False">
 
             <!--  Icon oder Standardsymbol T  -->
             <!--  Symbolbereich mit konfigurierbarer Hintergrundfarbe  -->
@@ -83,8 +83,8 @@
                     <!--  Icon  -->
                     <Image
                         x:Name="IconImage"
-                        Width="30"
-                        Height="30"
+                        Width="25"
+                        Height="25"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Source="{Binding Icon, ElementName=Root}"

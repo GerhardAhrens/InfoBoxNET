@@ -23,9 +23,6 @@ namespace InfoBoxNET.View
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
-    using System.Windows.Threading;
-
-    using Accessibility;
 
     using InfoBoxNET.Core;
     using InfoBoxNET.Core.Enums;
@@ -45,7 +42,6 @@ namespace InfoBoxNET.View
             this.CurrentRow = rowView;
             this.OriginalRow = rowView;
             this.RowAction = rowAction;
-            this.Background = System.Windows.Media.Brushes.LightGreen;
 
             this.DataContext = this;
         }
@@ -185,29 +181,14 @@ namespace InfoBoxNET.View
                 this.cbUsername.IsDropDownOpen = false;
                 this.Username = this.CurrentRow.Username;
                 this.Passwort = this.CurrentRow.Passwort;
+
+                this.TitelField.PART_TextBox.Focus();
+                this.TitelField.PART_TextBox.CaretIndex = 0;
             }
         }
         #endregion Windows Events
 
         #region Command Events
         #endregion Command Events
-
-        private void WindowComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            WindowComboBox comboBox = sender as WindowComboBox;
-
-            Dispatcher.Invoke(() =>
-            {
-                comboBox.Focus();
-                if (comboBox.IsDropDownOpen == true)
-                {
-                    comboBox.IsDropDownOpen = false;
-                }
-
-                this.TitelField.PART_TextBox.Focus();
-                this.TitelField.PART_TextBox.CaretIndex = 0;
-
-            }, DispatcherPriority.Send);
-        }
     }
 }
