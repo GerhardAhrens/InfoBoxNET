@@ -187,6 +187,10 @@ namespace System.Data.SQLite
                 {
                     resultValue = GetScalar<T>(@this.Connection, @this.SQL, @this.ParameterCollection);
                 }
+                else if (typeof(T).IsClass == true && typeof(T).IsGenericType == false && typeof(T).Namespace != "System")
+                {
+                    resultValue = GetScalar<T>(@this.Connection, @this.SQL, @this.ParameterCollection);
+                }
                 else if (typeof(T) == typeof(DataRow))
                 {
                     resultValue = GetDataRow<T>(@this.Connection, @this.SQL, @this.ParameterCollection);
@@ -1249,6 +1253,13 @@ namespace System.Data.SQLite
             else if (type.Name == typeof(float).Name)
             {
                 result = true;
+            }
+            else
+            {
+                if (type.IsClass == true && type.IsGenericType == false)
+                {
+                    result = true;
+                }
             }
 
             return result;

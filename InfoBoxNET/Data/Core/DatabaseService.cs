@@ -157,6 +157,51 @@ namespace System.Data.SQLite
             }
         }
 
+        public bool DeleteDatabaseFile()
+        {
+            try
+            {
+                if (File.Exists(this.FullName) == true)
+                {
+                    FileInfo fi = new FileInfo(this.FullName);
+                    fi.Delete();
+
+                    if (File.Exists(this.FullName) == false)
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return false;
+        }
+
+        public void Backup(string targetBackup = "")
+        {
+            try
+            {
+                if (File.Exists(this.FullName) == true)
+                {
+                    FileInfo fi = new FileInfo(this.FullName);
+                    if (string.IsNullOrEmpty(targetBackup) == true)
+                    {
+                        targetBackup = $"{Path.GetDirectoryName(this.FullName)}\\{Path.GetFileNameWithoutExtension(this.FullName)}_{DateTime.Now.ToString("yyyyMMdd", CultureInfo.CurrentCulture)}{Path.GetExtension(this.FullName)}";
+                    }
+
+                    var result = this.CopyFileAsync(this.FullName, targetBackup);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        #region Erstellen SQL Anweisungen
         public string SelectRows<T>(string whereClause = null, string orderBy = null)
         {
             Type type = typeof(T);
@@ -187,7 +232,7 @@ namespace System.Data.SQLite
             {
                 string columnName = property.Name;
 
-                Type propertyType =  Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                Type propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
 
                 if (propertyType == typeof(string))
                 {
@@ -216,7 +261,9 @@ namespace System.Data.SQLite
 
             return sql;
         }
+        #endregion Erstellen SQL Anweisungen
 
+        #region Erstellen SQL Database Anweisungen
         public bool InsertRow<T>(T dataObject)
         {
             if (dataObject == null)
@@ -291,7 +338,6 @@ namespace System.Data.SQLite
 
             return true;
         }
-
 
         public bool UpdateRow<T>(T dataObject)
         {
@@ -386,10 +432,19 @@ namespace System.Data.SQLite
             }
         }
 
-        
-    public string DeleteRows<T>()
+        public int DeleteRows<T>(T dataObject)
         {
-            Type type = typeof(T);
+            if (dataObject == null)
+            {
+                throw new ArgumentNullException(nameof(dataObject));
+            }
+
+            if (!File.Exists(this.FullName))
+            {
+                return 0;
+            }
+
+            Type type = dataObject.GetType();
 
             // Tabellenname aus dem DataTable-Attribut ermitteln
             DataTableAttribute tableAttribute = type.GetCustomAttribute<DataTableAttribute>();
@@ -420,63 +475,41 @@ namespace System.Data.SQLite
                 throw new InvalidOperationException($"Die Klasse {type.Name} besitzt keinen Primärschlüssel.");
             }
 
-            // WHERE-Klausel erstellen
-            List<string> whereClauses = new List<string>();
-
-            foreach (PropertyInfo property in primaryKeys)
+            using (SQLiteConnection sqliteConnection = new SQLiteConnection(this.SqlConnectionString))
             {
-                string columnName = property.Name;
+                sqliteConnection.Open();
+                this.IsOpen = true;
 
-                whereClauses.Add($"[{columnName}] = @key_{columnName}");
+                using (SQLiteCommand command =
+                       sqliteConnection.CreateCommand())
+                {
+                    List<string> whereClauses = new List<string>();
+
+                    // WHERE-Klausel und SQLite-Parameter erstellen
+                    foreach (PropertyInfo property in primaryKeys)
+                    {
+                        string columnName = property.Name;
+                        string parameterName = "@key_" + columnName;
+
+                        whereClauses.Add($"[{columnName}] = {parameterName}");
+
+                        object value = property.GetValue(dataObject, null);
+
+                        command.Parameters.AddWithValue(parameterName, GetSQLiteValue(value));
+                    }
+
+                    // DELETE-Anweisung erstellen
+                    command.CommandText = $"DELETE FROM [{tableName}] WHERE {string.Join(" AND ", whereClauses)}";
+
+                    // Anzahl der gelöschten Datensätze zurückgeben
+                    return command.ExecuteNonQuery();
+                }
             }
-
-            // DELETE-Anweisung erstellen
-            string sql = $"DELETE FROM [{tableName}] WHERE {string.Join(" AND ", whereClauses)}";
-
-            return sql;
         }
 
-        private static object GetSQLiteValue(object value)
-        {
-            if (value == null)
-            {
-                return DBNull.Value;
-            }
+        #endregion Erstellen SQL Database Anweisungen
 
-            Type type = value.GetType();
-
-            // Nullable<T> ist bei einem nicht-null-Wert bereits
-            // auf den tatsächlichen Werttyp reduziert.
-            if (type.IsEnum)
-            {
-                return Convert.ChangeType(value, Enum.GetUnderlyingType(type));
-            }
-
-            if (value is Guid guid)
-            {
-                return guid.ToString();
-            }
-
-            if (value is DateTime dateTime)
-            {
-                return dateTime.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
-            }
-
-            if (value is DateTimeOffset dateTimeOffset)
-            {
-                return dateTimeOffset.ToString("o");
-            }
-
-            if (value is bool boolean)
-            {
-                return boolean ? 1 : 0;
-            }
-
-            return value;
-        }
-
-
-
+        #region SQL DataBase Anweisung über Action
         public void Insert(Action<SQLiteConnection> actionMethod)
         {
             try
@@ -621,50 +654,47 @@ namespace System.Data.SQLite
                 throw;
             }
         }
+        #endregion SQL DataBase Anweisung über Action
 
-        public bool DeleteDatabaseFile()
+        private static object GetSQLiteValue(object value)
         {
-            try
+            if (value == null)
             {
-                if (File.Exists(this.FullName) == true)
-                {
-                    FileInfo fi = new FileInfo(this.FullName);
-                    fi.Delete();
-
-                    if (File.Exists(this.FullName) == false)
-                    {
-                        return true;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                throw;
+                return DBNull.Value;
             }
 
-            return false;
+            Type type = value.GetType();
+
+            // Nullable<T> ist bei einem nicht-null-Wert bereits
+            // auf den tatsächlichen Werttyp reduziert.
+            if (type.IsEnum)
+            {
+                return Convert.ChangeType(value, Enum.GetUnderlyingType(type));
+            }
+
+            if (value is Guid guid)
+            {
+                return guid.ToString();
+            }
+
+            if (value is DateTime dateTime)
+            {
+                return dateTime.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
+            }
+
+            if (value is DateTimeOffset dateTimeOffset)
+            {
+                return dateTimeOffset.ToString("o");
+            }
+
+            if (value is bool boolean)
+            {
+                return boolean ? 1 : 0;
+            }
+
+            return value;
         }
 
-        public void Backup(string targetBackup = "")
-        {
-            try
-            {
-                if (File.Exists(this.FullName) == true)
-                {
-                    FileInfo fi = new FileInfo(this.FullName);
-                    if (string.IsNullOrEmpty(targetBackup) == true)
-                    {
-                        targetBackup = $"{Path.GetDirectoryName(this.FullName)}\\{Path.GetFileNameWithoutExtension(this.FullName)}_{DateTime.Now.ToString("yyyyMMdd", CultureInfo.CurrentCulture)}{Path.GetExtension(this.FullName)}";
-                    }
-
-                    var result = this.CopyFileAsync(this.FullName, targetBackup);
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
 
         /// <summary>
         /// Lesen alle Columns/Tabelle der aktuellen SQLite Datenbank

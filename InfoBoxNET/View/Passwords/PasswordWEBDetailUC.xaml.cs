@@ -180,6 +180,34 @@ namespace InfoBoxNET.View
                 this.TitelField.PART_TextBox.Focus();
                 this.TitelField.PART_TextBox.CaretIndex = 0;
             }
+            else if (this.CurrentRow != null && this.RowAction == DataRowAction.Add)
+            {
+                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                {
+                    ds.OpenConnection();
+                    if (ds.Connection == null)
+                    {
+                        return;
+                    }
+
+                    this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
+
+                    var usernamesAll = ds.Connection.RecordSet<List<PasswordPin>>("SELECT Username, AccessTyp FROM TAB_PasswordPin").Get().Result;
+                    if (usernamesAll != null)
+                    {
+                        this.UsernameSource = usernamesAll
+                            .Where(w => w.AccessTyp == AccessTyp.Website)
+                            .OrderBy(o => o.Username)
+                            .DistinctBy(d => d.Username)
+                            .ToDictionary(k => Guid.CreateVersion7(), v => v.Username);
+                    }
+
+                    this.HorizontalImageList.SelectedValue = 0;
+                    this.HorizontalImageList.ScrollIntoView(0);
+                    this.HorizontalImageList.UpdateLayout();
+                    this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush();
+                }
+            }
         }
         #endregion Windows Events
 

@@ -66,7 +66,7 @@ namespace InfoBoxNET.Core
             return brushColor;
         }
 
-        public static Brush ConvertNameToBrush(string colorName)
+        public static Brush ConvertNameToBrush(string colorName = "")
         {
             if (string.IsNullOrEmpty(colorName) == true) 
             { 

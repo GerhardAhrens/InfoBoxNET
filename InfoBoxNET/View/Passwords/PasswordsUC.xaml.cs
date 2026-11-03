@@ -27,8 +27,6 @@ namespace InfoBoxNET.View
     using System.Windows.Markup;
     using System.Windows.Media;
 
-    using DocumentFormat.OpenXml.Office2010.Excel;
-
     using InfoBoxNET.Core;
     using InfoBoxNET.Core.Enums;
     using InfoBoxNET.Data;
@@ -191,7 +189,15 @@ namespace InfoBoxNET.View
                 };
 
                 this.PasswordsTabControl.Items.Add(passwordsTab);
-                passwordsTab.Content = new PasswordWEBDetailUC(this.CurrentSelectedItem, DataRowAction.Add);
+
+                PasswordPin pw = new()
+                {
+                    AccessTyp = AccessTyp.Website,
+                    AccessSymbol = this.GetIconText("W"),
+                    Version = 0,
+                }
+                ;
+                passwordsTab.Content = new PasswordWEBDetailUC(pw, DataRowAction.Add);
                 this.PasswordsTabControl.SelectedItem = passwordsTab;
                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                 {
@@ -208,7 +214,15 @@ namespace InfoBoxNET.View
                 };
 
                 this.PasswordsTabControl.Items.Add(passwordsTab);
-                passwordsTab.Content = new PasswordWEBDetailUC(this.CurrentSelectedItem, DataRowAction.Add);
+
+                PasswordPin pw = new()
+                {
+                    AccessTyp = AccessTyp.Website,
+                    AccessSymbol = this.GetIconText("W"),
+                    Version = 0,
+                };
+
+                passwordsTab.Content = new PasswordWEBDetailUC(pw, DataRowAction.Add);
                 this.PasswordsTabControl.SelectedItem = passwordsTab;
                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                 {
@@ -293,11 +307,7 @@ namespace InfoBoxNET.View
                         int countDelete = ds.Connection.RecordSet<int>("SELECT COUNT(*) FROM TAB_PasswordPin WHERE Id=@key_Id", parameterCollection).Get().Result;
                         if (countDelete == 1)
                         {
-                            string sql = ds.DeleteRows<PasswordPin>();
-                            parameterCollection.Clear();
-                            parameterCollection.Add("@key_Id", this.CurrentSelectedItem.Id.ToString());
-                            parameterCollection.Add("@key_Version", 0);
-                            int rowsAffected = ds.Connection.RecordSet<int>(sql, parameterCollection).Execute().Result;
+                            int rowsAffected = ds.DeleteRows<PasswordPin>(this.CurrentSelectedItem);
                             if (rowsAffected > 0)
                             {
                                 this.LoadDataHandler();
@@ -305,6 +315,21 @@ namespace InfoBoxNET.View
                                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                                 {
                                     await App.EventAgg.PublishAsync(new StatusEvent($"Eintrag '{titel}' gelöscht. Bereit: {this.RowCount} Einträge"));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            parameterCollection.Clear();
+                            parameterCollection.Add("@key_Id", this.CurrentSelectedItem.Id.ToString());
+                            int rowsAffected = ds.Connection.RecordSet<int>("DELETE FROM TAB_PasswordPin WHERE Id=@key_Id", parameterCollection).Execute().Result;
+                            if (rowsAffected > 0)
+                            {
+                                this.LoadDataHandler();
+
+                                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                                {
+                                    await App.EventAgg.PublishAsync(new StatusEvent($"Eintrag '{titel}' ({rowsAffected}) gelöscht. Bereit: {this.RowCount} Einträge"));
                                 }
                             }
                         }
@@ -615,10 +640,65 @@ namespace InfoBoxNET.View
                     bool areEqual = JsonSerializer.Serialize(rowView) == JsonSerializer.Serialize(this.CurrentSelectedItem);
                     if (areEqual == false)
                     {
-                        MessageBoxResult result = MessageBox.Show($"Die Änderungen am Eintrag [{rowView.Title}] wurden noch nicht gespeichert. Wollen Sie die Änderungen verwerfen und den Tab schließen?", "Änderungen verwerfen", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        string titel = this.CurrentSelectedItem.Title;
+                        MessageBoxResult result = MessageBox.Show($"Die Änderungen am Eintrag [{titel}] wurden noch nicht gespeichert. Wollen Sie die Änderungen verwerfen und den Tab schließen?", "Änderungen verwerfen", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                         if (result == MessageBoxResult.Yes)
                         {
+                            ID rowId = rowView.Id;
                             /* Änderungen speichern */
+                            using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                            {
+                                if (ds.UpdateRow<PasswordPin>(rowView) == true)
+                                {
+                                    if (rowView.Photo == null)
+                                    {
+                                        if (ds.Connection == null)
+                                        {
+                                            ds.OpenConnection();
+                                        }
+
+                                        List<Attachment> photo = ds.Connection.RecordSet<List<Attachment>>($"SELECT * FROM TAB_Attachment WHERE ObjectId = '{rowId.ToString()}'").Get().Result;
+                                        ds.DeleteRows<Attachment>(photo[0]);
+                                    }
+                                    else
+                                    {
+                                        if (ds.Connection == null)
+                                        {
+                                            ds.OpenConnection();
+                                        }
+
+                                        int countUpdate = ds.Connection.RecordSet<int>($"SELECT COUNT(*) FROM TAB_Attachment WHERE ObjectId='{rowId.ToString()}'").Get().Result;
+                                        if (countUpdate == 0)
+                                        {
+                                            InfoBoxNET.Model.Attachment photo = new()
+                                            {
+                                                Filename = "Clipboard",
+                                                FileExtension = "Raw",
+                                                FileDateTime = DateTime.Now,
+                                                FileSize = rowView.Photo.Length,
+                                                Content = rowView.Photo,
+                                                ObjectId = new Guid(rowId.Value.ToString()),
+                                                ObjectName = "PasswordPin",
+                                            };
+
+                                            ds.InsertRow<Attachment>(photo);
+                                        }
+                                        else
+                                        {
+                                            List<Attachment> photo = ds.Connection.RecordSet<List<Attachment>>($"SELECT * FROM TAB_Attachment WHERE ObjectId = '{rowId.ToString()}'").Get().Result;
+                                            photo[0].FileSize = rowView.Photo.Length;
+                                            photo[0].Content = rowView.Photo;
+                                        }
+                                    }
+
+                                    this.LoadDataHandler();
+
+                                    if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                                    {
+                                        await App.EventAgg.PublishAsync(new StatusEvent($"Eintrag '{titel}' aktualisiert. Bereit: {this.RowCount} Einträge"));
+                                    }
+                                };
+                            }
 
                             this.PasswordsTabControl.Items.Remove(tabItem);
                         }
