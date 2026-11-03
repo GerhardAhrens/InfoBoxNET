@@ -80,7 +80,7 @@ namespace InfoBoxNET.View
         public int SelectedSymbol
         {
             get => base.GetValue<int>();
-            set => base.SetValue(value);
+            set => base.SetValue(value, this.ChangeValue);
         }
 
         public string Website
@@ -95,22 +95,10 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
-        public string Username
-        {
-            get => base.GetValue<string>();
-            set => base.SetValue(value);
-        }
-
-        public string Passwort
-        {
-            get => base.GetValue<string>();
-            set => base.SetValue(value);
-        }
-
         public Brush SelectedBackgroundColor
         {
             get => base.GetValue<Brush>();
-            set => base.SetValue(value);
+            set => base.SetValue(value,this.ChangeValue);
         }
 
         public byte[] Photo
@@ -119,11 +107,23 @@ namespace InfoBoxNET.View
             set => base.SetValue(value,this.ChangeValue);
         }
 
-        private void ChangeValue(byte[] arg1, string arg2)
+        private void ChangeValue(object arg1, string arg2)
         {
             if (arg2 == nameof(this.Photo))
             {
-                this.CurrentRow.Photo = arg1;
+                this.CurrentRow.Photo = (byte[])arg1;
+            }
+            else if (arg2 == nameof(this.SelectedBackgroundColor))
+            {
+                this.CurrentRow.Background = ColorConverters.ConvertBrushToName((Brush)arg1);
+            }
+        }
+
+        private void ChangeValue(int arg1, string arg2)
+        {
+            if (arg2 == nameof(this.SelectedSymbol))
+            {
+                this.CurrentRow.Symbol = arg1;
             }
         }
 
@@ -172,26 +172,10 @@ namespace InfoBoxNET.View
                     this.Photo = ds.Connection.RecordSet<byte[]>($"SELECT Content FROM TAB_Attachment WHERE ObjectId = '{this.CurrentRow.Id.ToString()}'").Get().Result;
                 }
 
-                /*
-                this.Title = this.CurrentRow.Title;
-                this.ShowDescription = this.CurrentRow.ShowDescription;
-                this.Description = this.CurrentRow.Description;
-                this.SelectedSymbol = this.CurrentRow.Symbol;
-                this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
-                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
-                this.HorizontalImageList.UpdateLayout();
-                this.Website = this.CurrentRow.Website;
-                this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
-                this.Username = this.UsernameSource.FirstOrDefault(u => u.Value == this.CurrentRow.Username).Value;
-                this.Username = this.CurrentRow.Username;
-                this.Passwort = this.CurrentRow.Passwort;
-                */
-
-                this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
-                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
+                this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol+1;
+                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol+1);
                 this.HorizontalImageList.UpdateLayout();
                 this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
-                this.Username = this.UsernameSource.FirstOrDefault(u => u.Value == this.CurrentRow.Username).Value;
                 this.cbUsername.IsDropDownOpen = false;
                 this.TitelField.PART_TextBox.Focus();
                 this.TitelField.PART_TextBox.CaretIndex = 0;
