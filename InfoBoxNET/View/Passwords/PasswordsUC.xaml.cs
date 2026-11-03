@@ -27,6 +27,8 @@ namespace InfoBoxNET.View
     using System.Windows.Markup;
     using System.Windows.Media;
 
+    using DocumentFormat.OpenXml.Office2010.Excel;
+
     using InfoBoxNET.Core;
     using InfoBoxNET.Core.Enums;
     using InfoBoxNET.Data;
@@ -274,7 +276,40 @@ namespace InfoBoxNET.View
         {
             if (commandParam is CommandButtons button && button == CommandButtons.DeleteEntry)
             {
+                string titel = this.CurrentSelectedItem.Title;
+                MessageBoxResult result = MessageBox.Show($"Wollen Sie den Eintrag '{titel}' löschen?", "Eintrag löschen", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                    {
+                        ds.OpenConnection();
+                        if (ds.Connection == null)
+                        {
+                            return;
+                        }
 
+                        Dictionary<string, object> parameterCollection = new();
+                        parameterCollection.Add("@key_Id", this.CurrentSelectedItem.Id.ToString());
+                        int countDelete = ds.Connection.RecordSet<int>("SELECT COUNT(*) FROM TAB_PasswordPin WHERE Id=@key_Id", parameterCollection).Get().Result;
+                        if (countDelete == 1)
+                        {
+                            string sql = ds.DeleteRows<PasswordPin>();
+                            parameterCollection.Clear();
+                            parameterCollection.Add("@key_Id", this.CurrentSelectedItem.Id.ToString());
+                            parameterCollection.Add("@key_Version", 0);
+                            int rowsAffected = ds.Connection.RecordSet<int>(sql, parameterCollection).Execute().Result;
+                            if (rowsAffected > 0)
+                            {
+                                this.LoadDataHandler();
+
+                                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                                {
+                                    await App.EventAgg.PublishAsync(new StatusEvent($"Eintrag '{titel}' gelöscht. Bereit: {this.RowCount} Einträge"));
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 

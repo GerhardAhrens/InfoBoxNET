@@ -386,6 +386,56 @@ namespace System.Data.SQLite
             }
         }
 
+        
+    public string DeleteRows<T>()
+        {
+            Type type = typeof(T);
+
+            // Tabellenname aus dem DataTable-Attribut ermitteln
+            DataTableAttribute tableAttribute = type.GetCustomAttribute<DataTableAttribute>();
+
+            if (tableAttribute == null)
+            {
+                throw new InvalidOperationException($"Die Klasse {type.Name} besitzt kein DataTable-Attribut.");
+            }
+
+            string tableName = tableAttribute.TableName;
+
+            // Properties mit TableColumn-Attribut ermitteln
+            PropertyInfo[] properties = type
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.GetCustomAttribute<TableColumnAttribute>() != null).ToArray();
+
+            if (properties.Length == 0)
+            {
+                throw new InvalidOperationException($"Die Klasse {type.Name} besitzt keine TableColumn-Properties.");
+            }
+
+            // Alle Primärschlüssel ermitteln
+            PropertyInfo[] primaryKeys = properties
+                .Where(p => p.GetCustomAttribute<PrimaryKeyAttribute>() != null).ToArray();
+
+            if (primaryKeys.Length == 0)
+            {
+                throw new InvalidOperationException($"Die Klasse {type.Name} besitzt keinen Primärschlüssel.");
+            }
+
+            // WHERE-Klausel erstellen
+            List<string> whereClauses = new List<string>();
+
+            foreach (PropertyInfo property in primaryKeys)
+            {
+                string columnName = property.Name;
+
+                whereClauses.Add($"[{columnName}] = @key_{columnName}");
+            }
+
+            // DELETE-Anweisung erstellen
+            string sql = $"DELETE FROM [{tableName}] WHERE {string.Join(" AND ", whereClauses)}";
+
+            return sql;
+        }
+
         private static object GetSQLiteValue(object value)
         {
             if (value == null)
