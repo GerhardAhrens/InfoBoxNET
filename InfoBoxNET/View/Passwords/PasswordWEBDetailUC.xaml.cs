@@ -40,7 +40,6 @@ namespace InfoBoxNET.View
             WeakEventManager<UserControl, RoutedEventArgs>.AddHandler(this, "Loaded", this.OnLoaded);
 
             this.CurrentRow = rowView;
-            this.OriginalRow = rowView;
             this.RowAction = rowAction;
 
             this.DataContext = this;
@@ -57,12 +56,6 @@ namespace InfoBoxNET.View
         public Region SelectedRegion
         {
             get => base.GetValue<Region>();
-            set => base.SetValue(value);
-        }
-
-        public string Title
-        {
-            get => base.GetValue<string>();
             set => base.SetValue(value);
         }
 
@@ -123,11 +116,24 @@ namespace InfoBoxNET.View
         public byte[] Photo
         {
             get => base.GetValue<byte[]>();
+            set => base.SetValue(value,this.ChangeValue);
+        }
+
+        private void ChangeValue(byte[] arg1, string arg2)
+        {
+            if (arg2 == nameof(this.Photo))
+            {
+                this.CurrentRow.Photo = arg1;
+            }
+        }
+
+        public PasswordPin CurrentRow
+        {
+            get => base.GetValue<PasswordPin>();
             set => base.SetValue(value);
         }
+
         public DataRowAction RowAction { get; set; }
-        public PasswordPin OriginalRow { get; set; }
-        public PasswordPin CurrentRow { get; set; }
         private MessageBase Message { get; } = new MessageBase();
 
         #endregion Properties
@@ -166,6 +172,7 @@ namespace InfoBoxNET.View
                     this.Photo = ds.Connection.RecordSet<byte[]>($"SELECT Content FROM TAB_Attachment WHERE ObjectId = '{this.CurrentRow.Id.ToString()}'").Get().Result;
                 }
 
+                /*
                 this.Title = this.CurrentRow.Title;
                 this.ShowDescription = this.CurrentRow.ShowDescription;
                 this.Description = this.CurrentRow.Description;
@@ -178,7 +185,13 @@ namespace InfoBoxNET.View
                 this.Username = this.UsernameSource.FirstOrDefault(u => u.Value == this.CurrentRow.Username).Value;
                 this.Username = this.CurrentRow.Username;
                 this.Passwort = this.CurrentRow.Passwort;
+                */
 
+                this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
+                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
+                this.HorizontalImageList.UpdateLayout();
+                this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
+                this.Username = this.UsernameSource.FirstOrDefault(u => u.Value == this.CurrentRow.Username).Value;
                 this.cbUsername.IsDropDownOpen = false;
                 this.TitelField.PART_TextBox.Focus();
                 this.TitelField.PART_TextBox.CaretIndex = 0;

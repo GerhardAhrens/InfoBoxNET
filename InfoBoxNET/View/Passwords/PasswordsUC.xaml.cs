@@ -549,19 +549,19 @@ namespace InfoBoxNET.View
                 {
                     if (rowView.AccessTyp == AccessTyp.Website)
                     {
-                        selectedTab.Content = new PasswordWEBDetailUC(rowView, DataRowAction.Change);
+                        selectedTab.Content = new PasswordWEBDetailUC(rowView.DeepClone(), DataRowAction.Change);
                     }
                     else if (rowView.AccessTyp == AccessTyp.Passwort)
                     {
-                        selectedTab.Content = new PasswordPASSDetailUC(rowView, DataRowAction.Change);
+                        selectedTab.Content = new PasswordPASSDetailUC(rowView.DeepClone(), DataRowAction.Change);
                     }
                     else if (rowView.AccessTyp == AccessTyp.Pin)
                     {
-                        selectedTab.Content = new PasswordPINDetailUC(rowView, DataRowAction.Change);
+                        selectedTab.Content = new PasswordPINDetailUC(rowView.DeepClone(), DataRowAction.Change);
                     }
                     else if (rowView.AccessTyp == AccessTyp.License)
                     {
-                        selectedTab.Content = new PasswordLICDetailUC(rowView, DataRowAction.Change);
+                        selectedTab.Content = new PasswordLICDetailUC(rowView.DeepClone(), DataRowAction.Change);
                     }
                 }
 
@@ -576,9 +576,8 @@ namespace InfoBoxNET.View
                 if (this.CurrentSelectedItem.AccessTyp == AccessTyp.Website)
                 {
                     PasswordPin rowView = ((PasswordWEBDetailUC)tabItem.Content).CurrentRow;
-                    PasswordPin rowViewOrig = ((PasswordWEBDetailUC)tabItem.Content).OriginalRow;
                     DataRowAction rowAction = ((PasswordWEBDetailUC)tabItem.Content).RowAction;
-                    bool areEqual = JsonSerializer.Serialize(rowView) == JsonSerializer.Serialize(rowViewOrig);
+                    bool areEqual = JsonSerializer.Serialize(rowView) == JsonSerializer.Serialize(this.CurrentSelectedItem);
                     if (areEqual == false)
                     {
                         MessageBoxResult result = MessageBox.Show($"Die Änderungen am Eintrag [{rowView.Title}] wurden noch nicht gespeichert. Wollen Sie die Änderungen verwerfen und den Tab schließen?", "Änderungen verwerfen", MessageBoxButton.YesNo, MessageBoxImage.Warning);
@@ -602,9 +601,8 @@ namespace InfoBoxNET.View
                     if (this.CurrentSelectedItem.AccessTyp == AccessTyp.Website)
                     {
                         PasswordPin rowView = ((PasswordWEBDetailUC)this.CurrentTabItem.Content).CurrentRow;
-                        PasswordPin rowViewOrig = ((PasswordWEBDetailUC)this.CurrentTabItem.Content).OriginalRow;
                         DataRowAction rowAction = ((PasswordWEBDetailUC)this.CurrentTabItem.Content).RowAction;
-                        bool areEqual = JsonSerializer.Serialize(rowView) == JsonSerializer.Serialize(rowViewOrig);
+                        bool areEqual = JsonSerializer.Serialize(rowView) == JsonSerializer.Serialize(this.CurrentSelectedItem);
 
                         this.PasswordsTabControl.Items.Remove(this.CurrentTabItem);
                     }

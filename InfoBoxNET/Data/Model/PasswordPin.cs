@@ -18,6 +18,7 @@ namespace InfoBoxNET.Model
     using System;
     using System.Data.SQLite;
     using System.Diagnostics;
+    using System.Text.Json.Serialization;
 
     using InfoBoxNET.Core.Enums;
     using InfoBoxNET.Data;
@@ -143,5 +144,7 @@ namespace InfoBoxNET.Model
 
         [TableColumn(SQLiteDataType.DateTime)]
         public DateTime ModifiedOn { get; set; }
+
+        public byte[] Photo { get; set; }
     }
 }
