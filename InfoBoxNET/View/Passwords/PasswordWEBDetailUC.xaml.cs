@@ -96,15 +96,9 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
-        public IEnumerable<PasswordPin> UsernameSource
+        public Dictionary<Guid, string> UsernameSource
         {
-            get => base.GetValue<IEnumerable<PasswordPin>>();
-            set => base.SetValue(value);
-        }
-
-        public PasswordPin UsernameItem
-        {
-            get => base.GetValue<PasswordPin>();
+            get => base.GetValue<Dictionary<Guid, string>>();
             set => base.SetValue(value);
         }
 
@@ -162,7 +156,11 @@ namespace InfoBoxNET.View
                     var usernamesAll = ds.Connection.RecordSet<List<PasswordPin>>("SELECT Username, AccessTyp FROM TAB_PasswordPin").Get().Result;
                     if (usernamesAll != null)
                     {
-                        this.UsernameSource = usernamesAll.Where(w => w.AccessTyp == AccessTyp.Website).OrderBy(o => o.Username).DistinctBy(d => d.Username); //.ToList<PasswordPin>; //.Select(s => new { s.Username });
+                        this.UsernameSource = usernamesAll
+                            .Where(w => w.AccessTyp == AccessTyp.Website)
+                            .OrderBy(o => o.Username)
+                            .DistinctBy(d => d.Username)
+                            .ToDictionary(k => Guid.CreateVersion7(), v => v.Username);
                     }
 
                     this.Photo = ds.Connection.RecordSet<byte[]>($"SELECT Content FROM TAB_Attachment WHERE ObjectId = '{this.CurrentRow.Id.ToString()}'").Get().Result;
@@ -177,11 +175,11 @@ namespace InfoBoxNET.View
                 this.HorizontalImageList.UpdateLayout();
                 this.Website = this.CurrentRow.Website;
                 this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
-                this.UsernameItem = UsernameSource.FirstOrDefault(u => u.Username == this.CurrentRow.Username);
-                this.cbUsername.IsDropDownOpen = false;
+                this.Username = this.UsernameSource.FirstOrDefault(u => u.Value == this.CurrentRow.Username).Value;
                 this.Username = this.CurrentRow.Username;
                 this.Passwort = this.CurrentRow.Passwort;
 
+                this.cbUsername.IsDropDownOpen = false;
                 this.TitelField.PART_TextBox.Focus();
                 this.TitelField.PART_TextBox.CaretIndex = 0;
             }
