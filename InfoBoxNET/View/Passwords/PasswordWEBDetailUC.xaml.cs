@@ -59,18 +59,6 @@ namespace InfoBoxNET.View
             set => base.SetValue(value);
         }
 
-        public bool ShowDescription
-        {
-            get => base.GetValue<bool>();
-            set => base.SetValue(value);
-        }
-
-        public string Description
-        {
-            get => base.GetValue<string>();
-            set => base.SetValue(value);
-        }
-
         public Dictionary<int, string> SymbolSource
         {
             get => base.GetValue<Dictionary<int, string>>();
@@ -83,15 +71,15 @@ namespace InfoBoxNET.View
             set => base.SetValue(value, this.ChangeValue);
         }
 
-        public string Website
-        {
-            get => base.GetValue<string>();
-            set => base.SetValue(value);
-        }
-
         public Dictionary<Guid, string> UsernameSource
         {
             get => base.GetValue<Dictionary<Guid, string>>();
+            set => base.SetValue(value);
+        }
+
+        public string Username
+        {
+            get => base.GetValue<string>();
             set => base.SetValue(value);
         }
 
@@ -116,6 +104,10 @@ namespace InfoBoxNET.View
             else if (arg2 == nameof(this.SelectedBackgroundColor))
             {
                 this.CurrentRow.Background = ColorConverters.ConvertBrushToName((Brush)arg1);
+            }
+            else if (arg2 == nameof(this.Username))
+            {
+                this.CurrentRow.Username = (string)arg1;
             }
         }
 
@@ -172,13 +164,14 @@ namespace InfoBoxNET.View
                     this.Photo = ds.Connection.RecordSet<byte[]>($"SELECT Content FROM TAB_Attachment WHERE ObjectId = '{this.CurrentRow.Id.ToString()}'").Get().Result;
                 }
 
-                this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol+1;
-                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol+1);
+                this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
+                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
                 this.HorizontalImageList.UpdateLayout();
                 this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
-                this.cbUsername.IsDropDownOpen = false;
                 this.TitelField.PART_TextBox.Focus();
                 this.TitelField.PART_TextBox.CaretIndex = 0;
+                this.Username = this.CurrentRow.Username;
+                this.cbUsername.IsDropDownOpen = false;
             }
             else if (this.CurrentRow != null && this.RowAction == DataRowAction.Add)
             {
@@ -202,10 +195,10 @@ namespace InfoBoxNET.View
                             .ToDictionary(k => Guid.CreateVersion7(), v => v.Username);
                     }
 
-                    this.HorizontalImageList.SelectedValue = 0;
-                    this.HorizontalImageList.ScrollIntoView(0);
+                    this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol + 1;
+                    this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol + 1);
                     this.HorizontalImageList.UpdateLayout();
-                    this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush();
+                    this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
                 }
             }
         }

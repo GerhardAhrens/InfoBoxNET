@@ -124,6 +124,7 @@ namespace InfoBoxNET.View
         private int RowCount { get; set; }
         private int RowFilterCount { get; set; }
         private ChangeViewEventArgs CurrentCtorArgs { get; set; }
+        private MessageBase Message { get; } = new MessageBase();
         #endregion Properties
 
         #region Windows Events
@@ -195,6 +196,8 @@ namespace InfoBoxNET.View
                     AccessTyp = AccessTyp.Website,
                     AccessSymbol = this.GetIconText("W"),
                     Version = 0,
+                    Symbol = 1,
+                    Background = ColorConverters.ConvertBrushToName(Brushes.Transparent),
                 }
                 ;
                 passwordsTab.Content = new PasswordWEBDetailUC(pw, DataRowAction.Add);
@@ -637,11 +640,19 @@ namespace InfoBoxNET.View
                 {
                     PasswordPin rowView = ((PasswordWEBDetailUC)tabItem.Content).CurrentRow;
                     DataRowAction rowAction = ((PasswordWEBDetailUC)tabItem.Content).RowAction;
-                    bool areEqual = JsonSerializer.Serialize(rowView) == JsonSerializer.Serialize(this.CurrentSelectedItem);
-                    if (areEqual == false)
+
+                    string errorMessage = string.Empty;
+                    if (this.ModelValidation(rowView, out errorMessage) == false)
+                    {
+                        this.Message.Hinweis("Eingabefehler", errorMessage);
+                        return;
+                    }
+
+                    IEnumerable<PropertyDifference> areEqual = PropertyComparer.Compare(rowView, this.CurrentSelectedItem);
+                    if (areEqual.Any() == true)
                     {
                         string titel = this.CurrentSelectedItem.Title;
-                        MessageBoxResult result = MessageBox.Show($"Die Änderungen am Eintrag [{titel}] wurden noch nicht gespeichert. Wollen Sie die Änderungen verwerfen und den Tab schließen?", "Änderungen verwerfen", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        MessageBoxResult result =  this.Message.CancelQuestion("Änderungen speichern", $"Die Änderungen am Eintrag [{titel}] wurden noch nicht gespeichert. Wollen Sie die Änderungen speichern oder verwerfen. Der Tab wird danach geschlossen.");
                         if (result == MessageBoxResult.Yes)
                         {
                             ID rowId = rowView.Id;
@@ -658,7 +669,10 @@ namespace InfoBoxNET.View
                                         }
 
                                         List<Attachment> photo = ds.Connection.RecordSet<List<Attachment>>($"SELECT * FROM TAB_Attachment WHERE ObjectId = '{rowId.ToString()}'").Get().Result;
-                                        ds.DeleteRows<Attachment>(photo[0]);
+                                        if (photo != null && photo.Any() == true)
+                                        {
+                                            ds.DeleteRows<Attachment>(photo[0]);
+                                        }
                                     }
                                     else
                                     {
@@ -700,6 +714,10 @@ namespace InfoBoxNET.View
                                 };
                             }
 
+                            this.PasswordsTabControl.Items.Remove(tabItem);
+                        }
+                        else if (result == MessageBoxResult.Cancel)
+                        {
                             this.PasswordsTabControl.Items.Remove(tabItem);
                         }
                     }
@@ -919,6 +937,28 @@ namespace InfoBoxNET.View
             }
 
             return iconText;
+        }
+
+        private bool ModelValidation(PasswordPin rowView, out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            if (string.IsNullOrEmpty(rowView.Title) == true)
+            {
+                errorMessage = "Titel darf nicht leer sein.";
+                return false;
+            }
+            if (string.IsNullOrEmpty(rowView.Username) == true)
+            {
+                errorMessage = "Benutzername darf nicht leer sein.";
+                return false;
+            }
+            if (string.IsNullOrEmpty(rowView.Passwort) == true)
+            {
+                errorMessage = "Passwort darf nicht leer sein.";
+                return false;
+            }
+
+            return true;
         }
     }
 }

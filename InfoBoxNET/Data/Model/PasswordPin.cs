@@ -145,6 +145,7 @@ namespace InfoBoxNET.Model
         [TableColumn(SQLiteDataType.DateTime)]
         public DateTime ModifiedOn { get; set; }
 
+        [JsonIgnore]
         public byte[] Photo { get; set; }
     }
 }
