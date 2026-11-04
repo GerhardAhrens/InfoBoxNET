@@ -656,83 +656,143 @@ namespace InfoBoxNET.View
                         return;
                     }
 
-                    IEnumerable<PropertyDifference> areEqual = PropertyComparer.Compare(rowView, this.CurrentSelectedItem);
-                    if (areEqual.Any() == true)
+                    if (rowAction == DataRowAction.Change)
                     {
-                        string titel = this.CurrentSelectedItem.Title;
-                        MessageBoxResult result =  this.Message.CancelQuestion("Änderungen speichern", $"Die Änderungen am Eintrag [{titel}] wurden noch nicht gespeichert. Wollen Sie die Änderungen speichern oder verwerfen. Der Tab wird danach geschlossen.");
-                        if (result == MessageBoxResult.Yes)
+                        IEnumerable<PropertyDifference> areEqual = PropertyComparer.Compare(rowView, this.CurrentSelectedItem);
+                        if (areEqual.Any() == true)
                         {
-                            ID rowId = rowView.Id;
-                            /* Änderungen speichern */
-                            using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                            string titel = rowView.Title;
+                            MessageBoxResult result = this.Message.CancelQuestion("Änderungen speichern", $"Die Änderungen am Eintrag [{titel}] wurden noch nicht gespeichert. Wollen Sie die Änderungen speichern oder verwerfen. Der Tab wird danach geschlossen.");
+                            if (result == MessageBoxResult.Yes)
                             {
-                                if (ds.UpdateRow<PasswordPin>(rowView) == true)
+                                ID rowId = rowView.Id;
+                                /* Änderungen speichern */
+                                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
                                 {
-                                    if (rowView.Photo == null)
+                                    if (ds.UpdateRow<PasswordPin>(rowView) == true)
                                     {
-                                        if (ds.Connection == null)
+                                        if (rowView.Photo == null)
                                         {
-                                            ds.OpenConnection();
-                                        }
-
-                                        List<Attachment> photo = ds.Connection.RecordSet<List<Attachment>>($"SELECT * FROM TAB_Attachment WHERE ObjectId = '{rowId.ToString()}'").Get().Result;
-                                        if (photo != null && photo.Any() == true)
-                                        {
-                                            ds.DeleteRows<Attachment>(photo[0]);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (ds.Connection == null)
-                                        {
-                                            ds.OpenConnection();
-                                        }
-
-                                        int countUpdate = ds.Connection.RecordSet<int>($"SELECT COUNT(*) FROM TAB_Attachment WHERE ObjectId='{rowId.ToString()}'").Get().Result;
-                                        if (countUpdate == 0)
-                                        {
-                                            InfoBoxNET.Model.Attachment photo = new()
+                                            if (ds.Connection == null)
                                             {
-                                                Filename = "Clipboard",
-                                                FileExtension = "Raw",
-                                                FileDateTime = DateTime.Now,
-                                                FileSize = rowView.Photo.Length,
-                                                Content = rowView.Photo,
-                                                ObjectId = new Guid(rowId.Value.ToString()),
-                                                ObjectName = "PasswordPin",
-                                            };
+                                                ds.OpenConnection();
+                                            }
 
-                                            ds.InsertRow<Attachment>(photo);
+                                            List<Attachment> photo = ds.Connection.RecordSet<List<Attachment>>($"SELECT * FROM TAB_Attachment WHERE ObjectId = '{rowId.ToString()}'").Get().Result;
+                                            if (photo != null && photo.Any() == true)
+                                            {
+                                                ds.DeleteRows<Attachment>(photo[0]);
+                                            }
                                         }
                                         else
                                         {
-                                            List<Attachment> photo = ds.Connection.RecordSet<List<Attachment>>($"SELECT * FROM TAB_Attachment WHERE ObjectId = '{rowId.ToString()}'").Get().Result;
-                                            photo[0].FileSize = rowView.Photo.Length;
-                                            photo[0].Content = rowView.Photo;
+                                            if (ds.Connection == null)
+                                            {
+                                                ds.OpenConnection();
+                                            }
+
+                                            int countUpdate = ds.Connection.RecordSet<int>($"SELECT COUNT(*) FROM TAB_Attachment WHERE ObjectId='{rowId.ToString()}'").Get().Result;
+                                            if (countUpdate == 0)
+                                            {
+                                                InfoBoxNET.Model.Attachment photo = new()
+                                                {
+                                                    Filename = "Clipboard",
+                                                    FileExtension = "Raw",
+                                                    FileDateTime = DateTime.Now,
+                                                    FileSize = rowView.Photo.Length,
+                                                    Content = rowView.Photo,
+                                                    ObjectId = new Guid(rowId.Value.ToString()),
+                                                    ObjectName = "PasswordPin",
+                                                };
+
+                                                ds.InsertRow<Attachment>(photo);
+                                            }
+                                            else
+                                            {
+                                                List<Attachment> photo = ds.Connection.RecordSet<List<Attachment>>($"SELECT * FROM TAB_Attachment WHERE ObjectId = '{rowId.ToString()}'").Get().Result;
+                                                photo[0].FileSize = rowView.Photo.Length;
+                                                photo[0].Content = rowView.Photo;
+                                            }
+                                        }
+
+                                        this.LoadDataHandler();
+
+                                        if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                                        {
+                                            await App.EventAgg.PublishAsync(new StatusEvent($"Eintrag '{titel}' aktualisiert. Bereit: {this.RowCount} Einträge"));
                                         }
                                     }
+                                    ;
+                                }
 
-                                    this.LoadDataHandler();
-
-                                    if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                                this.PasswordsTabControl.Items.Remove(tabItem);
+                            }
+                            else if (result == MessageBoxResult.Cancel)
+                            {
+                                this.PasswordsTabControl.Items.Remove(tabItem);
+                            }
+                        }
+                        else
+                        {
+                            this.PasswordsTabControl.Items.Remove(tabItem);
+                        }
+                    }
+                    else if (rowAction == DataRowAction.Add)
+                    {
+                        string titel = rowView.Title;
+                        MessageBoxResult result = this.Message.CancelQuestion("Neuer Eintrag speichern", $"Soll der neue Eintrag [{titel}] gespeichert werden. Der Tab wird danach geschlossen.");
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            ID rowId = rowView.Id;
+                            /* Neuer Eintrag speichern */
+                            using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                            {
+                                if (ds.InsertRow<PasswordPin>(rowView) == true)
+                                {
+                                    if (rowView.Photo != null)
                                     {
-                                        await App.EventAgg.PublishAsync(new StatusEvent($"Eintrag '{titel}' aktualisiert. Bereit: {this.RowCount} Einträge"));
+                                        InfoBoxNET.Model.Attachment photo = new()
+                                        {
+                                            Filename = "Clipboard",
+                                            FileExtension = "Raw",
+                                            FileDateTime = DateTime.Now,
+                                            FileSize = rowView.Photo.Length,
+                                            Content = rowView.Photo,
+                                            ObjectId = new Guid(rowId.Value.ToString()),
+                                            ObjectName = "PasswordPin",
+                                        };
+
+                                        ds.InsertRow<Attachment>(photo);
+
                                     }
-                                };
+                                }
+
+                                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                                {
+                                    await App.EventAgg.PublishAsync(new StatusEvent($"Eintrag '{titel}' neu erstellt. Bereit: {this.RowCount} Einträge"));
+                                }
                             }
 
                             this.PasswordsTabControl.Items.Remove(tabItem);
+                            this.LoadDataHandler();
                         }
                         else if (result == MessageBoxResult.Cancel)
                         {
                             this.PasswordsTabControl.Items.Remove(tabItem);
                         }
                     }
-                    else
-                    {
-                        this.PasswordsTabControl.Items.Remove(tabItem);
-                    }
+                }
+                else if (tabItem.Name == AccessTyp.Passwort.ToString())
+                {
+
+                }
+                else if (tabItem.Name == AccessTyp.Pin.ToString())
+                {
+
+                }
+                else if (tabItem.Name == AccessTyp.License.ToString())
+                {
+
                 }
             }
             else

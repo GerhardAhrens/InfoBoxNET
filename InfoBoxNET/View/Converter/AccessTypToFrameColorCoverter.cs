@@ -1,4 +1,4 @@
-﻿namespace PasswortNET.Views.Converter
+﻿namespace InfoBoxNET.View
 {
     using System;
     using System.Globalization;

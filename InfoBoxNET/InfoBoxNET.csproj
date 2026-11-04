@@ -29,6 +29,7 @@
   <ItemGroup>
     <Folder Include="Core\Enums\" />
     <Folder Include="Core\Graphics\" />
+    <Folder Include="Core\Cryptography\" />
     <Folder Include="Data\FixedDocument\Extension\" />
     <Folder Include="Data\FixedDocument\ReportControls\" />
     <Folder Include="Data\FixedDocument\ReportBase\" />

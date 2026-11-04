@@ -32,6 +32,7 @@ namespace InfoBoxNET.Model
         /// </summary>
         public PasswordPin()
         {
+            this.Id = Guid.CreateVersion7();
             this.LastExport = DateTime.Today.DefaultDate();
             this.CreatedBy = UserInfo.TS().CurrentUser;
             this.CreatedOn = UserInfo.TS().CurrentTime;

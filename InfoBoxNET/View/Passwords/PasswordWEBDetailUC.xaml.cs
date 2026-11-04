@@ -80,7 +80,7 @@ namespace InfoBoxNET.View
         public string Username
         {
             get => base.GetValue<string>();
-            set => base.SetValue(value);
+            set => base.SetValue(value, this.ChangeValue);
         }
 
         public Brush SelectedBackgroundColor
@@ -105,10 +105,6 @@ namespace InfoBoxNET.View
             {
                 this.CurrentRow.Background = ColorConverters.ConvertBrushToName((Brush)arg1);
             }
-            else if (arg2 == nameof(this.Username))
-            {
-                this.CurrentRow.Username = (string)arg1;
-            }
         }
 
         private void ChangeValue(int arg1, string arg2)
@@ -116,6 +112,14 @@ namespace InfoBoxNET.View
             if (arg2 == nameof(this.SelectedSymbol))
             {
                 this.CurrentRow.Symbol = arg1;
+            }
+        }
+
+        private void ChangeValue(string arg1, string arg2)
+        {
+            if (arg2 == nameof(this.Username))
+            {
+                this.CurrentRow.Username = arg1;
             }
         }
 
