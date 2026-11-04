@@ -195,8 +195,8 @@ namespace InfoBoxNET.View
                             .ToDictionary(k => Guid.CreateVersion7(), v => v.Username);
                     }
 
-                    this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol + 1;
-                    this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol + 1);
+                    this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
+                    this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
                     this.HorizontalImageList.UpdateLayout();
                     this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
                 }

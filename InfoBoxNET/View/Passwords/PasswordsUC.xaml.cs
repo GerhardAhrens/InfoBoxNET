@@ -189,6 +189,7 @@ namespace InfoBoxNET.View
                     HeaderImage = iconWeb,
                 };
 
+                passwordsTab.Name = AccessTyp.Website.ToString();
                 this.PasswordsTabControl.Items.Add(passwordsTab);
 
                 PasswordPin pw = new()
@@ -416,6 +417,7 @@ namespace InfoBoxNET.View
                         HeaderImage = iconWeb,
                     };
 
+                    passwordsTab.Name = AccessTyp.Website.ToString();
                     bool isTabFound = PasswordsTabControl.Items.OfType<AdvancedTabItem>().Any(tab => tab.Header?.ToString() == passwordsTab.Header.ToString());
                     if (isTabFound == false)
                     {
@@ -436,6 +438,8 @@ namespace InfoBoxNET.View
                         Header = $"Eintrag [{pw.Title}]",
                         HeaderImage = iconPasswort,
                     };
+
+                    passwordsTab.Name = AccessTyp.Passwort.ToString();
 
                     bool isTabFound = PasswordsTabControl.Items.OfType<AdvancedTabItem>().Any(tab => tab.Header?.ToString() == passwordsTab.Header.ToString());
                     if (isTabFound == false)
@@ -458,6 +462,8 @@ namespace InfoBoxNET.View
                         HeaderImage = iconPin,
                     };
 
+                    passwordsTab.Name = AccessTyp.Pin.ToString();
+
                     bool isTabFound = PasswordsTabControl.Items.OfType<AdvancedTabItem>().Any(tab => tab.Header?.ToString() == passwordsTab.Header.ToString());
                     if (isTabFound == false)
                     {
@@ -478,6 +484,8 @@ namespace InfoBoxNET.View
                         Header = $"Eintrag [{pw.Title}]",
                         HeaderImage = iconLizenz,
                     };
+
+                    passwordsTab.Name = AccessTyp.License.ToString();
 
                     bool isTabFound = PasswordsTabControl.Items.OfType<AdvancedTabItem>().Any(tab => tab.Header?.ToString() == passwordsTab.Header.ToString());
                     if (isTabFound == false)
@@ -636,7 +644,7 @@ namespace InfoBoxNET.View
         {
             if (commandParam is AdvancedTabItem tabItem)
             {
-                if (this.CurrentSelectedItem.AccessTyp == AccessTyp.Website)
+                if (tabItem.Name == AccessTyp.Website.ToString())
                 {
                     PasswordPin rowView = ((PasswordWEBDetailUC)tabItem.Content).CurrentRow;
                     DataRowAction rowAction = ((PasswordWEBDetailUC)tabItem.Content).RowAction;
