@@ -38,6 +38,7 @@ namespace InfoBoxNET.View
         {
             this.InitializeComponent();
             WeakEventManager<UserControl, RoutedEventArgs>.AddHandler(this, "Loaded", this.OnLoaded);
+            this.PasswordGeneratorCommand = new CommandBase(commandParam => this.OnPasswordGenerator(commandParam), () => true);
 
             this.CurrentRow = rowView;
             this.RowAction = rowAction;
@@ -46,6 +47,7 @@ namespace InfoBoxNET.View
         }
 
         #region Properties
+        public CommandBase PasswordGeneratorCommand { get; private set; }
 
         public IEnumerable<Region> RegionSource
         {
@@ -210,5 +212,9 @@ namespace InfoBoxNET.View
 
         #region Command Events
         #endregion Command Events
+
+        private void OnPasswordGenerator(object commandParam)
+        {
+        }
     }
 }
