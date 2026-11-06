@@ -650,7 +650,7 @@ namespace InfoBoxNET.View
                     DataRowAction rowAction = ((PasswordWEBDetailUC)tabItem.Content).RowAction;
 
                     string errorMessage = string.Empty;
-                    if (this.ModelValidation(rowView, out errorMessage) == false)
+                    if (this.ModelValidationWeb(rowView, out errorMessage) == false)
                     {
                         this.Message.Hinweis("Eingabefehler", errorMessage);
                         return;
@@ -788,7 +788,24 @@ namespace InfoBoxNET.View
                 }
                 else if (tabItem.Name == AccessTyp.Pin.ToString())
                 {
+                    PasswordPin rowView = ((PasswordWEBDetailUC)tabItem.Content).CurrentRow;
+                    DataRowAction rowAction = ((PasswordWEBDetailUC)tabItem.Content).RowAction;
 
+                    string errorMessage = string.Empty;
+                    if (this.ModelValidationWeb(rowView, out errorMessage) == false)
+                    {
+                        this.Message.Hinweis("Eingabefehler", errorMessage);
+                        return;
+                    }
+
+                    if (rowAction == DataRowAction.Change)
+                    {
+
+                    }
+                    else if (rowAction == DataRowAction.Add)
+                    {
+
+                    }
                 }
                 else if (tabItem.Name == AccessTyp.License.ToString())
                 {
@@ -1007,7 +1024,7 @@ namespace InfoBoxNET.View
             return iconText;
         }
 
-        private bool ModelValidation(PasswordPin rowView, out string errorMessage)
+        private bool ModelValidationWeb(PasswordPin rowView, out string errorMessage)
         {
             errorMessage = string.Empty;
             if (string.IsNullOrEmpty(rowView.Title) == true)
@@ -1023,6 +1040,23 @@ namespace InfoBoxNET.View
             if (string.IsNullOrEmpty(rowView.Passwort) == true)
             {
                 errorMessage = "Passwort darf nicht leer sein.";
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ModelValidationPin(PasswordPin rowView, out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            if (string.IsNullOrEmpty(rowView.Title) == true)
+            {
+                errorMessage = "Titel darf nicht leer sein.";
+                return false;
+            }
+            if (string.IsNullOrEmpty(rowView.Pin) == true)
+            {
+                errorMessage = "PIN darf nicht leer sein.";
                 return false;
             }
 

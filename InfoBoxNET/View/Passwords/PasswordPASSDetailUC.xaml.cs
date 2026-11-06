@@ -20,8 +20,10 @@ namespace InfoBoxNET.View
 {
     using System.Data;
     using System.Windows;
+    using System.Windows.Media;
     using System.Windows.Controls;
 
+    using InfoBoxNET.Core;
     using InfoBoxNET.Model;
 
     /// <summary>
@@ -43,23 +45,110 @@ namespace InfoBoxNET.View
         }
 
         #region Properties
+        public CommandBase PasswordGeneratorCommand { get; private set; }
+
+        public IEnumerable<Region> RegionSource
+        {
+            get => base.GetValue<IEnumerable<Region>>();
+            set => base.SetValue(value);
+        }
+
+        public Region SelectedRegion
+        {
+            get => base.GetValue<Region>();
+            set => base.SetValue(value);
+        }
+
+        public Dictionary<int, string> SymbolSource
+        {
+            get => base.GetValue<Dictionary<int, string>>();
+            set => base.SetValue(value);
+        }
+
+        public int SelectedSymbol
+        {
+            get => base.GetValue<int>();
+            set => base.SetValue(value, this.ChangeValue);
+        }
+
+        public Dictionary<Guid, string> UsernameSource
+        {
+            get => base.GetValue<Dictionary<Guid, string>>();
+            set => base.SetValue(value);
+        }
+
+        public string Username
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value, this.ChangeValue);
+        }
+
+        public Brush SelectedBackgroundColor
+        {
+            get => base.GetValue<Brush>();
+            set => base.SetValue(value, this.ChangeValue);
+        }
+
+        public byte[] Photo
+        {
+            get => base.GetValue<byte[]>();
+            set => base.SetValue(value, this.ChangeValue);
+        }
+
+        private void ChangeValue(object arg1, string arg2)
+        {
+            if (arg2 == nameof(this.Photo))
+            {
+                this.CurrentRow.Photo = (byte[])arg1;
+            }
+            else if (arg2 == nameof(this.SelectedBackgroundColor))
+            {
+                this.CurrentRow.Background = ColorConverters.ConvertBrushToName((Brush)arg1);
+            }
+        }
+
+        private void ChangeValue(int arg1, string arg2)
+        {
+            if (arg2 == nameof(this.SelectedSymbol))
+            {
+                this.CurrentRow.Symbol = arg1;
+            }
+        }
+
+        private void ChangeValue(string arg1, string arg2)
+        {
+            if (arg2 == nameof(this.Username))
+            {
+                this.CurrentRow.Username = arg1;
+            }
+        }
+
         public PasswordPin CurrentRow
         {
             get => base.GetValue<PasswordPin>();
             set => base.SetValue(value);
         }
 
-        private PasswordPin OriginalRow { get; set; }
-        private PasswordPin CopyRow { get; set; }
-        private DataRowAction RowAction { get; set; }
-        private MessageBase Message { get; } = new MessageBase();
-
+        public DataRowAction RowAction { get; set; }
         #endregion Properties
 
         #region Windows Events
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            using (SymbolsList sl = new SymbolsList())
+            {
+                this.SymbolSource = sl.GetSymbols();
+            }
+
+            if (this.CurrentRow != null && this.RowAction == DataRowAction.Change)
+            {
+
+            }
+            else if (this.CurrentRow != null && this.RowAction == DataRowAction.Add)
+            {
+
+            }
         }
         #endregion Windows Events
 

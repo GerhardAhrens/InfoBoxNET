@@ -132,7 +132,6 @@ namespace InfoBoxNET.View
         }
 
         public DataRowAction RowAction { get; set; }
-        private MessageBase Message { get; } = new MessageBase();
 
         #endregion Properties
 
