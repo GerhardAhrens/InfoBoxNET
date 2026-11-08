@@ -19,9 +19,10 @@
 namespace InfoBoxNET.View
 {
     using System.Data;
+    using System.Data.SQLite;
     using System.Windows;
-    using System.Windows.Media;
     using System.Windows.Controls;
+    using System.Windows.Media;
 
     using InfoBoxNET.Core;
     using InfoBoxNET.Model;
@@ -141,7 +142,17 @@ namespace InfoBoxNET.View
 
             if (this.CurrentRow != null && this.RowAction == DataRowAction.Change)
             {
+                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                {
+                    ds.OpenConnection();
+                    if (ds.Connection == null)
+                    {
+                        return;
+                    }
 
+                    this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
+
+                }
             }
             else if (this.CurrentRow != null && this.RowAction == DataRowAction.Add)
             {
