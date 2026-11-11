@@ -48,6 +48,12 @@ namespace System.Windows
             return result;
         }
 
+        public static MessageBoxResult CheckValidation(this IMessageBase self, string titel, string message)
+        {
+            MessageBoxResult result = self.ShowMessage(titel, message, MessageBoxButton.OKCancel, MessageBoxImage.Hand, MessageBoxResult.OK);
+            return result;
+        }
+
         public static MessageBoxResult Warning(this IMessageBase self, string titel, string message)
         {
             MessageBoxResult result = self.ShowMessage(titel, message, MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);

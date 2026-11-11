@@ -217,6 +217,7 @@ namespace InfoBoxNET.View
                     HeaderImage = iconWeb,
                 };
 
+                passwordsTab.Name = AccessTyp.Website.ToString();
                 this.PasswordsTabControl.Items.Add(passwordsTab);
 
                 PasswordPin pw = new()
@@ -224,6 +225,8 @@ namespace InfoBoxNET.View
                     AccessTyp = AccessTyp.Website,
                     AccessSymbol = this.GetIconText("W"),
                     Version = 0,
+                    Symbol = 1,
+                    Background = ColorConverters.ConvertBrushToName(Brushes.Transparent),
                 };
 
                 passwordsTab.Content = new PasswordWEBDetailUC(pw, DataRowAction.Add);
@@ -241,8 +244,19 @@ namespace InfoBoxNET.View
                     HeaderImage = iconPasswort,
                 };
 
+                passwordsTab.Name = AccessTyp.Passwort.ToString();
                 this.PasswordsTabControl.Items.Add(passwordsTab);
-                passwordsTab.Content = new PasswordPASSDetailUC(this.CurrentSelectedItem, DataRowAction.Add);
+
+                PasswordPin pw = new()
+                {
+                    AccessTyp = AccessTyp.Passwort,
+                    AccessSymbol = this.GetIconText("PA"),
+                    Version = 0,
+                    Symbol = 1,
+                    Background = ColorConverters.ConvertBrushToName(Brushes.Transparent),
+                };
+
+                passwordsTab.Content = new PasswordPINDetailUC(pw, DataRowAction.Add);
                 this.PasswordsTabControl.SelectedItem = passwordsTab;
                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                 {
@@ -257,8 +271,19 @@ namespace InfoBoxNET.View
                     HeaderImage = iconPin,
                 };
 
+                passwordsTab.Name = AccessTyp.Pin.ToString();
                 this.PasswordsTabControl.Items.Add(passwordsTab);
-                passwordsTab.Content = new PasswordPINDetailUC(this.CurrentSelectedItem, DataRowAction.Add);
+
+                PasswordPin pw = new()
+                {
+                    AccessTyp = AccessTyp.Pin,
+                    AccessSymbol = this.GetIconText("PI"),
+                    Version = 0,
+                    Symbol = 1,
+                    Background = ColorConverters.ConvertBrushToName(Brushes.Transparent),
+                };
+
+                passwordsTab.Content = new PasswordPINDetailUC(pw, DataRowAction.Add);
                 this.PasswordsTabControl.SelectedItem = passwordsTab;
                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                 {
@@ -273,8 +298,19 @@ namespace InfoBoxNET.View
                     HeaderImage = iconLizenz,
                 };
 
+                passwordsTab.Name = AccessTyp.License.ToString();
                 this.PasswordsTabControl.Items.Add(passwordsTab);
-                passwordsTab.Content = new PasswordLICDetailUC(this.CurrentSelectedItem, DataRowAction.Add);
+
+                PasswordPin pw = new()
+                {
+                    AccessTyp = AccessTyp.License,
+                    AccessSymbol = this.GetIconText("L"),
+                    Version = 0,
+                    Symbol = 1,
+                    Background = ColorConverters.ConvertBrushToName(Brushes.Transparent),
+                };
+
+                passwordsTab.Content = new PasswordLICDetailUC(pw, DataRowAction.Add);
                 this.PasswordsTabControl.SelectedItem = passwordsTab;
                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                 {
@@ -923,7 +959,12 @@ namespace InfoBoxNET.View
             string errorMessage = string.Empty;
             if (this.ModelValidationWeb(rowView, out errorMessage) == false)
             {
-                this.Message.Hinweis("Eingabefehler", errorMessage);
+                MessageBoxResult validResult = this.Message.CheckValidation("Eingabefehler", errorMessage);
+                if (validResult == MessageBoxResult.Cancel)
+                {
+                    this.PasswordsTabControl.Items.Remove(tabItem);
+                }
+
                 return;
             }
 

@@ -25,6 +25,7 @@ namespace InfoBoxNET.View
     using System.Windows.Media;
 
     using InfoBoxNET.Core;
+    using InfoBoxNET.Core.Enums;
     using InfoBoxNET.Model;
 
     /// <summary>
@@ -156,7 +157,21 @@ namespace InfoBoxNET.View
             }
             else if (this.CurrentRow != null && this.RowAction == DataRowAction.Add)
             {
+                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                {
+                    ds.OpenConnection();
+                    if (ds.Connection == null)
+                    {
+                        return;
+                    }
 
+                    this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
+
+                    this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
+                    this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
+                    this.HorizontalImageList.UpdateLayout();
+                    this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
+                }
             }
         }
         #endregion Windows Events
