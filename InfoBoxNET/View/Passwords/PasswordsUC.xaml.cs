@@ -96,7 +96,7 @@ namespace InfoBoxNET.View
         public string FilterDefaultSearch
         {
             get => base.GetValue<string>();
-            set => base.SetValue(value,this.RefreschDataSource);
+            set => base.SetValue(value, this.RefreschDataSource);
         }
 
         public ViewBase CustomView
@@ -378,64 +378,6 @@ namespace InfoBoxNET.View
             }
         }
 
-        private async void OnPrintPasswords(object commandParam)
-        {
-            if (commandParam is CommandButtons button && button == CommandButtons.PrintDocument)
-            {
-                ChangeViewEventArgs args = new();
-                args.MenuButton = CommandButtons.PrintDocument;
-                args.FromPage = this.CurrentCtorArgs.MenuButton;
-                args.DataSource = this.DialogDataView;
-                if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
-                {
-                    await App.EventAgg.PublishAsync(args);
-                }
-            }
-        }
-
-        private async void OnExportPasswords(object commandParam)
-        {
-            if (commandParam is CommandButtons button && button == CommandButtons.ExportPasswords)
-            {
-                var dialog = new SaveFileDialog
-                {
-                    Title = "PasswordPins exportieren",
-                    Filter = "Excel-Datei (*.xlsx)|*.xlsx",
-                    DefaultExt = ".xlsx",
-                    AddExtension = true,
-                    FileName = "PasswordPins.xlsx"
-                };
-
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    this.IsLoadingOverlay = true;
-
-                    // 2. Warten, bis der Dispatcher das UI-Layout und die Container im Hintergrund gerendert hat
-                    await Dispatcher.InvokeAsync(() =>
-                    {
-                        ExcelExportService.Export<PasswordPin>(this.DialogDataView, dialog.FileName);
-
-                    }, System.Windows.Threading.DispatcherPriority.Background);
-
-                    this.IsLoadingOverlay = false;
-                }
-            }
-        }
-
-        private async void OnImpExport(object commandParam)
-        {
-            if (commandParam is CommandButtons button && button == CommandButtons.ImportExportPasswords)
-            {
-                ChangeViewEventArgs args = new();
-                args.MenuButton = CommandButtons.ImportExportPasswords;
-                args.FromPage = this.CurrentCtorArgs.MenuButton;
-                if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
-                {
-                    await App.EventAgg.PublishAsync(args);
-                }
-            }
-        }
-
         private async void OnDoubleClickEntry(object commandParam)
         {
             if (commandParam != null && commandParam is PasswordPin pw)
@@ -713,6 +655,63 @@ namespace InfoBoxNET.View
             }
         }
 
+        private async void OnPrintPasswords(object commandParam)
+        {
+            if (commandParam is CommandButtons button && button == CommandButtons.PrintDocument)
+            {
+                ChangeViewEventArgs args = new();
+                args.MenuButton = CommandButtons.PrintDocument;
+                args.FromPage = this.CurrentCtorArgs.MenuButton;
+                args.DataSource = this.DialogDataView;
+                if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
+                {
+                    await App.EventAgg.PublishAsync(args);
+                }
+            }
+        }
+
+        private async void OnExportPasswords(object commandParam)
+        {
+            if (commandParam is CommandButtons button && button == CommandButtons.ExportPasswords)
+            {
+                var dialog = new SaveFileDialog
+                {
+                    Title = "PasswordPins exportieren",
+                    Filter = "Excel-Datei (*.xlsx)|*.xlsx",
+                    DefaultExt = ".xlsx",
+                    AddExtension = true,
+                    FileName = "PasswordPins.xlsx"
+                };
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    this.IsLoadingOverlay = true;
+
+                    // 2. Warten, bis der Dispatcher das UI-Layout und die Container im Hintergrund gerendert hat
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        ExcelExportService.Export<PasswordPin>(this.DialogDataView, dialog.FileName);
+
+                    }, System.Windows.Threading.DispatcherPriority.Background);
+
+                    this.IsLoadingOverlay = false;
+                }
+            }
+        }
+
+        private async void OnImpExport(object commandParam)
+        {
+            if (commandParam is CommandButtons button && button == CommandButtons.ImportExportPasswords)
+            {
+                ChangeViewEventArgs args = new();
+                args.MenuButton = CommandButtons.ImportExportPasswords;
+                args.FromPage = this.CurrentCtorArgs.MenuButton;
+                if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
+                {
+                    await App.EventAgg.PublishAsync(args);
+                }
+            }
+        }
         #endregion Command Events
 
         private async void LoadDataHandler()
@@ -729,7 +728,7 @@ namespace InfoBoxNET.View
                 this.AddButtonItem.Add(new SplitButtonItem { Content = "Neuer Eintrag Pin", Icon = iconPin, Command = this.AddEntryCommand, CommandParameter = "ADD_PIN" });
                 this.AddButtonItem.Add(new SplitButtonItem { Content = "Neuer Eintrag Lizenz", Icon = iconLizenz, Command = this.AddEntryCommand, CommandParameter = "ADD_LIZENZ" });
 
-                this.FilterButtonItem.Add(new SplitButtonItem { Content = "Web",  Icon = iconWeb, Command = this.FilterButtonCommand, CommandParameter = "FILTER_1" });
+                this.FilterButtonItem.Add(new SplitButtonItem { Content = "Web", Icon = iconWeb, Command = this.FilterButtonCommand, CommandParameter = "FILTER_1" });
                 this.FilterButtonItem.Add(new SplitButtonItem { Content = "Passwort", Icon = iconPasswort, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_2" });
                 this.FilterButtonItem.Add(new SplitButtonItem { Content = "Pin", Icon = iconPin, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_3" });
                 this.FilterButtonItem.Add(new SplitButtonItem { Content = "Lizenz", Icon = iconLizenz, Command = this.FilterButtonCommand, CommandParameter = $"FILTER_4" });
@@ -895,7 +894,7 @@ namespace InfoBoxNET.View
                     </DrawingImage.Drawing>
                 </DrawingImage>";
             }
-            else 
+            else
             {
                 iconText = @"
                 <DrawingImage
@@ -1097,23 +1096,146 @@ namespace InfoBoxNET.View
 
         private async void SaveClosePin(AdvancedTabItem tabItem)
         {
-            PasswordPin rowView = ((PasswordWEBDetailUC)tabItem.Content).CurrentRow;
-            DataRowAction rowAction = ((PasswordWEBDetailUC)tabItem.Content).RowAction;
+            PasswordPin rowView = ((PasswordPINDetailUC)tabItem.Content).CurrentRow;
+            DataRowAction rowAction = ((PasswordPINDetailUC)tabItem.Content).RowAction;
 
             string errorMessage = string.Empty;
             if (this.ModelValidationPin(rowView, out errorMessage) == false)
             {
-                this.Message.Hinweis("Eingabefehler", errorMessage);
+                MessageBoxResult validResult = this.Message.CheckValidation("Eingabefehler", errorMessage);
+                if (validResult == MessageBoxResult.Cancel)
+                {
+                    this.PasswordsTabControl.Items.Remove(tabItem);
+                }
+
                 return;
             }
 
             if (rowAction == DataRowAction.Change)
             {
+                IEnumerable<PropertyDifference> areEqual = PropertyComparer.Compare(rowView, this.CurrentSelectedItem);
+                if (areEqual.Any() == true)
+                {
+                    string titel = rowView.Title;
+                    MessageBoxResult result = this.Message.CancelQuestion("Änderungen speichern", $"Die Änderungen am Eintrag [{titel}] wurden noch nicht gespeichert. Wollen Sie die Änderungen speichern oder verwerfen. Der Tab wird danach geschlossen.");
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        ID rowId = rowView.Id;
+                        /* Änderungen speichern */
+                        using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                        {
+                            if (ds.UpdateRow<PasswordPin>(rowView) == true)
+                            {
+                                if (rowView.Photo == null)
+                                {
+                                    if (ds.Connection == null)
+                                    {
+                                        ds.OpenConnection();
+                                    }
 
+                                    List<Attachment> photo = ds.Connection.RecordSet<List<Attachment>>($"SELECT * FROM TAB_Attachment WHERE ObjectId = '{rowId.ToString()}'").Get().Result;
+                                    if (photo != null && photo.Any() == true)
+                                    {
+                                        ds.DeleteRows<Attachment>(photo[0]);
+                                    }
+                                }
+                                else
+                                {
+                                    if (ds.Connection == null)
+                                    {
+                                        ds.OpenConnection();
+                                    }
+
+                                    int countUpdate = ds.Connection.RecordSet<int>($"SELECT COUNT(*) FROM TAB_Attachment WHERE ObjectId='{rowId.ToString()}'").Get().Result;
+                                    if (countUpdate == 0)
+                                    {
+                                        InfoBoxNET.Model.Attachment photo = new()
+                                        {
+                                            Filename = "Clipboard",
+                                            FileExtension = "Raw",
+                                            FileDateTime = DateTime.Now,
+                                            FileSize = rowView.Photo.Length,
+                                            Content = rowView.Photo,
+                                            ObjectId = new Guid(rowId.Value.ToString()),
+                                            ObjectName = "PasswordPin",
+                                        };
+
+                                        ds.InsertRow<Attachment>(photo);
+                                    }
+                                    else
+                                    {
+                                        List<Attachment> photo = ds.Connection.RecordSet<List<Attachment>>($"SELECT * FROM TAB_Attachment WHERE ObjectId = '{rowId.ToString()}'").Get().Result;
+                                        photo[0].FileSize = rowView.Photo.Length;
+                                        photo[0].Content = rowView.Photo;
+                                    }
+                                }
+
+                                this.LoadDataHandler();
+
+                                if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                                {
+                                    await App.EventAgg.PublishAsync(new StatusEvent($"Eintrag '{titel}' aktualisiert. Bereit: {this.RowCount} Einträge"));
+                                }
+                            }
+                            ;
+                        }
+
+                        this.PasswordsTabControl.Items.Remove(tabItem);
+                    }
+                    else if (result == MessageBoxResult.Cancel)
+                    {
+                        this.PasswordsTabControl.Items.Remove(tabItem);
+                    }
+                }
+                else
+                {
+                    this.PasswordsTabControl.Items.Remove(tabItem);
+                }
             }
             else if (rowAction == DataRowAction.Add)
             {
 
+                string titel = rowView.Title;
+                MessageBoxResult result = this.Message.CancelQuestion("Neuer Eintrag speichern", $"Soll der neue Eintrag [{titel}] gespeichert werden. Der Tab wird danach geschlossen.");
+                if (result == MessageBoxResult.Yes)
+                {
+                    ID rowId = rowView.Id;
+                    /* Neuer Eintrag speichern */
+                    using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                    {
+                        if (ds.InsertRow<PasswordPin>(rowView) == true)
+                        {
+                            if (rowView.Photo != null)
+                            {
+                                InfoBoxNET.Model.Attachment photo = new()
+                                {
+                                    Filename = "Clipboard",
+                                    FileExtension = "Raw",
+                                    FileDateTime = DateTime.Now,
+                                    FileSize = rowView.Photo.Length,
+                                    Content = rowView.Photo,
+                                    ObjectId = new Guid(rowId.Value.ToString()),
+                                    ObjectName = "PasswordPin",
+                                };
+
+                                ds.InsertRow<Attachment>(photo);
+
+                            }
+                        }
+
+                        if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                        {
+                            await App.EventAgg.PublishAsync(new StatusEvent($"Eintrag '{titel}' neu erstellt. Bereit: {this.RowCount} Einträge"));
+                        }
+                    }
+
+                    this.PasswordsTabControl.Items.Remove(tabItem);
+                    this.LoadDataHandler();
+                }
+                else if (result == MessageBoxResult.Cancel)
+                {
+                    this.PasswordsTabControl.Items.Remove(tabItem);
+                }
             }
         }
         #endregion Save Models and Close Tab
