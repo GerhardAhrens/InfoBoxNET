@@ -25,7 +25,6 @@ namespace InfoBoxNET.View
     using System.Windows.Media;
 
     using InfoBoxNET.Core;
-    using InfoBoxNET.Core.Enums;
     using InfoBoxNET.Model;
 
     /// <summary>
@@ -41,7 +40,6 @@ namespace InfoBoxNET.View
 
             this.CurrentRow = rowView;
             this.RowAction = rowAction;
-            this.Background = System.Windows.Media.Brushes.LightBlue;
 
             this.DataContext = this;
         }
@@ -71,18 +69,6 @@ namespace InfoBoxNET.View
             set => base.SetValue(value, this.ChangeValue);
         }
 
-        public Dictionary<Guid, string> UsernameSource
-        {
-            get => base.GetValue<Dictionary<Guid, string>>();
-            set => base.SetValue(value);
-        }
-
-        public string Username
-        {
-            get => base.GetValue<string>();
-            set => base.SetValue(value, this.ChangeValue);
-        }
-
         public Brush SelectedBackgroundColor
         {
             get => base.GetValue<Brush>();
@@ -107,26 +93,18 @@ namespace InfoBoxNET.View
             }
         }
 
+        public PasswordPin CurrentRow
+        {
+            get => base.GetValue<PasswordPin>();
+            set => base.SetValue(value);
+        }
+
         private void ChangeValue(int arg1, string arg2)
         {
             if (arg2 == nameof(this.SelectedSymbol))
             {
                 this.CurrentRow.Symbol = arg1;
             }
-        }
-
-        private void ChangeValue(string arg1, string arg2)
-        {
-            if (arg2 == nameof(this.Username))
-            {
-                this.CurrentRow.Username = arg1;
-            }
-        }
-
-        public PasswordPin CurrentRow
-        {
-            get => base.GetValue<PasswordPin>();
-            set => base.SetValue(value);
         }
 
         public DataRowAction RowAction { get; set; }
@@ -154,6 +132,13 @@ namespace InfoBoxNET.View
                     this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
 
                 }
+
+                this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
+                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
+                this.HorizontalImageList.UpdateLayout();
+                this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
+                this.TitelField.PART_TextBox.Focus();
+                this.TitelField.PART_TextBox.CaretIndex = 0;
             }
             else if (this.CurrentRow != null && this.RowAction == DataRowAction.Add)
             {
@@ -167,11 +152,14 @@ namespace InfoBoxNET.View
 
                     this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
 
-                    this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
-                    this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
-                    this.HorizontalImageList.UpdateLayout();
-                    this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
                 }
+
+                this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
+                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
+                this.HorizontalImageList.UpdateLayout();
+                this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
+                this.TitelField.PART_TextBox.Focus();
+                this.TitelField.PART_TextBox.CaretIndex = 0;
             }
         }
         #endregion Windows Events

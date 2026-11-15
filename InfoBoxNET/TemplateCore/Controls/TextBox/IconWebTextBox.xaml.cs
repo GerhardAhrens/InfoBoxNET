@@ -245,7 +245,7 @@
         /// </summary>
         private void WebIcon_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount != 2)
+            if (e.ClickCount != 1)
             {
                 return;
             }

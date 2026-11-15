@@ -19,9 +19,10 @@
 namespace InfoBoxNET.View
 {
     using System.Data;
+    using System.Data.SQLite;
     using System.Windows;
-    using System.Windows.Media;
     using System.Windows.Controls;
+    using System.Windows.Media;
 
     using InfoBoxNET.Core;
     using InfoBoxNET.Model;
@@ -36,10 +37,10 @@ namespace InfoBoxNET.View
         {
             this.InitializeComponent();
             WeakEventManager<UserControl, RoutedEventArgs>.AddHandler(this, "Loaded", this.OnLoaded);
+            this.PasswordGeneratorCommand = new CommandBase(commandParam => this.OnPasswordGenerator(commandParam), () => true);
 
             this.CurrentRow = rowView;
             this.RowAction = rowAction;
-            this.Background = System.Windows.Media.Brushes.Orange;
 
             this.DataContext = this;
         }
@@ -69,12 +70,6 @@ namespace InfoBoxNET.View
         {
             get => base.GetValue<int>();
             set => base.SetValue(value, this.ChangeValue);
-        }
-
-        public Dictionary<Guid, string> UsernameSource
-        {
-            get => base.GetValue<Dictionary<Guid, string>>();
-            set => base.SetValue(value);
         }
 
         public string Username
@@ -115,14 +110,6 @@ namespace InfoBoxNET.View
             }
         }
 
-        private void ChangeValue(string arg1, string arg2)
-        {
-            if (arg2 == nameof(this.Username))
-            {
-                this.CurrentRow.Username = arg1;
-            }
-        }
-
         public PasswordPin CurrentRow
         {
             get => base.GetValue<PasswordPin>();
@@ -143,17 +130,55 @@ namespace InfoBoxNET.View
 
             if (this.CurrentRow != null && this.RowAction == DataRowAction.Change)
             {
+                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                {
+                    ds.OpenConnection();
+                    if (ds.Connection == null)
+                    {
+                        return;
+                    }
 
+                    this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
+
+                }
+
+                this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
+                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
+                this.HorizontalImageList.UpdateLayout();
+                this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
+                this.TitelField.PART_TextBox.Focus();
+                this.TitelField.PART_TextBox.CaretIndex = 0;
             }
             else if (this.CurrentRow != null && this.RowAction == DataRowAction.Add)
             {
+                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                {
+                    ds.OpenConnection();
+                    if (ds.Connection == null)
+                    {
+                        return;
+                    }
 
+                    this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
+
+                }
+
+                this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
+                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
+                this.HorizontalImageList.UpdateLayout();
+                this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
+                this.TitelField.PART_TextBox.Focus();
+                this.TitelField.PART_TextBox.CaretIndex = 0;
             }
         }
         #endregion Windows Events
 
         #region Command Events
         #endregion Command Events
+
+        private void OnPasswordGenerator(object commandParam)
+        {
+        }
 
     }
 }
