@@ -134,7 +134,7 @@ namespace InfoBoxNET.View
                 }
 
                 this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
-                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
+                this.HorizontalImageList.ScrollIntoView(this.HorizontalImageList.SelectedItem);
                 this.HorizontalImageList.UpdateLayout();
                 this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
                 this.TitelField.PART_TextBox.Focus();
@@ -155,7 +155,7 @@ namespace InfoBoxNET.View
                 }
 
                 this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
-                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
+                this.HorizontalImageList.ScrollIntoView(this.HorizontalImageList.SelectedItem);
                 this.HorizontalImageList.UpdateLayout();
                 this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
                 this.TitelField.PART_TextBox.Focus();
