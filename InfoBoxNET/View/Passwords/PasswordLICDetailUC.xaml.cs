@@ -19,11 +19,13 @@
 namespace InfoBoxNET.View
 {
     using System.Data;
+    using System.Data.SQLite;
     using System.Windows;
-    using System.Windows.Media;
     using System.Windows.Controls;
+    using System.Windows.Media;
 
     using InfoBoxNET.Core;
+    using InfoBoxNET.Core.Enums;
     using InfoBoxNET.Model;
 
     /// <summary>
@@ -69,13 +71,25 @@ namespace InfoBoxNET.View
             set => base.SetValue(value, this.ChangeValue);
         }
 
-        public Dictionary<Guid, string> UsernameSource
+        public Dictionary<Guid, string> CompanySource
         {
             get => base.GetValue<Dictionary<Guid, string>>();
             set => base.SetValue(value);
         }
 
-        public string Username
+        public string Company
+        {
+            get => base.GetValue<string>();
+            set => base.SetValue(value, this.ChangeValue);
+        }
+
+        public Dictionary<Guid, string> LicenseNameSource
+        {
+            get => base.GetValue<Dictionary<Guid, string>>();
+            set => base.SetValue(value);
+        }
+
+        public string LicenseName
         {
             get => base.GetValue<string>();
             set => base.SetValue(value, this.ChangeValue);
@@ -115,9 +129,14 @@ namespace InfoBoxNET.View
 
         private void ChangeValue(string arg1, string arg2)
         {
-            if (arg2 == nameof(this.Username))
+            if (arg2 == nameof(this.LicenseName))
             {
                 this.CurrentRow.Username = arg1;
+            }
+            else if (arg2 == nameof(this.Company))
+            {
+                this.CurrentRow.Company = arg1;
+
             }
         }
 
@@ -141,11 +160,94 @@ namespace InfoBoxNET.View
 
             if (this.CurrentRow != null && this.RowAction == DataRowAction.Change)
             {
+                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                {
+                    ds.OpenConnection();
+                    if (ds.Connection == null)
+                    {
+                        return;
+                    }
 
+                    this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
+
+                    var companyAll = ds.Connection.RecordSet<List<PasswordPin>>("SELECT Company, AccessTyp FROM TAB_PasswordPin").Get().Result;
+                    if (companyAll != null)
+                    {
+                        this.CompanySource = companyAll
+                            .Where(w => w.AccessTyp == AccessTyp.License)
+                            .OrderBy(o => o.Company)
+                            .DistinctBy(d => d.Company)
+                            .ToDictionary(k => Guid.CreateVersion7(), v => v.Company);
+                    }
+
+                    var usernamesAll = ds.Connection.RecordSet<List<PasswordPin>>("SELECT LicenseName, AccessTyp FROM TAB_PasswordPin").Get().Result;
+                    if (usernamesAll != null)
+                    {
+                        this.LicenseNameSource = usernamesAll
+                            .Where(w => w.AccessTyp == AccessTyp.License)
+                            .OrderBy(o => o.LicenseName)
+                            .DistinctBy(d => d.LicenseName)
+                            .ToDictionary(k => Guid.CreateVersion7(), v => v.LicenseName);
+                    }
+
+                    this.Photo = ds.Connection.RecordSet<byte[]>($"SELECT Content FROM TAB_Attachment WHERE ObjectId = '{this.CurrentRow.Id.ToString()}'").Get().Result;
+                }
+
+                this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
+                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
+                this.HorizontalImageList.UpdateLayout();
+                this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
+                this.TitelField.PART_TextBox.Focus();
+                this.TitelField.PART_TextBox.CaretIndex = 0;
+                this.LicenseName = this.CurrentRow.LicenseName;
+                this.Company = this.CurrentRow.Company;
+                this.cbCompany.IsDropDownOpen = false;
+                this.cbLicenseName.IsDropDownOpen = false;
             }
             else if (this.CurrentRow != null && this.RowAction == DataRowAction.Add)
             {
+                using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                {
+                    ds.OpenConnection();
+                    if (ds.Connection == null)
+                    {
+                        return;
+                    }
 
+                    this.RegionSource = ds.Connection.RecordSet<List<Region>>(ds.SelectRows<Region>()).Get().Result;
+
+                    var companyAll = ds.Connection.RecordSet<List<PasswordPin>>("SELECT Company, AccessTyp FROM TAB_PasswordPin").Get().Result;
+                    if (companyAll != null)
+                    {
+                        this.CompanySource = companyAll
+                            .Where(w => w.AccessTyp == AccessTyp.License)
+                            .OrderBy(o => o.Company)
+                            .DistinctBy(d => d.Company)
+                            .ToDictionary(k => Guid.CreateVersion7(), v => v.Company);
+                    }
+
+                    var licenseNameAll = ds.Connection.RecordSet<List<PasswordPin>>("SELECT LicenseName, AccessTyp FROM TAB_PasswordPin").Get().Result;
+                    if (licenseNameAll != null)
+                    {
+                        this.LicenseNameSource = licenseNameAll
+                            .Where(w => w.AccessTyp == AccessTyp.License)
+                            .OrderBy(o => o.LicenseName)
+                            .DistinctBy(d => d.LicenseName)
+                            .ToDictionary(k => Guid.CreateVersion7(), v => v.LicenseName);
+                    }
+
+                    this.Photo = ds.Connection.RecordSet<byte[]>($"SELECT Content FROM TAB_Attachment WHERE ObjectId = '{this.CurrentRow.Id.ToString()}'").Get().Result;
+                }
+
+                this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
+                this.HorizontalImageList.ScrollIntoView(this.CurrentRow.Symbol);
+                this.HorizontalImageList.UpdateLayout();
+                this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
+                this.TitelField.PART_TextBox.Focus();
+                this.TitelField.PART_TextBox.CaretIndex = 0;
+                this.LicenseName = this.CurrentRow.LicenseName;
+                this.cbCompany.IsDropDownOpen = false;
+                this.cbLicenseName.IsDropDownOpen = false;
             }
         }
         #endregion Windows Events

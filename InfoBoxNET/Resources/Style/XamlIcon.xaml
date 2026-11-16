@@ -1167,6 +1167,47 @@
     <!--#endregion Report Viewer-->
 
     <!--#region Icons für die Funktion zur Passwort Verwaltung-->
+    <DrawingImage x:Key="IconWerkstatt_Company">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Transform>
+                    <ScaleTransform ScaleX="0.25" ScaleY="0.25" />
+                </DrawingGroup.Transform>
+
+                <GeometryDrawing Brush="#FF4C4C4C" Geometry="F1M0,171.72L0,229.68 122.4,229.68 122.4,171.72 0,171.72z" />
+                <GeometryDrawing Brush="#FF4C4C4C" Geometry="F1M29.88,0L29.88,20.52 92.521,20.52 92.521,0 29.88,0z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M55.62,15.48L41.94,15.48 41.94,5.04 55.62,5.04 55.62,15.48z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M80.459,15.48L66.779,15.48 66.779,5.04 80.459,5.04 80.459,15.48z" />
+                <GeometryDrawing Brush="#FF4C4C4C" Geometry="F1M15.48,27L15.48,165.24 106.92,165.24 106.92,27 15.48,27z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M43.2,48.6L29.521,48.6 29.521,38.16 43.2,38.16 43.2,48.6z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M68.04,48.6L54.36,48.6 54.36,38.16 68.04,38.16 68.04,48.6z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M92.88,48.6L79.2,48.6 79.2,38.16 92.88,38.16 92.88,48.6z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M43.2,64.8L29.521,64.8 29.521,54.36 43.2,54.36 43.2,64.8z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M68.04,64.8L54.36,64.8 54.36,54.36 68.04,54.36 68.04,64.8z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M92.88,64.8L79.2,64.8 79.2,54.36 92.88,54.36 92.88,64.8z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M43.2,81L29.521,81 29.521,70.56 43.2,70.56 43.2,81z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M68.04,81L54.36,81 54.36,70.56 68.04,70.56 68.04,81z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M92.88,81L79.2,81 79.2,70.56 92.88,70.56 92.88,81z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M43.2,97.2L29.521,97.2 29.521,86.76 43.2,86.76 43.2,97.2z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M68.04,97.2L54.36,97.2 54.36,86.76 68.04,86.76 68.04,97.2z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M92.88,97.2L79.2,97.2 79.2,86.76 92.88,86.76 92.88,97.2z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M43.2,113.4L29.521,113.4 29.521,102.96 43.2,102.96 43.2,113.4z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M68.04,113.4L54.36,113.4 54.36,102.96 68.04,102.96 68.04,113.4z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M92.88,113.4L79.2,113.4 79.2,102.96 92.88,102.96 92.88,113.4z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M43.2,129.601L29.521,129.601 29.521,119.16 43.2,119.16 43.2,129.601z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M68.04,129.601L54.36,129.601 54.36,119.16 68.04,119.16 68.04,129.601z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M92.88,129.601L79.2,129.601 79.2,119.16 92.88,119.16 92.88,129.601z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M43.2,145.8L29.521,145.8 29.521,135.359 43.2,135.359 43.2,145.8z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M68.04,145.8L54.36,145.8 54.36,135.359 68.04,135.359 68.04,145.8z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M92.88,145.8L79.2,145.8 79.2,135.359 92.88,135.359 92.88,145.8z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M47.16,226.799L29.88,226.799 29.88,197.641 47.16,197.641 47.16,226.799z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M69.84,226.799L52.561,226.799 52.561,197.641 69.84,197.641 69.84,226.799z" />
+                <GeometryDrawing Brush="#FF28AAE1" Geometry="F1M92.521,226.799L75.24,226.799 75.24,197.641 92.521,197.641 92.521,226.799z" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
     <DrawingImage x:Key="IconPasswordInfo">
         <DrawingImage.Drawing>
             <DrawingGroup>
