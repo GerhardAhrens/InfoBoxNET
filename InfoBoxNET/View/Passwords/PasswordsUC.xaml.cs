@@ -45,7 +45,6 @@ namespace InfoBoxNET.View
 
             this.GoBackCommand = new CommandBase(commandParam => this.OnGoBack(commandParam), () => true);
             this.AddEntryCommand = new CommandBase(commandParam => this.OnAddEntry(commandParam), () => true);
-            this.CopyEntryCommand = new CommandBase(commandParam => this.OnCopyEntry(commandParam), () => true);
             this.DeleteEntryCommand = new CommandBase(commandParam => this.OnDeleteEntry(commandParam), () => true);
             this.ExportPasswordsCommand = new CommandBase(commandParam => this.OnExportPasswords(commandParam), () => true);
             this.PrintPasswordsCommand = new CommandBase(commandParam => this.OnPrintPasswords(commandParam), () => true);
@@ -64,7 +63,6 @@ namespace InfoBoxNET.View
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
         public CommandBase AddEntryCommand { get; private set; }
-        public CommandBase CopyEntryCommand { get; private set; }
         public CommandBase DeleteEntryCommand { get; private set; }
         public CommandBase ExportPasswordsCommand { get; private set; }
         public CommandBase PrintPasswordsCommand { get; private set; }
@@ -114,6 +112,12 @@ namespace InfoBoxNET.View
         public IEnumerable<Region> RegionSource
         {
             get => base.GetValue<IEnumerable<Region>>();
+            set => base.SetValue(value);
+        }
+
+        public Visibility IsLoadingDetail
+        {
+            get => base.GetValue<Visibility>();
             set => base.SetValue(value);
         }
 
@@ -319,13 +323,6 @@ namespace InfoBoxNET.View
             }
         }
 
-        private void OnCopyEntry(object commandParam)
-        {
-            if (commandParam is CommandButtons button && button == CommandButtons.CopyEntry)
-            {
-            }
-        }
-
         private async void OnDeleteEntry(object commandParam)
         {
             if (commandParam is CommandButtons button && button == CommandButtons.DeleteEntry)
@@ -382,6 +379,8 @@ namespace InfoBoxNET.View
         {
             if (commandParam != null && commandParam is PasswordPin pw)
             {
+                this.IsLoadingDetail = Visibility.Collapsed;
+
                 DrawingImage iconWeb = this.CreateDrawingImageFromString("W");
                 DrawingImage iconPasswort = this.CreateDrawingImageFromString("PA");
                 DrawingImage iconPin = this.CreateDrawingImageFromString("PI");
@@ -638,6 +637,8 @@ namespace InfoBoxNET.View
                 {
                     this.SaveCloseLic(tabItem);
                 }
+
+                this.IsLoadingDetail = Visibility.Visible;
             }
         }
 
@@ -754,6 +755,8 @@ namespace InfoBoxNET.View
                         this.RowCount = this.DialogDataView?.Cast<PasswordPin>().Count() ?? 0;
                     }
                 });
+
+                this.IsLoadingDetail = Visibility.Visible;
 
 
                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
