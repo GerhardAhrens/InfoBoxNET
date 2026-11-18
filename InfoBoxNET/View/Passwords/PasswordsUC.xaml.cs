@@ -187,6 +187,7 @@ namespace InfoBoxNET.View
 
             if (commandParam is CommandButtons button && button == CommandButtons.AddEntry)
             {
+                this.IsLoadingDetail = Visibility.Collapsed;
                 AdvancedTabItem passwordsTab = new AdvancedTabItem()
                 {
                     Header = $"Neu Webseite",
@@ -215,6 +216,7 @@ namespace InfoBoxNET.View
             }
             else if (commandParam is string addParamWeb && addParamWeb == "ADD_WEB")
             {
+                this.IsLoadingDetail = Visibility.Collapsed;
                 AdvancedTabItem passwordsTab = new AdvancedTabItem()
                 {
                     Header = $"Neu Webseite",
@@ -242,6 +244,7 @@ namespace InfoBoxNET.View
             }
             else if (commandParam is string addParamPass && addParamPass == "ADD_PASS")
             {
+                this.IsLoadingDetail = Visibility.Collapsed;
                 AdvancedTabItem passwordsTab = new AdvancedTabItem()
                 {
                     Header = $"Neu Passwort",
@@ -269,6 +272,7 @@ namespace InfoBoxNET.View
             }
             else if (commandParam is string addParamPin && addParamPin == "ADD_PIN")
             {
+                this.IsLoadingDetail = Visibility.Collapsed;
                 AdvancedTabItem passwordsTab = new AdvancedTabItem()
                 {
                     Header = $"Neu Pin",
@@ -296,6 +300,7 @@ namespace InfoBoxNET.View
             }
             else if (commandParam is string addParamLizenz && addParamLizenz == "ADD_LIZENZ")
             {
+                this.IsLoadingDetail = Visibility.Collapsed;
                 AdvancedTabItem passwordsTab = new AdvancedTabItem()
                 {
                     Header = $"Neu Lizenz",

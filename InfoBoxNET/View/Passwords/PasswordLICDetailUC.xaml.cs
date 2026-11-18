@@ -131,12 +131,11 @@ namespace InfoBoxNET.View
         {
             if (arg2 == nameof(this.LicenseName))
             {
-                this.CurrentRow.Username = arg1;
+                this.CurrentRow.LicenseName = arg1;
             }
             else if (arg2 == nameof(this.Company))
             {
                 this.CurrentRow.Company = arg1;
-
             }
         }
 
@@ -199,9 +198,9 @@ namespace InfoBoxNET.View
                 this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
                 this.TitelField.PART_TextBox.Focus();
                 this.TitelField.PART_TextBox.CaretIndex = 0;
-                this.LicenseName = this.CurrentRow.LicenseName;
                 this.Company = this.CurrentRow.Company;
                 this.cbCompany.IsDropDownOpen = false;
+                this.LicenseName = this.CurrentRow.LicenseName;
                 this.cbLicenseName.IsDropDownOpen = false;
             }
             else if (this.CurrentRow != null && this.RowAction == DataRowAction.Add)
@@ -245,8 +244,9 @@ namespace InfoBoxNET.View
                 this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
                 this.TitelField.PART_TextBox.Focus();
                 this.TitelField.PART_TextBox.CaretIndex = 0;
-                this.LicenseName = this.CurrentRow.LicenseName;
+                this.Company = this.CurrentRow.Company;
                 this.cbCompany.IsDropDownOpen = false;
+                this.LicenseName = this.CurrentRow.LicenseName;
                 this.cbLicenseName.IsDropDownOpen = false;
             }
         }
