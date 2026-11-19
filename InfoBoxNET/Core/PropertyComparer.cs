@@ -1,6 +1,7 @@
 ﻿namespace InfoBoxNET.Core
 {
     using System.Reflection;
+    using System.Text.Json.Serialization;
 
     public class PropertyComparer
     {
@@ -9,8 +10,15 @@
         /// </summary>
         public static IEnumerable<PropertyDifference> Compare<T>(T original, T modified) where T : class
         {
-            if (original == null) throw new ArgumentNullException(nameof(original));
-            if (modified == null) throw new ArgumentNullException(nameof(modified));
+            if (original == null)
+            {
+                throw new ArgumentNullException(nameof(original));
+            }
+
+            if (modified == null)
+            {
+                throw new ArgumentNullException(nameof(modified));
+            }
 
             // Holt alle öffentlichen Instanz-Properties des Typs
             PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -18,7 +26,17 @@
             foreach (PropertyInfo property in properties)
             {
                 // Indizierte Properties (z.B. Item[int]) überspringen
-                if (property.GetIndexParameters().Length > 0) continue;
+                if (property.GetIndexParameters().Length > 0)
+                {
+                    continue;
+                }
+
+
+                JsonIgnoreAttribute ignoreAttribute = property.GetCustomAttribute<JsonIgnoreAttribute>();
+                if (ignoreAttribute != null)
+                {
+                    continue;
+                }
 
                 object originalValue = property.GetValue(original);
                 object modifiedValue = property.GetValue(modified);

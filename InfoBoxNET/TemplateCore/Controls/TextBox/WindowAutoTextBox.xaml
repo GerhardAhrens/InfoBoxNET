@@ -137,8 +137,9 @@
                 <!--  LINKE SPALTE  -->
                 <Border
                     Grid.Column="0"
+                    Margin="0,1,0,1"
                     Background="{Binding IconBackground, ElementName=Root}"
-                    BorderBrush="Black" Margin="0,1,0,1"
+                    BorderBrush="#D1D1D1"
                     BorderThickness="0,0,1,0"
                     CornerRadius="4,0,0,4">
 

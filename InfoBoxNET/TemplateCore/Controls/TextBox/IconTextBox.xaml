@@ -64,7 +64,7 @@
             </Style>
         </Border.Style>
 
-        <Grid ColumnDefinitions="24,12,1,12,*" ShowGridLines="False">
+        <Grid ColumnDefinitions="28,5,3,12,*" ShowGridLines="False">
 
             <!--  Icon oder Standardsymbol T  -->
             <!--  Symbolbereich mit konfigurierbarer Hintergrundfarbe  -->
@@ -138,7 +138,7 @@
                 Width="1"
                 Margin="0,2"
                 VerticalAlignment="Stretch"
-                Background="Gray" />
+                Background="#D1D1D1" />
 
             <!--  Abstand zwischen Trennstrich und Text  -->
             <Border Grid.Column="3" />

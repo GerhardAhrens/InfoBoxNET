@@ -19,7 +19,6 @@ namespace InfoBoxNET.View
     using System.ComponentModel;
     using System.Data;
     using System.Data.SQLite;
-    using System.Text.Json;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
@@ -1442,6 +1441,7 @@ namespace InfoBoxNET.View
 
             if (rowAction == DataRowAction.Change)
             {
+
                 IEnumerable<PropertyDifference> areEqual = PropertyComparer.Compare(rowView, this.CurrentSelectedItem);
                 if (areEqual.Any() == true)
                 {

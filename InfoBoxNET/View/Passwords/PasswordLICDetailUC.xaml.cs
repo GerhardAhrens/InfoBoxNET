@@ -18,6 +18,7 @@
 
 namespace InfoBoxNET.View
 {
+    using System.Collections.ObjectModel;
     using System.Data;
     using System.Data.SQLite;
     using System.Windows;
@@ -71,9 +72,9 @@ namespace InfoBoxNET.View
             set => base.SetValue(value, this.ChangeValue);
         }
 
-        public Dictionary<Guid, string> CompanySource
+        public ObservableCollection<string> CompanySource
         {
-            get => base.GetValue<Dictionary<Guid, string>>();
+            get => base.GetValue<ObservableCollection<string>>();
             set => base.SetValue(value);
         }
 
@@ -83,9 +84,9 @@ namespace InfoBoxNET.View
             set => base.SetValue(value, this.ChangeValue);
         }
 
-        public Dictionary<Guid, string> LicenseNameSource
+        public ObservableCollection<string> LicenseNameSource
         {
-            get => base.GetValue<Dictionary<Guid, string>>();
+            get => base.GetValue<ObservableCollection<string>>();
             set => base.SetValue(value);
         }
 
@@ -173,20 +174,19 @@ namespace InfoBoxNET.View
                     if (companyAll != null)
                     {
                         this.CompanySource = companyAll
-                            .Where(w => w.AccessTyp == AccessTyp.License)
-                            .OrderBy(o => o.Company)
-                            .DistinctBy(d => d.Company)
-                            .ToDictionary(k => Guid.CreateVersion7(), v => v.Company);
+                            .Where(w => w.AccessTyp == AccessTyp.License).Select(s => s.Company)
+                            .OrderBy(o => o)
+                            .DistinctBy(d => d).ToObservableCollection();
                     }
 
                     var usernamesAll = ds.Connection.RecordSet<List<PasswordPin>>("SELECT LicenseName, AccessTyp FROM TAB_PasswordPin").Get().Result;
                     if (usernamesAll != null)
                     {
                         this.LicenseNameSource = usernamesAll
-                            .Where(w => w.AccessTyp == AccessTyp.License)
-                            .OrderBy(o => o.LicenseName)
-                            .DistinctBy(d => d.LicenseName)
-                            .ToDictionary(k => Guid.CreateVersion7(), v => v.LicenseName);
+                            .Where(w => w.AccessTyp == AccessTyp.License).Select(s => s.LicenseName)
+                            .OrderBy(o => o)
+                            .DistinctBy(d => d)
+                            .ToObservableCollection();
                     }
 
                     this.Photo = ds.Connection.RecordSet<byte[]>($"SELECT Content FROM TAB_Attachment WHERE ObjectId = '{this.CurrentRow.Id.ToString()}'").Get().Result;
@@ -198,10 +198,6 @@ namespace InfoBoxNET.View
                 this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
                 this.TitelField.PART_TextBox.Focus();
                 this.TitelField.PART_TextBox.CaretIndex = 0;
-                this.Company = this.CurrentRow.Company;
-                this.cbCompany.IsDropDownOpen = false;
-                this.LicenseName = this.CurrentRow.LicenseName;
-                this.cbLicenseName.IsDropDownOpen = false;
             }
             else if (this.CurrentRow != null && this.RowAction == DataRowAction.Add)
             {
@@ -219,20 +215,19 @@ namespace InfoBoxNET.View
                     if (companyAll != null)
                     {
                         this.CompanySource = companyAll
-                            .Where(w => w.AccessTyp == AccessTyp.License)
-                            .OrderBy(o => o.Company)
-                            .DistinctBy(d => d.Company)
-                            .ToDictionary(k => Guid.CreateVersion7(), v => v.Company);
+                            .Where(w => w.AccessTyp == AccessTyp.License).Select(s => s.LicenseName)
+                            .OrderBy(o => o)
+                            .DistinctBy(d => d).ToObservableCollection();
                     }
 
-                    var licenseNameAll = ds.Connection.RecordSet<List<PasswordPin>>("SELECT LicenseName, AccessTyp FROM TAB_PasswordPin").Get().Result;
-                    if (licenseNameAll != null)
+                    var usernamesAll = ds.Connection.RecordSet<List<PasswordPin>>("SELECT LicenseName, AccessTyp FROM TAB_PasswordPin").Get().Result;
+                    if (usernamesAll != null)
                     {
-                        this.LicenseNameSource = licenseNameAll
-                            .Where(w => w.AccessTyp == AccessTyp.License)
-                            .OrderBy(o => o.LicenseName)
-                            .DistinctBy(d => d.LicenseName)
-                            .ToDictionary(k => Guid.CreateVersion7(), v => v.LicenseName);
+                        this.LicenseNameSource = usernamesAll
+                            .Where(w => w.AccessTyp == AccessTyp.License).Select(s => s.LicenseName)
+                            .OrderBy(o => o)
+                            .DistinctBy(d => d)
+                            .ToObservableCollection();
                     }
 
                     this.Photo = ds.Connection.RecordSet<byte[]>($"SELECT Content FROM TAB_Attachment WHERE ObjectId = '{this.CurrentRow.Id.ToString()}'").Get().Result;
@@ -244,10 +239,6 @@ namespace InfoBoxNET.View
                 this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
                 this.TitelField.PART_TextBox.Focus();
                 this.TitelField.PART_TextBox.CaretIndex = 0;
-                this.Company = this.CurrentRow.Company;
-                this.cbCompany.IsDropDownOpen = false;
-                this.LicenseName = this.CurrentRow.LicenseName;
-                this.cbLicenseName.IsDropDownOpen = false;
             }
         }
         #endregion Windows Events

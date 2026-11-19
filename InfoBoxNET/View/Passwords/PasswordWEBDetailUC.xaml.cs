@@ -18,6 +18,7 @@
 
 namespace InfoBoxNET.View
 {
+    using System.Collections.ObjectModel;
     using System.Data;
     using System.Data.SQLite;
     using System.Windows;
@@ -73,9 +74,9 @@ namespace InfoBoxNET.View
             set => base.SetValue(value, this.ChangeValue);
         }
 
-        public Dictionary<Guid, string> UsernameSource
+        public ObservableCollection<string> UsernameSource
         {
-            get => base.GetValue<Dictionary<Guid, string>>();
+            get => base.GetValue<ObservableCollection<string>>();
             set => base.SetValue(value);
         }
 
@@ -160,13 +161,13 @@ namespace InfoBoxNET.View
                     if (usernamesAll != null)
                     {
                         this.UsernameSource = usernamesAll
-                            .Where(w => w.AccessTyp == AccessTyp.Website)
-                            .OrderBy(o => o.Username)
-                            .DistinctBy(d => d.Username)
-                            .ToDictionary(k => Guid.CreateVersion7(), v => v.Username);
+                            .Where(w => w.AccessTyp == AccessTyp.Website).Select(s => s.Username)
+                            .OrderBy(o => o)
+                            .DistinctBy(d => d).ToObservableCollection();
                     }
 
                     this.Photo = ds.Connection.RecordSet<byte[]>($"SELECT Content FROM TAB_Attachment WHERE ObjectId = '{this.CurrentRow.Id.ToString()}'").Get().Result;
+                    this.CurrentRow.Photo = this.Photo;
                 }
 
                 this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
@@ -175,8 +176,6 @@ namespace InfoBoxNET.View
                 this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
                 this.TitelField.PART_TextBox.Focus();
                 this.TitelField.PART_TextBox.CaretIndex = 0;
-                this.Username = this.CurrentRow.Username;
-                this.cbUsername.IsDropDownOpen = false;
             }
             else if (this.CurrentRow != null && this.RowAction == DataRowAction.Add)
             {
@@ -194,16 +193,17 @@ namespace InfoBoxNET.View
                     if (usernamesAll != null)
                     {
                         this.UsernameSource = usernamesAll
-                            .Where(w => w.AccessTyp == AccessTyp.Website)
-                            .OrderBy(o => o.Username)
-                            .DistinctBy(d => d.Username)
-                            .ToDictionary(k => Guid.CreateVersion7(), v => v.Username);
+                            .Where(w => w.AccessTyp == AccessTyp.Website).Select(s => s.Username)
+                            .OrderBy(o => o)
+                            .DistinctBy(d => d).ToObservableCollection();
                     }
 
                     this.HorizontalImageList.SelectedValue = this.CurrentRow.Symbol;
                     this.HorizontalImageList.ScrollIntoView(this.HorizontalImageList.SelectedItem);
                     this.HorizontalImageList.UpdateLayout();
                     this.SelectedBackgroundColor = ColorConverters.ConvertNameToBrush(this.CurrentRow.Background);
+                    this.TitelField.PART_TextBox.Focus();
+                    this.TitelField.PART_TextBox.CaretIndex = 0;
                 }
             }
         }
