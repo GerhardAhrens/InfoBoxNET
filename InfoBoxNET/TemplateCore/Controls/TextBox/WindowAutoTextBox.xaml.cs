@@ -301,6 +301,28 @@
         #endregion
 
         #region ICommands
+        public static readonly DependencyProperty F1CommandProperty =
+            DependencyProperty.Register(nameof(F1Command),
+            typeof(ICommand),
+            typeof(WindowAutoCompleteTextBox), new PropertyMetadata(null));
+
+        public ICommand F1Command
+        {
+            get => (ICommand)GetValue(F1CommandProperty);
+            set => SetValue(F2CommandProperty, value);
+        }
+
+        public static readonly DependencyProperty F1CommandParameterProperty =
+            DependencyProperty.Register(nameof(F1CommandParameter),
+                typeof(object),
+                typeof(WindowAutoCompleteTextBox), new PropertyMetadata(null));
+
+        public object F1CommandParameter
+        {
+            get => GetValue(F1CommandParameterProperty);
+            set => SetValue(F1CommandParameterProperty, value);
+        }
+
         public static readonly DependencyProperty F2CommandProperty =
         DependencyProperty.Register(
             nameof(F2Command),
@@ -569,6 +591,24 @@
 
         private void PART_TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.F1)
+            {
+                var parameter = new WindowTextBoxCommandParameter(
+                    PART_TextBox.Text,
+                    PART_TextBox.CaretIndex,
+                    PART_TextBox.SelectionStart,
+                    PART_TextBox.SelectionLength,
+                    PART_TextBox.SelectedText,
+                    PART_TextBox.SelectionStart
+                );
+
+                if (F1Command?.CanExecute(parameter) == true)
+                {
+                    F1Command.Execute(parameter);
+                    e.Handled = true;
+                }
+            }
+
             if (e.Key == Key.F2)
             {
                 var parameter = new WindowTextBoxCommandParameter(
