@@ -20,6 +20,8 @@ namespace System.Data.SQLite
     using System.Reflection;
     using System.Threading.Tasks;
 
+    using InfoBoxNET.Model;
+
     public class DatabaseService : IDisposable
     {
         private bool classIsDisposed;
@@ -262,6 +264,96 @@ namespace System.Data.SQLite
             return sql;
         }
         #endregion Erstellen SQL Anweisungen
+
+        #region History
+
+        public int InsertHistoryRow(History dataObject)
+        {
+            ArgumentNullException.ThrowIfNull(dataObject);
+
+            Type objectType = dataObject.GetType();
+
+            // Tabellenname aus DataTableAttribute ermitteln
+            var tableAttribute = objectType.GetCustomAttributesData().FirstOrDefault(a => a.AttributeType.Name == "DataTableAttribute");
+
+            if (tableAttribute == null || tableAttribute.ConstructorArguments.Count == 0)
+            {
+                throw new InvalidOperationException($"Kein DataTableAttribute für {objectType.Name} gefunden.");
+            }
+
+            string tableName = tableAttribute.ConstructorArguments[0].Value?.ToString() ?? throw new InvalidOperationException("Tabellenname fehlt.");
+
+            // Alle Properties mit TableColumnAttribute ermitteln
+            var properties = objectType.GetProperties()
+                .Where(p => p.GetCustomAttributesData()
+                    .Any(a => a.AttributeType.Name == "TableColumnAttribute")).ToList();
+
+            if (!properties.Any())
+            {
+                throw new InvalidOperationException("Keine Tabellenspalten gefunden.");
+            }
+
+            // INSERT-Anweisung erstellen
+            string columns = string.Join(", ", properties.Select(p => $"\"{p.Name}\""));
+            string parameters = string.Join(", ", properties.Select((p, i) => $"@p{i}"));
+            string sql = $"INSERT INTO {tableName} ({columns}) VALUES ({parameters})";
+
+            bool connectionWasClosed = this.Connection.State != System.Data.ConnectionState.Open;
+
+            try
+            {
+                if (connectionWasClosed)
+                {
+                    this.Connection.Open();
+                }
+
+                using var command = this.Connection.CreateCommand();
+
+                command.CommandText = sql;
+
+                // Parameter befüllen
+                for (int i = 0; i < properties.Count; i++)
+                {
+                    object value = properties[i].GetValue(dataObject);
+                    command.Parameters.AddWithValue($"@p{i}", ConvertSqliteValue(value));
+                }
+
+                return command.ExecuteNonQuery();
+            }
+            finally
+            {
+                if (connectionWasClosed == true)
+                {
+                    this.Connection.Close();
+                }
+            }
+        }
+
+        private static object ConvertSqliteValue(object value)
+        {
+            if (value == null)
+                return DBNull.Value;
+
+            return value switch
+            {
+                Guid guid => guid.ToString("D"),
+
+                DateTime dateTime =>
+                    dateTime.ToString("O", CultureInfo.InvariantCulture),
+
+                DateTimeOffset dateTimeOffset =>
+                    dateTimeOffset.ToString("O", CultureInfo.InvariantCulture),
+
+                bool boolean => boolean ? 1 : 0,
+
+                Enum enumValue => Convert.ToInt32(enumValue),
+
+                char character => character.ToString(),
+
+                _ => value
+            };
+        }
+        #endregion History
 
         #region Erstellen SQL Database Anweisungen
         public bool InsertRow<T>(T dataObject)

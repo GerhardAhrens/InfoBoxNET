@@ -3,6 +3,8 @@
     using System.Reflection;
     using System.Text.Json.Serialization;
 
+    using InfoBoxNET.Model;
+
     public class PropertyComparer
     {
         /// <summary>
@@ -54,6 +56,30 @@
                 }
             }
         }
+
+
+        public IEnumerable<History> CreateHistoryEntries(IEnumerable<PropertyDifference> differences, string objectName = "PassPin")
+        {
+            if (differences == null)
+            {
+                yield break;
+            }
+
+            foreach (var difference in differences)
+            {
+                yield return new History
+                {
+                    ObjectName = string.IsNullOrEmpty(objectName) ? "PassPin" : objectName,
+                    PropertyName = difference.PropertyName,
+                    OriginalValue = Convert.ToString(difference.OriginalValue, System.Globalization.CultureInfo.InvariantCulture),
+                    ModifiedValue = Convert.ToString(difference.ModifiedValue, System.Globalization.CultureInfo.InvariantCulture),
+                    PropertyType = difference.PropertyType?.Name,
+                    CreatedBy = Environment.UserName,
+                    CreatedOn = DateTime.Now
+                };
+            }
+        }
+
     }
 
     public class PropertyDifference
