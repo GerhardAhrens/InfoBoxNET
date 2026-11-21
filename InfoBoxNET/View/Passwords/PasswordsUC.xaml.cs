@@ -36,6 +36,8 @@ namespace InfoBoxNET.View
     /// </summary>
     public partial class PasswordsUC : UserControlBase
     {
+        private Predicate<object> _gespeicherterFilter;
+
         public PasswordsUC(ChangeViewEventArgs args) : base(typeof(PasswordsUC))
 
         {
@@ -705,7 +707,8 @@ namespace InfoBoxNET.View
         }
         #endregion Command Events
 
-        private async void LoadDataHandler()
+        #region Load Data and Filter
+        private async void LoadDataHandler(bool reloadWithFilter = false)
         {
             try
             {
@@ -749,7 +752,17 @@ namespace InfoBoxNET.View
                         this.DialogDataView = CollectionViewSource.GetDefaultView(dataSource);
                         if (this.DialogDataView != null)
                         {
-                            this.DialogDataView.Filter = rowItem => this.DataDefaultFilter(rowItem as PasswordPin);
+                            if (reloadWithFilter == true && this._gespeicherterFilter != null)
+                            {
+                                this.DialogDataView.Filter = this._gespeicherterFilter;
+                                this.DialogDataView?.Refresh();
+                            }
+                            else
+                            {
+                                this.DialogDataView.Filter = rowItem => this.DataDefaultFilter(rowItem as PasswordPin);
+                                this._gespeicherterFilter = this.DialogDataView.Filter;
+                            }
+
                             this.DialogDataView.SortDescriptions.Add(new SortDescription("AccessTyp", ListSortDirection.Ascending));
                             this.DialogDataView.SortDescriptions.Add(new SortDescription("Title", ListSortDirection.Ascending));
                             this.DialogDataView.MoveCurrentToFirst();
@@ -812,7 +825,6 @@ namespace InfoBoxNET.View
             return found;
         }
 
-
         private async void RefreschDataSource(string arg1, string arg2)
         {
             if (arg2 == nameof(this.FilterDefaultSearch))
@@ -837,69 +849,7 @@ namespace InfoBoxNET.View
                 }
             }
         }
-
-        public DrawingImage CreateDrawingImageFromString(string typ)
-        {
-            return (DrawingImage)XamlReader.Parse(GetIconText(typ));
-        }
-
-        private string GetIconText(string typ)
-        {
-            string iconText = string.Empty;
-
-            if (typ == "W")
-            {
-                iconText = @"
-                <DrawingImage
-                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
-                    <DrawingImage.Drawing>
-                        <GeometryDrawing Brush = ""Green"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
-                    </DrawingImage.Drawing>
-                </DrawingImage>";
-            }
-            else if (typ == "PI")
-            {
-                iconText = @"
-                <DrawingImage
-                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
-                    <DrawingImage.Drawing>
-                        <GeometryDrawing Brush = ""Blue"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
-                    </DrawingImage.Drawing>
-                </DrawingImage>";
-            }
-            else if (typ == "PA")
-            {
-                iconText = @"
-                <DrawingImage
-                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
-                    <DrawingImage.Drawing>
-                        <GeometryDrawing Brush = ""Orange"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
-                    </DrawingImage.Drawing>
-                </DrawingImage>";
-            }
-            else if (typ == "L")
-            {
-                iconText = @"
-                <DrawingImage
-                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
-                    <DrawingImage.Drawing>
-                        <GeometryDrawing Brush = ""Yellow"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
-                    </DrawingImage.Drawing>
-                </DrawingImage>";
-            }
-            else
-            {
-                iconText = @"
-                <DrawingImage
-                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
-                    <DrawingImage.Drawing>
-                        <GeometryDrawing Brush = ""Black"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
-                    </DrawingImage.Drawing>
-                </DrawingImage>";
-            }
-
-            return iconText;
-        }
+        #endregion Load Data and Filter
 
         #region Validation Models
         private bool ModelValidationWeb(PasswordPin rowView, out string errorMessage)
@@ -1064,7 +1014,7 @@ namespace InfoBoxNET.View
                                     }
                                 }
 
-                                this.LoadDataHandler();
+                                this.LoadDataHandler(true);
 
                                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                                 {
@@ -1123,7 +1073,7 @@ namespace InfoBoxNET.View
                     }
 
                     this.PasswordsTabControl.Items.Remove(tabItem);
-                    this.LoadDataHandler();
+                    this.LoadDataHandler(true);
                 }
                 else if (result == MessageBoxResult.Cancel)
                 {
@@ -1208,7 +1158,7 @@ namespace InfoBoxNET.View
                                     }
                                 }
 
-                                this.LoadDataHandler();
+                                this.LoadDataHandler(true);
 
                                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                                 {
@@ -1268,7 +1218,7 @@ namespace InfoBoxNET.View
                     }
 
                     this.PasswordsTabControl.Items.Remove(tabItem);
-                    this.LoadDataHandler();
+                    this.LoadDataHandler(true);
                 }
                 else if (result == MessageBoxResult.Cancel)
                 {
@@ -1353,7 +1303,7 @@ namespace InfoBoxNET.View
                                     }
                                 }
 
-                                this.LoadDataHandler();
+                                this.LoadDataHandler(true);
 
                                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                                 {
@@ -1413,7 +1363,7 @@ namespace InfoBoxNET.View
                     }
 
                     this.PasswordsTabControl.Items.Remove(tabItem);
-                    this.LoadDataHandler();
+                    this.LoadDataHandler(true);
                 }
                 else if (result == MessageBoxResult.Cancel)
                 {
@@ -1499,7 +1449,7 @@ namespace InfoBoxNET.View
                                     }
                                 }
 
-                                this.LoadDataHandler();
+                                this.LoadDataHandler(true);
 
                                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                                 {
@@ -1568,5 +1518,68 @@ namespace InfoBoxNET.View
             }
         }
         #endregion Save Models and Close Tab
+
+        private DrawingImage CreateDrawingImageFromString(string typ)
+        {
+            return (DrawingImage)XamlReader.Parse(GetIconText(typ));
+        }
+
+        private string GetIconText(string typ)
+        {
+            string iconText = string.Empty;
+
+            if (typ == "W")
+            {
+                iconText = @"
+                <DrawingImage
+                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
+                    <DrawingImage.Drawing>
+                        <GeometryDrawing Brush = ""Green"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
+                    </DrawingImage.Drawing>
+                </DrawingImage>";
+            }
+            else if (typ == "PI")
+            {
+                iconText = @"
+                <DrawingImage
+                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
+                    <DrawingImage.Drawing>
+                        <GeometryDrawing Brush = ""Blue"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
+                    </DrawingImage.Drawing>
+                </DrawingImage>";
+            }
+            else if (typ == "PA")
+            {
+                iconText = @"
+                <DrawingImage
+                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
+                    <DrawingImage.Drawing>
+                        <GeometryDrawing Brush = ""Orange"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
+                    </DrawingImage.Drawing>
+                </DrawingImage>";
+            }
+            else if (typ == "L")
+            {
+                iconText = @"
+                <DrawingImage
+                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
+                    <DrawingImage.Drawing>
+                        <GeometryDrawing Brush = ""Yellow"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
+                    </DrawingImage.Drawing>
+                </DrawingImage>";
+            }
+            else
+            {
+                iconText = @"
+                <DrawingImage
+                    xmlns = ""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
+                    <DrawingImage.Drawing>
+                        <GeometryDrawing Brush = ""Black"" Geometry = ""M 0,0 L 16,0 16,16 0,16 Z"" />
+                    </DrawingImage.Drawing>
+                </DrawingImage>";
+            }
+
+            return iconText;
+        }
     }
 }
