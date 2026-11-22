@@ -893,6 +893,47 @@
     <!--#endregion Main Menü Symbole-->
 
     <!--#region Icons für verschiedene Funktion-->
+    <DrawingImage x:Key="HistoryIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+
+                <!--  Uhr-Kreis  -->
+                <GeometryDrawing Brush="#FFFFFFFF" Geometry="M13,3 A9,9 0 1 1 12.999,3 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#FF606060" Thickness="1.5" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <!--  Uhrzeiger  -->
+                <GeometryDrawing Brush="{x:Null}">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            EndLineCap="Round"
+                            StartLineCap="Round"
+                            Thickness="1.6" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <LineGeometry StartPoint="12,6" EndPoint="12,12" />
+                            <LineGeometry StartPoint="12,12" EndPoint="16,14" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Mittelpunkt  -->
+                <GeometryDrawing Brush="#FF606060" Geometry="M12,10.9 A1.1,1.1 0 1 1 11.999,10.9 Z" />
+
+                <!--  Rückwärtspfeil  -->
+                <GeometryDrawing Brush="#FF1976D2" Geometry="M7.2,3.8 L2.5,4 L4.8,8 L5.6,6.1 C7.2,4.7 9.1,4 11,4 L11,2.5 C9.5,2.5 8.2,2.9 7.2,3.8 Z" />
+
+                <!--  Pfeilspitze  -->
+                <GeometryDrawing Brush="#FF1976D2" Geometry="M2.5,4 L7.2,3.8 L4.8,8 Z" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
     <DrawingImage x:Key="IconPlus">
         <DrawingImage.Drawing>
             <DrawingGroup>

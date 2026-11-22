@@ -55,11 +55,13 @@ namespace InfoBoxNET.View
             this.FilterButtonCommand = new CommandBase(commandParam => this.OnFilterButtonClicked(commandParam), () => true);
             this.SelectionTabChangedCommand = new CommandBase(commandParam => this.OnSelectionTabChanged(commandParam), () => true);
             this.CloseTabCommand = new CommandBase(commandParam => this.OnCloseTab(commandParam), () => true);
+            this.HistoryEntryCommand = new CommandBase(commandParam => this.OnHistoryEntry(commandParam), () => true);
 
             this.CurrentCtorArgs = args;
 
             this.DataContext = this;
         }
+
 
         #region Properties
         public CommandBase GoBackCommand { get; private set; }
@@ -73,6 +75,7 @@ namespace InfoBoxNET.View
         public CommandBase FilterButtonCommand { get; private set; }
         public CommandBase SelectionTabChangedCommand { get; private set; }
         public CommandBase CloseTabCommand { get; private set; }
+        public CommandBase HistoryEntryCommand { get; private set; }
 
         public ID Id
         {
@@ -705,6 +708,11 @@ namespace InfoBoxNET.View
                 }
             }
         }
+
+        private void OnHistoryEntry(object commandParam)
+        {
+        }
+
         #endregion Command Events
 
         #region Load Data and Filter

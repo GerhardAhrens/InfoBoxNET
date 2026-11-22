@@ -28,6 +28,8 @@
         ExportPasswords = 15,
         [Description("Liste drucken")]
         PrintDocument = 16,
+        [Description("Historie für Einträge")]
+        HistoryEntry = 17,
         [Description("Informationen")]
         InformationPopup = 20,
         [Description("Einstellungen")]
