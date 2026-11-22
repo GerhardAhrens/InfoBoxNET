@@ -26,15 +26,21 @@ namespace InfoBoxNET.Model
         /// <summary>
         /// Initializes a new instance of the <see cref="History"/> class.
         /// </summary>
-        public History()
+        public History(Guid objectId, string objectName = "PasswordPin")
         {
             this.Id = Guid.CreateVersion7();
-            this.ObjectName = "PassPin";
+            this.ObjectName = objectName;
+            this.ObjectId = objectId;
+            this.CreatedBy = Environment.UserName;
+            this.CreatedOn = DateTime.Now;
         }
 
         [PrimaryKey]
         [TableColumn(SQLiteDataType.Guid)]
         public Guid Id { get; set; }
+
+        [TableColumn(SQLiteDataType.Guid)]
+        public Guid ObjectId { get; set; }
 
         [TableColumn(SQLiteDataType.VarChar)]
         public string ObjectName { get; set; }

@@ -58,7 +58,7 @@
         }
 
 
-        public IEnumerable<History> CreateHistoryEntries(IEnumerable<PropertyDifference> differences, string objectName = "PassPin")
+        public IEnumerable<History> CreateHistoryEntries(IEnumerable<PropertyDifference> differences,Guid objectId, string objectName = "PasswordPin")
         {
             if (differences == null)
             {
@@ -67,9 +67,8 @@
 
             foreach (var difference in differences)
             {
-                yield return new History
+                yield return new History(objectId, objectName)
                 {
-                    ObjectName = string.IsNullOrEmpty(objectName) ? "PassPin" : objectName,
                     PropertyName = difference.PropertyName,
                     OriginalValue = Convert.ToString(difference.OriginalValue, System.Globalization.CultureInfo.InvariantCulture),
                     ModifiedValue = Convert.ToString(difference.ModifiedValue, System.Globalization.CultureInfo.InvariantCulture),

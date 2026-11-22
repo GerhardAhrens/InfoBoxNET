@@ -1014,7 +1014,8 @@ namespace InfoBoxNET.View
                                     }
                                 }
 
-                                this.LoadDataHandler(true);
+                                this.OnFilterButtonClicked("FILTER_1");
+                                //this.LoadDataHandler(true);
 
                                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                                 {
@@ -1073,7 +1074,8 @@ namespace InfoBoxNET.View
                     }
 
                     this.PasswordsTabControl.Items.Remove(tabItem);
-                    this.LoadDataHandler(true);
+                    this.OnFilterButtonClicked("FILTER_1");
+                    //this.LoadDataHandler(true);
                 }
                 else if (result == MessageBoxResult.Cancel)
                 {

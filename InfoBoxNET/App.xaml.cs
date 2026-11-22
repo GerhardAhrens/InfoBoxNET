@@ -235,28 +235,46 @@
             {
                 ds.Create(CreateTableInDB);
             }
+
+            using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+            {
+                if (ds.IsOpen == false)
+                {
+                    ds.OpenConnection();
+                }
+
+                ds.InsertHistoryRow(new History(Guid.NewGuid(), "PasswordPin"));
+            }
         }
 
         private static void CreateTableInDB(SQLiteConnection sqliteConnection)
         {
             string createSQL = string.Empty;
-            using (SQLGenerator<PasswordPin> aa = new SQLGenerator<PasswordPin>(null))
+
+            using (SQLGenerator<History> sqlText = new SQLGenerator<History>(null))
             {
-                createSQL = aa.CreateTable();
+                createSQL = sqlText.CreateTable();
             }
 
             sqliteConnection.RecordSet<int>(createSQL).Execute();
 
-            using (SQLGenerator<Region> aa = new SQLGenerator<Region>(null))
+            using (SQLGenerator<PasswordPin> sqlText = new SQLGenerator<PasswordPin>(null))
             {
-                createSQL = aa.CreateTable();
+                createSQL = sqlText.CreateTable();
             }
 
             sqliteConnection.RecordSet<int>(createSQL).Execute();
 
-            using (SQLGenerator<Attachment> aa = new SQLGenerator<Attachment>(null))
+            using (SQLGenerator<Region> sqlText = new SQLGenerator<Region>(null))
             {
-                createSQL = aa.CreateTable();
+                createSQL = sqlText.CreateTable();
+            }
+
+            sqliteConnection.RecordSet<int>(createSQL).Execute();
+
+            using (SQLGenerator<Attachment> sqlText = new SQLGenerator<Attachment>(null))
+            {
+                createSQL = sqlText.CreateTable();
             }
 
             sqliteConnection.RecordSet<int>(createSQL).Execute();
