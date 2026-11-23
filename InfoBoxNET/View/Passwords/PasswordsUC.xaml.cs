@@ -709,8 +709,41 @@ namespace InfoBoxNET.View
             }
         }
 
-        private void OnHistoryEntry(object commandParam)
+        private async void OnHistoryEntry(object commandParam)
         {
+            try
+            {
+                if (commandParam is CommandButtons button && button == CommandButtons.HistoryEntry)
+                {
+                    ID id = this.CurrentSelectedItem.Id;
+
+                    AdvancedTabItem historyTab = new AdvancedTabItem()
+                    {
+                        Header = $"Historie für [{this.CurrentSelectedItem.Title}]",
+                        HeaderImage = this.FindResource("HistoryIcon") as ImageSource,
+                    };
+
+                    historyTab.Name = AccessTyp.History.ToString();
+                    bool isTabFound = PasswordsTabControl.Items.OfType<AdvancedTabItem>().Any(tab => tab.Header?.ToString() == historyTab.Header.ToString());
+                    if (isTabFound == false)
+                    {
+                        historyTab.Tag = null;
+                        historyTab.Content = new HistoryUC(id);
+                        this.PasswordsTabControl.Items.Add(historyTab);
+                        if (App.EventAgg.IsSubscription<StatusEvent>() == true)
+                        {
+                            await App.EventAgg.PublishAsync(new StatusEvent($"Bereit"));
+                        }
+                    }
+
+                    this.PasswordsTabControl.SelectedItem = historyTab;
+                }
+            }
+            catch (Exception ex)
+            {
+                string errorText = ex.Message;
+                throw;
+            }
         }
 
         #endregion Command Events

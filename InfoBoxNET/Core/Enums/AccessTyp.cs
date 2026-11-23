@@ -30,6 +30,8 @@ namespace InfoBoxNET.Core.Enums
         Passwort = 3,
         [Description("Softwarelizenz")]
         License = 4,
+        [Description("History")]
+        History = 5,
         [Description("Unspezifisch")]
         All = 99
     }

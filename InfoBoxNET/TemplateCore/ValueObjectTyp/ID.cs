@@ -29,9 +29,12 @@ namespace System.Windows
         public ID(Guid id)
         {
             this.Value = id;
+            this.ValueGuid = id;
         }
 
         public object Value { get; }
+
+        public Guid ValueGuid { get; }
 
         public IDStatus Status { get; private set; }
 
@@ -59,16 +62,16 @@ namespace System.Windows
                 state = IDStatus.Edit;
             }
 
-            Guid outInt = Guid.Empty;
-            if (Guid.TryParse(value.ToString(), out outInt) == false)
+            Guid outGuid = Guid.Empty;
+            if (Guid.TryParse(value.ToString(), out outGuid) == false)
             {
                 state = IDStatus.Error;
             }
             else
             {
-                if (outInt == Guid.Empty)
+                if (outGuid == Guid.Empty)
                 {
-                    outInt = Guid.Empty;
+                    outGuid = Guid.Empty;
                     state = IDStatus.New;
                 }
                 else
@@ -77,7 +80,7 @@ namespace System.Windows
                 }
             }
 
-            ID instance = new ID((Guid)outInt)
+            ID instance = new ID((Guid)outGuid)
             {
                 Status = state
             };
@@ -174,16 +177,16 @@ namespace System.Windows
                 state = IDStatus.Edit;
             }
 
-            int outInt = -1;
-            if (int.TryParse(value, out outInt) == false)
+            int outString = -1;
+            if (int.TryParse(value, out outString) == false)
             {
                 state = IDStatus.Error;
             }
             else
             {
-                if (outInt < 1)
+                if (outString < 1)
                 {
-                    outInt = -1;
+                    outString = -1;
                     state = IDStatus.New;
                 }
                 else
@@ -192,7 +195,7 @@ namespace System.Windows
                 }
             }
 
-            ID instance = new ID((int)outInt)
+            ID instance = new ID((int)outString)
             {
                 Status = state
             };
