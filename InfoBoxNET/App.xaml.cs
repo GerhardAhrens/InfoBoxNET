@@ -14,6 +14,8 @@
     using InfoBoxNET.Model;
     using InfoBoxNET.View;
 
+    using Inventar.Modell.Model;
+
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
@@ -273,6 +275,34 @@
             sqliteConnection.RecordSet<int>(createSQL).Execute();
 
             using (SQLGenerator<Attachment> sqlText = new SQLGenerator<Attachment>(null))
+            {
+                createSQL = sqlText.CreateTable();
+            }
+
+            sqliteConnection.RecordSet<int>(createSQL).Execute();
+
+            using (SQLGenerator<Inventars> sqlText = new SQLGenerator<Inventars>(null))
+            {
+                createSQL = sqlText.CreateTable();
+            }
+
+            sqliteConnection.RecordSet<int>(createSQL).Execute();
+
+            using (SQLGenerator<InventarTyp> sqlText = new SQLGenerator<InventarTyp>(null))
+            {
+                createSQL = sqlText.CreateTable();
+            }
+
+            sqliteConnection.RecordSet<int>(createSQL).Execute();
+
+            using (SQLGenerator<Schlagwoerter> sqlText = new SQLGenerator<Schlagwoerter>(null))
+            {
+                createSQL = sqlText.CreateTable();
+            }
+
+            sqliteConnection.RecordSet<int>(createSQL).Execute();
+
+            using (SQLGenerator<VerkaeuferTyp> sqlText = new SQLGenerator<VerkaeuferTyp>(null))
             {
                 createSQL = sqlText.CreateTable();
             }
