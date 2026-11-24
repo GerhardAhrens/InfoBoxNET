@@ -128,6 +128,7 @@ namespace InfoBoxNET.View
         public ObservableCollection<object> FilterButtonItem { get; } = new();
         public ObservableCollection<object> AddButtonItem { get; } = new();
 
+        public string FilterValue { get; set; }
         private AdvancedTabItem CurrentTabItem { get; set; }
         private int RowCount { get; set; }
         private int RowFilterCount { get; set; }
@@ -499,7 +500,6 @@ namespace InfoBoxNET.View
 
         private async void OnFilterButtonClicked(object commandParam)
         {
-            string filterValue = string.Empty;
             AccessTyp selectTyp = AccessTyp.None;
             bool isTagFilter = false;
 
@@ -507,28 +507,28 @@ namespace InfoBoxNET.View
             {
                 if (filterParam.StartsWith("FILTER_"))
                 {
-                    filterValue = filterParam.Substring("FILTER_".Length);
-                    if (filterValue == "0")
+                    this.FilterValue = filterParam.Substring("FILTER_".Length);
+                    if (this.FilterValue == "0")
                     {
                         isTagFilter = false;
                         selectTyp = AccessTyp.All;
                     }
-                    else if (filterValue == "1")
+                    else if (this.FilterValue == "1")
                     {
                         isTagFilter = false;
                         selectTyp = AccessTyp.Website;
                     }
-                    else if (filterValue == "2")
+                    else if (this.FilterValue == "2")
                     {
                         isTagFilter = false;
                         selectTyp = AccessTyp.Passwort;
                     }
-                    else if (filterValue == "3")
+                    else if (this.FilterValue == "3")
                     {
                         isTagFilter = false;
                         selectTyp = AccessTyp.Pin;
                     }
-                    else if (filterValue == "4")
+                    else if (this.FilterValue == "4")
                     {
                         isTagFilter = false;
                         selectTyp = AccessTyp.License;
@@ -537,10 +537,10 @@ namespace InfoBoxNET.View
                 else if (filterParam.StartsWith("TAG_"))
                 {
                     isTagFilter = true;
-                    filterValue = filterParam.Substring("TAG_".Length);
+                    this.FilterValue = filterParam.Substring("TAG_".Length);
                 }
 
-                if (string.IsNullOrEmpty(filterValue) == false)
+                if (string.IsNullOrEmpty(this.FilterValue) == false)
                 {
                     using (DatabaseService ds = new DatabaseService(App.DatabasePath))
                     {
@@ -565,7 +565,7 @@ namespace InfoBoxNET.View
                         }
                         else
                         {
-                            sql = ds.SelectRows<PasswordPin>(whereClause: $"Version = 0 AND Region = '{filterValue}'");
+                            sql = ds.SelectRows<PasswordPin>(whereClause: $"Version = 0 AND Region = '{this.FilterValue}'");
                         }
 
                         List<PasswordPin> dataSource = ds.Connection.RecordSet<List<PasswordPin>>(sql).Get().Result;
@@ -1055,13 +1055,14 @@ namespace InfoBoxNET.View
                                     }
                                 }
 
-                                this.OnFilterButtonClicked("FILTER_1");
-                                //this.LoadDataHandler(true);
+                                this.OnFilterButtonClicked(this.FilterValue);
 
                                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                                 {
                                     await App.EventAgg.PublishAsync(new StatusEvent($"Eintrag '{titel}' aktualisiert. Bereit: {this.RowCount} Einträge"));
                                 }
+
+                                ds.InsertHistoryRow(rowView.Id.ToGuid(),areEqual);
                             }
                             ;
                         }
@@ -1115,8 +1116,7 @@ namespace InfoBoxNET.View
                     }
 
                     this.PasswordsTabControl.Items.Remove(tabItem);
-                    this.OnFilterButtonClicked("FILTER_1");
-                    //this.LoadDataHandler(true);
+                    this.OnFilterButtonClicked(this.FilterValue);
                 }
                 else if (result == MessageBoxResult.Cancel)
                 {
@@ -1201,7 +1201,8 @@ namespace InfoBoxNET.View
                                     }
                                 }
 
-                                this.LoadDataHandler(true);
+                                this.OnFilterButtonClicked(this.FilterValue);
+
 
                                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                                 {
@@ -1261,7 +1262,7 @@ namespace InfoBoxNET.View
                     }
 
                     this.PasswordsTabControl.Items.Remove(tabItem);
-                    this.LoadDataHandler(true);
+                    this.OnFilterButtonClicked(this.FilterValue);
                 }
                 else if (result == MessageBoxResult.Cancel)
                 {
@@ -1346,7 +1347,7 @@ namespace InfoBoxNET.View
                                     }
                                 }
 
-                                this.LoadDataHandler(true);
+                                this.OnFilterButtonClicked(this.FilterValue);
 
                                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                                 {
@@ -1406,7 +1407,7 @@ namespace InfoBoxNET.View
                     }
 
                     this.PasswordsTabControl.Items.Remove(tabItem);
-                    this.LoadDataHandler(true);
+                    this.OnFilterButtonClicked(this.FilterValue);
                 }
                 else if (result == MessageBoxResult.Cancel)
                 {
@@ -1492,7 +1493,7 @@ namespace InfoBoxNET.View
                                     }
                                 }
 
-                                this.LoadDataHandler(true);
+                                this.OnFilterButtonClicked(this.FilterValue);
 
                                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                                 {
@@ -1552,7 +1553,7 @@ namespace InfoBoxNET.View
                     }
 
                     this.PasswordsTabControl.Items.Remove(tabItem);
-                    this.LoadDataHandler();
+                    this.OnFilterButtonClicked(this.FilterValue);
                 }
                 else if (result == MessageBoxResult.Cancel)
                 {

@@ -238,6 +238,7 @@
                 ds.Create(CreateTableInDB);
             }
 
+            /*
             using (DatabaseService ds = new DatabaseService(App.DatabasePath))
             {
                 if (ds.IsOpen == false)
@@ -247,6 +248,7 @@
 
                 ds.InsertHistoryRow(new History(Guid.NewGuid(), "PasswordPin"));
             }
+            */
         }
 
         private static void CreateTableInDB(SQLiteConnection sqliteConnection)

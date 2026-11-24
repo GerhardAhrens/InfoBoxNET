@@ -19,6 +19,8 @@ namespace InfoBoxNET.Model
     using System.Data.SQLite;
     using System.Diagnostics;
 
+    using InfoBoxNET.Core;
+
     [DebuggerDisplay("Name={this.Name}")]
     [DataTable("TAB_History")]
     public partial class History
@@ -26,6 +28,13 @@ namespace InfoBoxNET.Model
         /// <summary>
         /// Initializes a new instance of the <see cref="History"/> class.
         /// </summary>
+        public History()
+        {
+            this.Id = Guid.CreateVersion7();
+            this.CreatedBy = Environment.UserName;
+            this.CreatedOn = DateTime.Now;
+        }
+
         public History(Guid objectId, string objectName = "PasswordPin")
         {
             this.Id = Guid.CreateVersion7();

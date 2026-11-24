@@ -19,7 +19,9 @@ namespace System.Data.SQLite
     using System.IO;
     using System.Reflection;
     using System.Threading.Tasks;
+    using System.Windows;
 
+    using InfoBoxNET.Core;
     using InfoBoxNET.Model;
 
     public class DatabaseService : IDisposable
@@ -325,6 +327,87 @@ namespace System.Data.SQLite
                 if (connectionWasClosed == true)
                 {
                     this.Connection.Close();
+                }
+            }
+        }
+
+        public void InsertHistoryRow(ID id, IEnumerable<PropertyDifference> propDiff, string objectName = "PasswordPin")
+        {
+            ArgumentNullException.ThrowIfNull(propDiff);
+
+            Type objectType = typeof(History);
+
+            // Tabellenname aus DataTableAttribute ermitteln
+            var tableAttribute = objectType.GetCustomAttributesData().FirstOrDefault(a => a.AttributeType.Name == "DataTableAttribute");
+
+            if (tableAttribute == null || tableAttribute.ConstructorArguments.Count == 0)
+            {
+                throw new InvalidOperationException($"Kein DataTableAttribute für {objectType.Name} gefunden.");
+            }
+
+            string tableName = tableAttribute.ConstructorArguments[0].Value?.ToString() ?? throw new InvalidOperationException("Tabellenname fehlt.");
+
+            // Alle Properties mit TableColumnAttribute ermitteln
+            var properties = objectType.GetProperties()
+                .Where(p => p.GetCustomAttributesData()
+                    .Any(a => a.AttributeType.Name == "TableColumnAttribute")).ToList();
+
+            if (!properties.Any())
+            {
+                throw new InvalidOperationException("Keine Tabellenspalten gefunden.");
+            }
+
+
+            foreach (PropertyDifference prop in propDiff)
+            {
+                var history = new History
+                {
+                    ObjectId = id.ValueGuid,
+                    ObjectName = objectName,
+                    PropertyName = prop.PropertyName,
+                    OriginalValue = prop.OriginalValue?.ToString(),
+                    ModifiedValue = prop.ModifiedValue?.ToString(),
+                    PropertyType = prop.PropertyType?.FullName,
+                    CreatedBy = Environment.UserName,
+                    CreatedOn = DateTime.UtcNow
+                };
+
+                // INSERT-Anweisung erstellen
+                string columns = string.Join(", ", properties.Select(p => $"\"{p.Name}\""));
+                string parameters = string.Join(", ", properties.Select((p, i) => $"@p{i}"));
+                string sql = $"INSERT INTO {tableName} ({columns}) VALUES ({parameters})";
+
+                bool connectionWasClosed = this.Connection.State != System.Data.ConnectionState.Open;
+
+                try
+                {
+                    if (connectionWasClosed)
+                    {
+                        this.Connection.Open();
+                    }
+
+                    using var command = this.Connection.CreateCommand();
+
+                    command.CommandText = sql;
+                    // Parameter befüllen
+                    command.Parameters.AddWithValue($"@p{0}", ConvertSqliteValue(history.Id));
+                    command.Parameters.AddWithValue($"@p{1}", ConvertSqliteValue(history.ObjectId));
+                    command.Parameters.AddWithValue($"@p{2}", ConvertSqliteValue(history.ObjectName));
+                    command.Parameters.AddWithValue($"@p{3}", ConvertSqliteValue(history.PropertyName));
+                    command.Parameters.AddWithValue($"@p{4}", ConvertSqliteValue(history.OriginalValue));
+                    command.Parameters.AddWithValue($"@p{5}", ConvertSqliteValue(history.ModifiedValue));
+                    command.Parameters.AddWithValue($"@p{6}", ConvertSqliteValue(history.PropertyType));
+                    command.Parameters.AddWithValue($"@p{7}", ConvertSqliteValue(history.CreatedBy));
+                    command.Parameters.AddWithValue($"@p{8}", ConvertSqliteValue(history.CreatedOn));
+
+                    command.ExecuteNonQuery();
+                }
+                finally
+                {
+                    if (connectionWasClosed == true)
+                    {
+                        this.Connection.Close();
+                    }
                 }
             }
         }
