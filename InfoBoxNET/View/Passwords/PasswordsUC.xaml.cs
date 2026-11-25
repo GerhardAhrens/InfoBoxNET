@@ -646,6 +646,10 @@ namespace InfoBoxNET.View
                 {
                     this.SaveCloseLic(tabItem);
                 }
+                else if (tabItem.Name == AccessTyp.History.ToString())
+                {
+                    this.PasswordsTabControl.Items.Remove(tabItem);
+                }
 
                 this.IsLoadingDetail = Visibility.Visible;
             }
@@ -717,6 +721,25 @@ namespace InfoBoxNET.View
                 {
                     ID id = this.CurrentSelectedItem.Id;
 
+                    using (DatabaseService ds = new DatabaseService(App.DatabasePath))
+                    {
+                        ds.OpenConnection();
+                        if (ds.Connection == null)
+                        {
+                            return;
+                        }
+
+                        string sql = ds.SelectRows<History>(whereClause: $"ObjectId = '{id}'");
+                        List<History> dataSource = ds.Connection.RecordSet<List<History>>(sql).Get().Result;
+                        if (dataSource == null || dataSource.Any() == false)
+                        {
+                            MessageBox.Show($"Keine Historie für den Eintrag [{this.CurrentSelectedItem.Title}] vorhanden.", "Historie", MessageBoxButton.OK, MessageBoxImage.Information);
+                            return;
+                        }
+                    }
+
+                    AccessTyp accessTyp = this.CurrentSelectedItem.AccessTyp;
+
                     AdvancedTabItem historyTab = new AdvancedTabItem()
                     {
                         Header = $"Historie für [{this.CurrentSelectedItem.Title}]",
@@ -728,7 +751,7 @@ namespace InfoBoxNET.View
                     if (isTabFound == false)
                     {
                         historyTab.Tag = null;
-                        historyTab.Content = new HistoryUC(id);
+                        historyTab.Content = new HistoryUC(id, accessTyp);
                         this.PasswordsTabControl.Items.Add(historyTab);
                         if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                         {
@@ -1055,14 +1078,14 @@ namespace InfoBoxNET.View
                                     }
                                 }
 
+                                ds.InsertHistoryRow(rowView.Id.ToGuid(), areEqual);
+
                                 this.OnFilterButtonClicked(this.FilterValue);
 
                                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
                                 {
                                     await App.EventAgg.PublishAsync(new StatusEvent($"Eintrag '{titel}' aktualisiert. Bereit: {this.RowCount} Einträge"));
                                 }
-
-                                ds.InsertHistoryRow(rowView.Id.ToGuid(),areEqual);
                             }
                             ;
                         }
@@ -1201,6 +1224,7 @@ namespace InfoBoxNET.View
                                     }
                                 }
 
+                                ds.InsertHistoryRow(rowView.Id.ToGuid(), areEqual);
                                 this.OnFilterButtonClicked(this.FilterValue);
 
 
@@ -1347,6 +1371,7 @@ namespace InfoBoxNET.View
                                     }
                                 }
 
+                                ds.InsertHistoryRow(rowView.Id.ToGuid(), areEqual);
                                 this.OnFilterButtonClicked(this.FilterValue);
 
                                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)
@@ -1493,6 +1518,7 @@ namespace InfoBoxNET.View
                                     }
                                 }
 
+                                ds.InsertHistoryRow(rowView.Id.ToGuid(), areEqual);
                                 this.OnFilterButtonClicked(this.FilterValue);
 
                                 if (App.EventAgg.IsSubscription<StatusEvent>() == true)

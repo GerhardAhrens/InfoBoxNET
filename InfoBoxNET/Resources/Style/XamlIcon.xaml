@@ -1877,6 +1877,75 @@
 
     <!--#endregion Icons für die Funktion zur Passwort Verwaltung-->
 
+    <!--#region Icons für die Funktion zur Inventarverwaltung-->
+    <DrawingImage x:Key="InventoryIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+
+                <!--  Hintere Box links  -->
+                <GeometryDrawing Brush="#FFFFFFFF" Geometry="M3,5 L9,2 L15,5 L9,8 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            LineJoin="Round"
+                            Thickness="1.3" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <GeometryDrawing Brush="#FFE3E3E3" Geometry="M3,5 L9,8 V14 L3,11 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            LineJoin="Round"
+                            Thickness="1.3" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <GeometryDrawing Brush="#FFF5F5F5" Geometry="M9,8 L15,5 V11 L9,14 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            LineJoin="Round"
+                            Thickness="1.3" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <!--  Vordere Box  -->
+                <GeometryDrawing Brush="#FFFFFFFF" Geometry="M9,11 L15,8 L21,11 L15,14 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            LineJoin="Round"
+                            Thickness="1.3" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <GeometryDrawing Brush="#FFE3E3E3" Geometry="M9,11 L15,14 V21 L9,18 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            LineJoin="Round"
+                            Thickness="1.3" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <GeometryDrawing Brush="#FFF5F5F5" Geometry="M15,14 L21,11 V18 L15,21 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            LineJoin="Round"
+                            Thickness="1.3" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <!--  Blaue Bestandsmarkierung  -->
+                <GeometryDrawing Brush="#FF1976D2" Geometry="M12,15 H14 V17 H12 Z" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <!--#endregion Icons für die Funktion zur Inventarverwaltung-->
+
     <!--#region Icons für die Katalog Verwaltung-->
     <DrawingImage x:Key="IconSaveData2">
         <DrawingImage.Drawing>

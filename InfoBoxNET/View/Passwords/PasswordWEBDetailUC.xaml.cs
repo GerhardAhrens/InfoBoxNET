@@ -210,10 +210,9 @@ namespace InfoBoxNET.View
         #endregion Windows Events
 
         #region Command Events
-        #endregion Command Events
-
         private void OnPasswordGenerator(object commandParam)
         {
         }
+        #endregion Command Events
     }
 }

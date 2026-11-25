@@ -36,6 +36,7 @@ namespace InfoBoxNET.View
 
             this.QuitCommand = new CommandBase(commandParam => this.OnQuit(commandParam), () => true);
             this.PasswordsCommand = new CommandBase(commandParam => this.OnPasswords(commandParam), () => true);
+            this.InventarCommand = new CommandBase(commandParam => this.OnInventar(commandParam), () => true);
             this.InformationCommand = new CommandBase(commandParam => this.OnPopup(commandParam));
             this.SettingsCommand = new CommandBase(commandParam => this.OnPopup(commandParam));
             this.CloseInformationPopupCommand = new CommandBase(commandParam => this.OnPopup(commandParam));
@@ -73,6 +74,7 @@ namespace InfoBoxNET.View
         #region Properties
         public CommandBase QuitCommand { get; private set; }
         public CommandBase PasswordsCommand { get; private set; }
+        public CommandBase InventarCommand { get; private set; }
         public CommandBase InformationCommand { get; private set; }
         public CommandBase SettingsCommand { get; private set; }
         public CommandBase CloseInformationPopupCommand { get; private set; }
@@ -129,6 +131,21 @@ namespace InfoBoxNET.View
         private async void OnPasswords(object commandParam)
         {
             if (commandParam is CommandButtons button && button == CommandButtons.Passwords)
+            {
+                ChangeViewEventArgs args = new();
+                args.FromPage = CommandButtons.Home;
+                args.MenuButton = button;
+
+                if (App.EventAgg.IsSubscription<ChangeViewEventArgs>() == true)
+                {
+                    await App.EventAgg.PublishAsync(args);
+                }
+            }
+        }
+
+        private async void OnInventar(object commandParam)
+        {
+            if (commandParam is CommandButtons button && button == CommandButtons.InventarOverview)
             {
                 ChangeViewEventArgs args = new();
                 args.FromPage = CommandButtons.Home;

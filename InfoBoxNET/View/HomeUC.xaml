@@ -127,6 +127,12 @@
                 Image="{StaticResource ResourceKey=ManagePasswordsIcon}"
                 ToolTip="Passwort und Lizenzen verwalten" />
 
+            <UI:MenuButton
+                Command="{Binding Path=InventarCommand}"
+                CommandParameter="{x:Static core:CommandButtons.InventarOverview}"
+                Image="{StaticResource ResourceKey=InventoryIcon}"
+                ToolTip="Übersicht Inventar" />
+
             <UI:SplitButton
                 Height="40"
                 UI:MenuBar.Dock="Right"

@@ -30,6 +30,8 @@
         PrintDocument = 16,
         [Description("Historie für Einträge")]
         HistoryEntry = 17,
+        [Description("Inventarverwaltung")]
+        InventarOverview = 18,
         [Description("Informationen")]
         InformationPopup = 20,
         [Description("Einstellungen")]
