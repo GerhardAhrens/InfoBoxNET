@@ -178,6 +178,14 @@ namespace InfoBoxNET.View
 
         private void OnPasswordGenerator(object commandParam)
         {
+            PasswordGeneratorResult result = PasswordGeneratorView.Execute();
+            if (result != null && result.Error == null)
+            {
+                if (result.Cancelled == false)
+                {
+                    this.txtPassword.Password = result.Result;
+                }
+            }
         }
 
     }

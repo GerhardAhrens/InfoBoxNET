@@ -3,6 +3,7 @@
     using System.ComponentModel;
     using System.Data;
     using System.Globalization;
+    using System.Reflection;
     using System.Text;
     using System.Windows.Data;
 
@@ -24,14 +25,19 @@
             get
             {
                 if (_listView.ItemsSource == null)
+                {
                     return 0;
+                }
 
                 ICollectionView view = CollectionViewSource.GetDefaultView(_listView.ItemsSource);
 
-                if (view is BindingListCollectionView blcv &&
-                    blcv.SourceCollection is DataView dv)
+                if (view is BindingListCollectionView blcv && blcv.SourceCollection is DataView dv)
                 {
                     return dv.Count;
+                }
+                else if (view is ListCollectionView collectionView)
+                {
+                    return collectionView.Count;
                 }
 
                 return 0;
@@ -43,14 +49,19 @@
             get
             {
                 if (_listView.ItemsSource == null)
+                {
                     return 0;
+                }
 
                 ICollectionView view = CollectionViewSource.GetDefaultView(_listView.ItemsSource);
 
-                if (view is BindingListCollectionView blcv &&
-                    blcv.SourceCollection is DataView dv)
+                if (view is BindingListCollectionView blcv && blcv.SourceCollection is DataView dv)
                 {
                     return dv.Table.Rows.Count;
+                }
+                else if (view is ListCollectionView collectionView)
+                {
+                    return collectionView.Count;
                 }
 
                 return 0;
@@ -84,20 +95,46 @@
         private FilterType ResolveFilterType(AdvancedGridViewColumn column, string propertyName)
         {
             if (column.FilterType != FilterType.Auto)
+            {
                 return column.FilterType;
+            }
 
             if (_listView.ItemsSource == null)
+            {
                 return FilterType.Text;
+            }
 
-            ICollectionView view =
-                CollectionViewSource.GetDefaultView(_listView.ItemsSource);
+            ICollectionView view = CollectionViewSource.GetDefaultView(_listView.ItemsSource);
 
-            if (view is BindingListCollectionView blcv &&
-                blcv.SourceCollection is DataView dataView)
+            if (view is BindingListCollectionView blcv && blcv.SourceCollection is DataView dataView)
             {
                 propertyName = propertyName.Trim('[', ']');
 
                 Type type = dataView.Table.Columns[propertyName].DataType;
+
+                if (type == typeof(string))
+                    return FilterType.Text;
+
+                if (type == typeof(DateTime))
+                    return FilterType.Date;
+
+                if (type == typeof(bool))
+                    return FilterType.Boolean;
+
+                if (type == typeof(byte) ||
+                    type == typeof(short) ||
+                    type == typeof(int) ||
+                    type == typeof(long) ||
+                    type == typeof(float) ||
+                    type == typeof(double) ||
+                    type == typeof(decimal))
+                    return FilterType.Number;
+            }
+            else if (view is ListCollectionView collectionView)
+            {
+                var werte = view.Cast<object>().Select(item => item.GetType().GetProperty(propertyName)?.GetValue(item, null)).ToList();
+
+                Type type = werte.FirstOrDefault()?.GetType();
 
                 if (type == typeof(string))
                     return FilterType.Text;
@@ -145,21 +182,26 @@
                 return;
             }
 
-            ICollectionView view =CollectionViewSource.GetDefaultView(this._listView.ItemsSource);
-
-            if (view is not BindingListCollectionView blcv)
-            {
-                return;
-            }
-
-            if (blcv.SourceCollection is not DataView dataView)
-            {
-                return;
-            }
-
             try
             {
-                dataView.RowFilter = BuildRowFilter();
+                ICollectionView view = CollectionViewSource.GetDefaultView(this._listView.ItemsSource);
+
+                if (view is BindingListCollectionView blcv)
+                {
+                    if (blcv.SourceCollection is DataView dataView)
+                    {
+                        dataView.RowFilter = this.BuildRowFilter();
+                    }
+                }
+
+                if (view is ICollectionView blcv1)
+                {
+                    if (blcv1.SourceCollection is IEnumerable<object>)
+                    {
+                        DataView dataView = this.ConvertToDataView(blcv1);
+                        dataView.RowFilter = this.BuildRowFilter();
+                    }
+                }
             }
             catch (EvaluateException)
             {
@@ -281,11 +323,7 @@
 
             bool Parse(string text, out decimal number)
             {
-                return decimal.TryParse(
-                    text,
-                    NumberStyles.Any,
-                    CultureInfo.CurrentCulture,
-                    out number);
+                return decimal.TryParse(text, NumberStyles.Any, CultureInfo.CurrentCulture, out number);
             }
 
             if (value.StartsWith(">=", StringComparison.OrdinalIgnoreCase))
@@ -403,5 +441,50 @@
         }
         #endregion Expression Filter Expression Filter Text, Nummerisch, Datum, Boolean
 
+        public DataView ConvertToDataView(ICollectionView collectionView)
+        {
+            DataTable table = new DataTable();
+
+            // Erstes sichtbares Element holen
+            var firstItem = collectionView.Cast<object>().FirstOrDefault();
+            if (firstItem == null)
+                return table.DefaultView;
+
+            // Sonderfall: Falls das IEnumerable<object> doch DataRowViews enthält
+            if (firstItem is DataRowView firstRowView)
+            {
+                table = firstRowView.DataView.Table.Clone();
+                foreach (DataRowView rv in collectionView)
+                {
+                    table.ImportRow(rv.Row);
+                }
+                return table.DefaultView;
+            }
+
+            // Standardfall: Normale Objekte oder anonyme Typen (z. B. aus LINQ Select)
+            PropertyInfo[] props = firstItem.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (var prop in props)
+            {
+                // Nullable-Typen (z. B. int?) in Basis-Typen (int) umwandeln, da DataTable kein Nullable unterstützt
+                Type colType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+                table.Columns.Add(prop.Name, colType);
+            }
+
+            // Alle (gefilterten/sortierten) Elemente der View in die DataTable schreiben
+            foreach (var item in collectionView)
+            {
+                if (item == null) continue;
+
+                DataRow row = table.NewRow();
+                foreach (var prop in props)
+                {
+                    row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
+                }
+                table.Rows.Add(row);
+            }
+
+            return table.DefaultView;
+        }
     }
 }

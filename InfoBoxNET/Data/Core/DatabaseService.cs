@@ -394,8 +394,8 @@ namespace System.Data.SQLite
                     command.Parameters.AddWithValue($"@p{1}", ConvertSqliteValue(history.ObjectId));
                     command.Parameters.AddWithValue($"@p{2}", ConvertSqliteValue(history.ObjectName));
                     command.Parameters.AddWithValue($"@p{3}", ConvertSqliteValue(history.PropertyName));
-                    command.Parameters.AddWithValue($"@p{4}", ConvertSqliteValue(history.OriginalValue));
-                    command.Parameters.AddWithValue($"@p{5}", ConvertSqliteValue(history.ModifiedValue));
+                    command.Parameters.AddWithValue($"@p{4}", ConvertSqliteValue(history.ModifiedValue));
+                    command.Parameters.AddWithValue($"@p{5}", ConvertSqliteValue(history.OriginalValue));
                     command.Parameters.AddWithValue($"@p{6}", ConvertSqliteValue(history.PropertyType));
                     command.Parameters.AddWithValue($"@p{7}", ConvertSqliteValue(history.CreatedBy));
                     command.Parameters.AddWithValue($"@p{8}", ConvertSqliteValue(history.CreatedOn));

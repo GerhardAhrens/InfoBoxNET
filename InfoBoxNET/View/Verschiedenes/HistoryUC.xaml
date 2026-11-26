@@ -10,5 +10,84 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid Background="AliceBlue" />
+
+    <UserControl.Resources>
+        <Style x:Key="RowNumberStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="TextAlignment" Value="Right" />
+            <Setter Property="Foreground" Value="Green" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Padding" Value="0,0,6,0" />
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid Background="AliceBlue" RowDefinitions="Auto,*,Auto">
+        <UI:FilterRow
+            Grid.Row="0"
+            Width="{Binding Path=ActualWidth, ElementName=lvwMain}"
+            Height="30"
+            Margin="0,0,0,-10"
+            VerticalAlignment="Bottom"
+            ListView="{Binding ElementName=lvwMain}" />
+
+        <UI:AdvancedListView
+            x:Name="lvwMain"
+            Grid.Row="1"
+            Margin="0,10,0,10"
+            Background="WhiteSmoke"
+            ItemsSource="{Binding Path=DialogDataView}"
+            RowNumberHeader="*"
+            RowNumberTextStyle="{StaticResource RowNumberStyle}"
+            SelectionMode="Single"
+            ShowRowNumbers="True">
+            <ListView.View>
+                <GridView>
+                    <UI:AdvancedGridViewColumn
+                        Width="100"
+                        DisplayMemberBinding="{Binding Path=ObjectName}"
+                        FilterType="Text"
+                        Header="Objektname"
+                        ShowFilter="False"
+                        SortMemberPath="ObjectName" />
+
+                    <UI:AdvancedGridViewColumn
+                        Width="100"
+                        DisplayMemberBinding="{Binding Path=PropertyName}"
+                        FilterType="Text"
+                        Header="Eigenschaftsname"
+                        SortMemberPath="PropertyName" />
+
+                    <UI:AdvancedGridViewColumn
+                        Width="200"
+                        DisplayMemberBinding="{Binding Path=OriginalValue}"
+                        FilterType="Text"
+                        Header="Originalwert"
+                        SortMemberPath="OriginalValue" />
+
+                    <UI:AdvancedGridViewColumn
+                        Width="200"
+                        DisplayMemberBinding="{Binding Path=ModifiedValue}"
+                        FilterType="Text"
+                        Header="Geändertwert"
+                        SortMemberPath="ModifiedValue" />
+
+                    <UI:AdvancedGridViewColumn
+                        Width="100"
+                        DisplayMemberBinding="{Binding Path=PropertyType}"
+                        FilterType="Text"
+                        ShowFilter="False"
+                        Header="Eigenschaftstyp"
+                        SortMemberPath="PropertyType" />
+                </GridView>
+            </ListView.View>
+        </UI:AdvancedListView>
+
+        <UI:StatusListView
+            Grid.Row="2"
+            Height="20"
+            Margin="0,-10,0,0"
+            ListView="{Binding ElementName=lvwMain}" />
+
+    </Grid>
 </base:UserControlBase>

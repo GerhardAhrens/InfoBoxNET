@@ -14,6 +14,49 @@
     <DrawingImage x:Key="IconApplicationLogo">
         <DrawingImage.Drawing>
             <DrawingGroup>
+
+                <!--  InfoBox Hintergrund  -->
+                <GeometryDrawing Brush="#FFFFFFFF" Geometry="M4,3 H20 C21.1,3 22,3.9 22,5 V19 C22,20.1 21.1,21 20,21 H4 C2.9,21 2,20.1 2,19 V5 C2,3.9 2.9,3 4,3 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF606060"
+                            LineJoin="Round"
+                            Thickness="1.4" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <!--  Blaue Informationsmarkierung  -->
+                <GeometryDrawing Brush="#FF1976D2" Geometry="M12,5 A3,3 0 1 1 11.999,5 Z" />
+
+                <!--  Info-Punkt  -->
+                <GeometryDrawing Brush="#FFFFFFFF" Geometry="M11.3,6  A0.7,0.7 0 1 1 11.299,6 Z" />
+
+                <!--  Info-Zeichen  -->
+                <GeometryDrawing Brush="{x:Null}">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="White"
+                            EndLineCap="Round"
+                            StartLineCap="Round"
+                            Thickness="1.6" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <LineGeometry StartPoint="12,8.5" EndPoint="12,11" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+
+                <!--  Textzeilen  -->
+                <GeometryDrawing Brush="#FF707070" Geometry="M6,13 H18 V14.2 H6 Z M6,16 H16 V17.2 H6 Z" />
+
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="IconApplicationLogoX">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
                 <DrawingGroup.Transform>
                     <ScaleTransform ScaleX="0.25" ScaleY="0.25" />
                 </DrawingGroup.Transform>

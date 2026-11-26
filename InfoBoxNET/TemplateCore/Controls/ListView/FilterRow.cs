@@ -34,12 +34,14 @@
             }
 
             if (ListView.View is not GridView gridView)
+            {
                 return;
+            }
 
             int columnIndex = 0;
 
             // Platz für die Zeilennummern
-            if (ListView.ShowRowNumbers)
+            if (ListView.ShowRowNumbers == true)
             {
                 ColumnDefinitions.Add(
                     new ColumnDefinition
@@ -76,13 +78,12 @@
                 ColumnDefinitions.Add(columnDefinition);
 
                 // Nur AdvancedGridViewColumn kann ShowFilter bereitstellen.
-                if (gridColumn is AdvancedGridViewColumn column &&
-                    column.ShowFilter)
+                if (gridColumn is AdvancedGridViewColumn column && column.ShowFilter)
                 {
                     TextBox tb = CreateFilterBox(column);
 
                     SetColumn(tb, columnIndex);
-                    Children.Add(tb);
+                    this.Children.Add(tb);
                 }
                 else
                 {
@@ -94,7 +95,7 @@
                     };
 
                     SetColumn(spacer, columnIndex);
-                    Children.Add(spacer);
+                    this.Children.Add(spacer);
                 }
 
                 columnIndex++;
