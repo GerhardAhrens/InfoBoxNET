@@ -52,6 +52,14 @@
                         SortMemberPath="ObjectName" />
 
                     <UI:AdvancedGridViewColumn
+                        Width="60"
+                        DisplayMemberBinding="{Binding Path=Version}"
+                        FilterType="Number"
+                        Header="Version"
+                        ShowFilter="True"
+                        SortMemberPath="Version" />
+
+                    <UI:AdvancedGridViewColumn
                         Width="100"
                         DisplayMemberBinding="{Binding Path=PropertyName}"
                         FilterType="Text"
@@ -76,9 +84,25 @@
                         Width="100"
                         DisplayMemberBinding="{Binding Path=PropertyType}"
                         FilterType="Text"
-                        ShowFilter="False"
                         Header="Eigenschaftstyp"
+                        ShowFilter="False"
                         SortMemberPath="PropertyType" />
+
+                    <UI:AdvancedGridViewColumn
+                        Width="100"
+                        DisplayMemberBinding="{Binding Path=CreatedBy}"
+                        FilterType="Text"
+                        Header="Erstellt von"
+                        ShowFilter="True"
+                        SortMemberPath="CreatedBy" />
+
+                    <UI:AdvancedGridViewColumn
+                        Width="140"
+                        DisplayMemberBinding="{Binding Path=CreatedOn}"
+                        FilterType="Date"
+                        Header="Erstellt am"
+                        ShowFilter="True"
+                        SortMemberPath="CreatedOn" />
                 </GridView>
             </ListView.View>
         </UI:AdvancedListView>

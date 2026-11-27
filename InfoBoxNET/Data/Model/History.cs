@@ -48,6 +48,9 @@ namespace InfoBoxNET.Model
         [TableColumn(SQLiteDataType.Guid)]
         public Guid Id { get; set; }
 
+        [TableColumn(SQLiteDataType.Integer)]
+        public int Version { get; set; }
+
         [TableColumn(SQLiteDataType.Guid)]
         public Guid ObjectId { get; set; }
 

@@ -1,6 +1,7 @@
 ﻿namespace InfoBoxNET.View
 {
     using System.ComponentModel;
+    using System.Data;
     using System.Data.SQLite;
     using System.Windows;
     using System.Windows.Controls;
@@ -57,8 +58,8 @@
                             return;
                         }
 
-                        string sql = ds.SelectRows<History>(whereClause: $"ObjectId = '{this.ObjectId}'");
-                        List<History> dataSource = ds.Connection.RecordSet<List<History>>(sql).Get().Result;
+                        string sql = ds.SelectRows<History>(whereClause: $"ObjectId = '{this.ObjectId}'", orderBy: "Version DESC");
+                        DataTable dataSource = ds.Connection.RecordSet<DataTable>(sql).Get().Result;
                         this.DialogDataView = CollectionViewSource.GetDefaultView(dataSource);
                     }
                 });

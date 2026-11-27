@@ -187,7 +187,7 @@ namespace System.Data.SQLite
                 {
                     resultValue = GetScalar<T>(@this.Connection, @this.SQL, @this.ParameterCollection);
                 }
-                else if (typeof(T).IsClass == true && typeof(T).IsGenericType == false && typeof(T).Namespace != "System")
+                else if (typeof(T).IsClass == true && typeof(T).IsGenericType == false && typeof(T).Namespace != "System.Data")
                 {
                     resultValue = GetScalar<T>(@this.Connection, @this.SQL, @this.ParameterCollection);
                 }
