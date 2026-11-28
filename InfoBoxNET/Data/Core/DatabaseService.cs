@@ -15,9 +15,12 @@ namespace System.Data.SQLite
 {
     using System;
     using System.Data;
+    using System.Data.Common;
     using System.Globalization;
     using System.IO;
     using System.Reflection;
+    using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Windows;
 
@@ -397,7 +400,6 @@ namespace System.Data.SQLite
 
                 Type type = typeof(T);
 
-                // [DataTable("TAB_Region")]
                 DataTableAttribute tableAttribute = type.GetCustomAttribute<DataTableAttribute>();
 
                 if (tableAttribute == null)
@@ -407,7 +409,6 @@ namespace System.Data.SQLite
 
                 string tableName = tableAttribute.TableName;
 
-                // Alle Properties mit [TableColumn]
                 PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                     .Where(p => p.GetCustomAttribute<TableColumnAttribute>() != null).ToArray();
 
@@ -801,6 +802,11 @@ namespace System.Data.SQLite
                 return dateTimeOffset.ToString("o");
             }
 
+            if (value is byte[] bytes)
+            {
+                return bytes;
+            }
+
             if (value is bool boolean)
             {
                 return boolean ? 1 : 0;
@@ -1111,5 +1117,117 @@ namespace System.Data.SQLite
         }
 
         #endregion Implement Dispose
+    }
+
+    public static class DbCommandExtensions
+    {
+        public static SqlCommandDump Dump(this DbCommand command)
+        {
+            ArgumentNullException.ThrowIfNull(command);
+
+            return new SqlCommandDump(command);
+        }
+    }
+
+    public sealed class SqlCommandDump
+    {
+        private readonly string _commandText;
+
+        private readonly List<(string Name, DbType Type, object Value)> _parameters;
+
+        internal SqlCommandDump(DbCommand command)
+        {
+            _commandText = command.CommandText;
+
+            _parameters = new List<(string, DbType, object)>();
+
+            foreach (DbParameter parameter in command.Parameters)
+            {
+                object value = parameter.Value;
+
+                // Byte-Arrays kopieren, damit der Dump unabhängig bleibt
+                if (value is byte[] bytes)
+                {
+                    value = bytes.ToArray();
+                }
+
+                _parameters.Add((parameter.ParameterName, parameter.DbType, value));
+            }
+        }
+
+        public string ToSql()
+        {
+            string sql = _commandText;
+
+            // Längere Parameternamen zuerst ersetzen
+            foreach (var parameter in _parameters.OrderByDescending(p => p.Name.Length))
+            {
+                string pattern = Regex.Escape(parameter.Name) + @"(?![\w])";
+
+                string value = FormatSqlValue(parameter.Value);
+
+                sql = Regex.Replace(sql, pattern, _ => value);
+            }
+
+            return sql;
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("========== SQL COMMAND ==========");
+            sb.AppendLine();
+            sb.AppendLine("SQL:");
+            sb.AppendLine(_commandText);
+            sb.AppendLine();
+            sb.AppendLine("PARAMETERS:");
+
+            if (_parameters.Count == 0)
+            {
+                sb.AppendLine("  <Keine Parameter>");
+            }
+            else
+            {
+                foreach (var parameter in _parameters)
+                {
+                    sb.AppendLine($"  {parameter.Name,-20} " + $"Type={parameter.Type,-12} " + $"Value={FormatSqlValue(parameter.Value)}");
+                }
+            }
+
+            sb.AppendLine();
+            sb.AppendLine("================================");
+
+            return sb.ToString();
+        }
+
+        private static string FormatSqlValue(object value)
+        {
+            if (value is null || value == DBNull.Value)
+            {
+                return "NULL";
+            }
+
+            return value switch
+            {
+                string s => "'" + s.Replace("'", "''") + "'",
+
+                char c => "'" + c.ToString().Replace("'", "''") + "'",
+
+                bool b => b ? "1" : "0",
+
+                byte[] bytes => "X'" + Convert.ToHexString(bytes) + "'",
+
+                DateTime dt => "'" + dt.ToString("O", CultureInfo.InvariantCulture) + "'",
+
+                DateTimeOffset dto => "'" + dto.ToString("O", CultureInfo.InvariantCulture) + "'",
+
+                Guid guid => "'" + guid.ToString() + "'",
+
+                _ when value.GetType().IsEnum => Convert.ToInt64(value, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture),
+
+                _ => Convert.ToString(value, CultureInfo.InvariantCulture) ?? "NULL"
+            };
+        }
     }
 }
