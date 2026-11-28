@@ -12,7 +12,7 @@
     <SolidColorBrush x:Key="Window11TextBox.Background.ReadOnly" Color="#F9F9F9" />
     <SolidColorBrush x:Key="Window11TextBox.Foreground" Color="#1A1A1A" />
     <SolidColorBrush x:Key="Window11TextBox.Foreground.Disabled" Color="#9A9A9A" />
-    <SolidColorBrush x:Key="Window11TextBox.Placeholder" Color="Gray" />
+    <SolidColorBrush x:Key="Window11TextBox.PlaceholderForeground" Color="Gray" />
     <SolidColorBrush x:Key="Window11TextBox.Border" Color="#8A8A8A" />
     <SolidColorBrush x:Key="Window11TextBox.Border.Hover" Color="#5F5F5F" />
     <SolidColorBrush x:Key="Window11TextBox.Border.Focus" Color="#0067C0" />
@@ -84,7 +84,7 @@
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Padding" Value="4,1,8,1" />
         <Setter Property="MinHeight" Value="28" />
-        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="CornerRadius" Value="4" />
         <Setter Property="PlaceholderForeground" Value="{DynamicResource Window11TextBox.PlaceholderForeground}" />
         <Setter Property="ShowClearButton" Value="True" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -172,7 +172,240 @@
                         <Trigger Property="Validation.HasError" Value="True">
                             <Setter TargetName="OuterBorder" Property="BorderBrush" Value="{DynamicResource Window11TextBox.Border.Error}" />
                         </Trigger>
+
                     </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <!--  =============================================================  -->
+    <!--  WindowNumberBox  -->
+    <!--  =============================================================  -->
+
+    <Style TargetType="{x:Type UI:WindowNumberBox}">
+
+        <Setter Property="Background" Value="{DynamicResource Window11TextBox.Background}" />
+
+        <Setter Property="Foreground" Value="{DynamicResource Window11TextBox.Foreground}" />
+
+        <Setter Property="BorderBrush" Value="{DynamicResource Window11TextBox.Border}" />
+
+        <Setter Property="BorderThickness" Value="1" />
+
+        <Setter Property="FontFamily" Value="Segoe UI" />
+
+        <Setter Property="FontWeight" Value="Bold" />
+
+        <Setter Property="FontSize" Value="14" />
+
+        <Setter Property="Padding" Value="4,1,8,1" />
+
+        <Setter Property="MinHeight" Value="28" />
+
+        <Setter Property="CornerRadius" Value="4" />
+
+        <Setter Property="PlaceholderForeground" Value="{DynamicResource Window11TextBox.PlaceholderForeground}" />
+
+        <Setter Property="ShowClearButton" Value="True" />
+
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+
+        <!--  Zahlen standardmäßig rechtsbündig  -->
+        <Setter Property="TextAlignment" Value="Right" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type UI:WindowNumberBox}">
+
+                    <Grid>
+
+                        <Border
+                            x:Name="OuterBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            SnapsToDevicePixels="True">
+
+                            <Grid ShowGridLines="False">
+
+                                <Grid.ColumnDefinitions>
+                                    <!--  Icon - 0  -->
+                                    <ColumnDefinition Width="Auto" />
+
+                                    <!--  Separator - 1  -->
+                                    <ColumnDefinition Width="Auto" />
+
+                                    <!--  Eingabetext - 2  -->
+                                    <ColumnDefinition Width="*" />
+
+                                    <!--  Währungssymbol - 3  -->
+                                    <ColumnDefinition Width="Auto" />
+
+                                    <!--  Clear-Button - 4  -->
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!--  Icon links  -->
+                                <Image
+                                    x:Name="PART_Icon"
+                                    Grid.Column="0"
+                                    Width="25"
+                                    Height="25"
+                                    Margin="8,0,0,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Source="{TemplateBinding Icon}"
+                                    Stretch="Uniform"
+                                    Visibility="Collapsed" />
+
+                                <!--  Vertikaler Trennstrich  -->
+                                <Border
+                                    x:Name="Separator"
+                                    Grid.Column="1"
+                                    Width="1"
+                                    Margin="15,2,10,0"
+                                    VerticalAlignment="Stretch"
+                                    Background="#D1D1D1" />
+
+                                <!--  Text  -->
+                                <ScrollViewer
+                                    x:Name="PART_ContentHost"
+                                    Grid.Column="2"
+                                    Margin="{TemplateBinding Padding}"
+                                    FontWeight="Normal"
+                                    HorizontalScrollBarVisibility="Hidden"
+                                    VerticalScrollBarVisibility="Hidden" />
+
+                                <!--  Placeholder  -->
+                                <TextBlock
+                                    x:Name="PART_Placeholder"
+                                    Grid.Column="2"
+                                    Margin="{TemplateBinding Padding}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    FontStretch="{TemplateBinding FontStretch}"
+                                    FontStyle="{TemplateBinding FontStyle}"
+                                    FontWeight="Bold"
+                                    Foreground="{TemplateBinding PlaceholderForeground}"
+                                    IsHitTestVisible="False"
+                                    Text="{TemplateBinding PlaceholderText}"
+                                    TextTrimming="CharacterEllipsis"
+                                    Visibility="{Binding PlaceholderVisibility, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                                <!--  Währungssymbol rechts  -->
+                                <TextBlock
+                                    x:Name="PART_CurrencySymbol"
+                                    Grid.Column="3"
+                                    Margin="4,0,6,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Text="{TemplateBinding CurrencySymbol}"
+                                    Visibility="Collapsed" />
+
+                                <!--  Clear Button  -->
+                                <Button
+                                    x:Name="PART_ClearButton"
+                                    Grid.Column="4"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Visibility="Collapsed">
+                                    <Button.Style>
+                                        <Style TargetType="{x:Type Button}">
+
+                                            <Setter Property="Width" Value="28" />
+                                            <Setter Property="Height" Value="28" />
+                                            <Setter Property="Margin" Value="0,0,4,0" />
+                                            <Setter Property="Padding" Value="0" />
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="BorderThickness" Value="0" />
+                                            <Setter Property="Foreground" Value="#5F5F5F" />
+                                            <Setter Property="Cursor" Value="Hand" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type Button}">
+                                                        <Border
+                                                            x:Name="ButtonBorder"
+                                                            Background="{TemplateBinding Background}"
+                                                            CornerRadius="4">
+
+                                                            <Path
+                                                                Width="10"
+                                                                Height="10"
+                                                                HorizontalAlignment="Center"
+                                                                VerticalAlignment="Center"
+                                                                Data="M 1,1 L 9,9 M 9,1 L 1,9"
+                                                                Stretch="Fill"
+                                                                Stroke="{TemplateBinding Foreground}"
+                                                                StrokeEndLineCap="Round"
+                                                                StrokeStartLineCap="Round"
+                                                                StrokeThickness="1.6" />
+
+                                                        </Border>
+
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="ButtonBorder" Property="Background" Value="#14000000" />
+                                                                <Setter Property="Foreground" Value="#1A1A1A" />
+                                                            </Trigger>
+
+                                                            <Trigger Property="IsPressed" Value="True">
+                                                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.7" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                            </Grid>
+                        </Border>
+
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <!--  Hover  -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="OuterBorder" Property="BorderBrush" Value="{DynamicResource Window11TextBox.Border.Hover}" />
+                        </Trigger>
+
+                        <!--  Focus  -->
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="OuterBorder" Property="BorderBrush" Value="{DynamicResource Window11TextBox.Border.Focus}" />
+                            <Setter TargetName="OuterBorder" Property="BorderThickness" Value="2" />
+                        </Trigger>
+
+                        <!--  Disabled  -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="OuterBorder" Property="Background" Value="{DynamicResource Window11TextBox.Background.Disabled}" />
+                            <Setter TargetName="OuterBorder" Property="BorderBrush" Value="{DynamicResource Window11TextBox.Border.Disabled}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Window11TextBox.Foreground.Disabled}" />
+                        </Trigger>
+
+                        <!--  ReadOnly  -->
+                        <Trigger Property="IsReadOnly" Value="True">
+                            <Setter TargetName="OuterBorder" Property="Background" Value="{DynamicResource Window11TextBox.Background.ReadOnly}" />
+                        </Trigger>
+
+                        <!--  Validation  -->
+                        <Trigger Property="Validation.HasError" Value="True">
+                            <Setter TargetName="OuterBorder" Property="BorderBrush" Value="{DynamicResource Window11TextBox.Border.Error}" />
+                        </Trigger>
+
+                        <!--  Currency-Symbol nur bei Currency  -->
+                        <DataTrigger Binding="{Binding NumberType, RelativeSource={RelativeSource TemplatedParent}}" Value="{x:Static UI:WindowNumberBoxType.Currency}">
+                            <Setter TargetName="PART_CurrencySymbol" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+
+                    </ControlTemplate.Triggers>
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

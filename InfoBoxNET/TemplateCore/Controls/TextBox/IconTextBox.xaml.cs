@@ -8,6 +8,7 @@
         public IconTextBox()
         {
             this.InitializeComponent();
+            this.MinHeight = 28;
         }
 
         #region Icon
